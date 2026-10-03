@@ -1,8 +1,8 @@
 # Publicación en GitHub Pages
 
-Repositorio propio: https://github.com/sarundalf64/unifiscratch
+Repositorio propio: https://github.com/raulgarcia95/unifiscratch
 
-Dirección prevista: https://sarundalf64.github.io/unifiscratch/
+Dirección pública: https://raulgarcia95.github.io/unifiscratch/
 
 Se publica el editor compilado en la rama `gh-pages`, con GitHub Pages configurado para servir la raíz de esa rama. La rama `main` conserva el código fuente y las licencias. Esta publicación es una versión en pruebas; no cambia las limitaciones del informe de extensiones.
 

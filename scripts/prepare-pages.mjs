@@ -21,6 +21,6 @@ for (const item of await fs.readdir(build, {withFileTypes: true})) {
 await fs.copyFile(path.join(root, 'LICENSE'), path.join(output, 'LICENSE'));
 await fs.writeFile(path.join(output, '.nojekyll'), '');
 await fs.writeFile(path.join(output, 'SOURCE.txt'),
-    'Unifiscratch source and audit: https://github.com/sarundalf64/unifiscratch\n' +
+    'Unifiscratch source and audit: https://github.com/raulgarcia95/unifiscratch\n' +
     'License: AGPL-3.0. Hardware validation remains pending; see docs/extensions-audit.md.\n');
 console.log(output);

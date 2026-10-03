@@ -64,7 +64,7 @@ class UnifiscratchSplash extends React.PureComponent {
                     </a>
                     <p className={styles.disclaimer}>
                         <a
-                            href="https://github.com/sarundalf64/unifiscratch"
+                            href="https://github.com/raulgarcia95/unifiscratch"
                             rel="noopener noreferrer"
                             target="_blank"
                         >
