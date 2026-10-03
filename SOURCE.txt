@@ -1,0 +1,2 @@
+Unifiscratch source and audit: https://github.com/sarundalf64/unifiscratch
+License: AGPL-3.0. Hardware validation remains pending; see docs/extensions-audit.md.
