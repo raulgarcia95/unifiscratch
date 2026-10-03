@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tm2scratch",
+    "repository": "https://github.com/champierre/tm2scratch",
+    "commit": "d018790a8afbb2bfc793ea6b8b5ef4b4e5abbd1e",
+    "sourceSha256": "7d521343a45150ad9ae9e82dd293fd5e63135c0cd6ea7ab1a03c1c3030dddba2"
+  },
+  {
+    "id": "tmpose2scratch",
+    "repository": "https://github.com/champierre/tmpose2scratch",
+    "commit": "2b14da353f456fa132ffd3092049ce86394132c1",
+    "sourceSha256": "97887a35dae7faa81224f77da48ecb581c1d6d2643ad7e72991a34ad9bbb97a6"
+  },
+  {
+    "id": "ic2scratch",
+    "repository": "https://github.com/champierre/ic2scratch",
+    "commit": "9384b52ad8161f8697c9219f6b49f5d6c783ee4e",
+    "sourceSha256": "0e2536765a3e518461252cb2c3335a6817027ad492a6806631d8e4de8a476ae1"
+  },
+  {
+    "id": "handpose2scratch",
+    "repository": "https://github.com/champierre/handpose2scratch",
+    "commit": "8d70fa3ead209b47b6c778629594a78f04fd73b7",
+    "sourceSha256": "4efd43cdf783c8c6dd5e2137a96eb5b0308ff91c9573704a7808db10b1beb035"
+  },
+  {
+    "id": "facemesh2scratch",
+    "repository": "https://github.com/champierre/facemesh2scratch",
+    "commit": "e958e201da42f9201e171d468b67294fe5fd5994",
+    "sourceSha256": "fbb23e26a5c73516e30f384c8b30a97befaaeadee4667ab9402c2088a4b23cce"
+  }
+]

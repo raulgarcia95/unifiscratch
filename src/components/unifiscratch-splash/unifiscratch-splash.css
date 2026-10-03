@@ -1,0 +1,64 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+@import "../../css/z-index.css";
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: calc($z-index-menu-bar + 100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .52);
+}
+
+.panel {
+    width: min(34rem, calc(100vw - 2rem));
+    background: $ui-white;
+    color: $text-primary;
+    border-radius: .5rem;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 1rem 3rem rgba(0, 0, 0, .25);
+    padding: 1.75rem;
+    text-align: center;
+}
+
+.title {
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $looks-secondary;
+}
+
+.body,
+.disclaimer {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.disclaimer {
+    color: $text-primary-transparent;
+}
+
+.author {
+    display: inline-block;
+    margin: .25rem 0 1.25rem;
+    color: $looks-secondary;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.author:hover {
+    text-decoration: underline;
+}
+
+.button {
+    min-width: 7.5rem;
+    border: 0;
+    border-radius: .25rem;
+    background: $motion-primary;
+    color: $ui-white;
+    cursor: pointer;
+    font-weight: 700;
+    padding: .65rem 1.25rem;
+}

@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "extensions": [
+    {
+      "url": "https://microbit-more.github.io/dist/microbitMore.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://microbit-more.github.io/dist/microbitMore.mjs",
+          "sha256": "1d51facc25315b06c0bf1d4f531df314ca4d5ef7895f1c3913b753daa64ecd0c"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/spikeessential.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/spikeessential.mjs",
+          "sha256": "72d1de80e51cff3bac09ea19f20c6ec28c429d9253a9872568f72257b0166360"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/legoble.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/legoble.mjs",
+          "sha256": "d74c385c86b649085171ec3c4577476857b49dfccb0cb446f0f1d5a210d13fdc"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/poweredup.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/poweredup.mjs",
+          "sha256": "0ab708f92e0d1157d9f69708c3e0e3874fcb8ec949fdc310be943e83b60522cd"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/legoremote.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/legoremote.mjs",
+          "sha256": "93dd1880d82798dd45d1cc309d7ef418196e0bf75cade471158a4c69845a3400"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/controlplus.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/controlplus.mjs",
+          "sha256": "0453afa0b6d32172e13ec732be9415cd6224d66b6577f0f26d17c2d2d48069d2"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/duplotrain.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/duplotrain.mjs",
+          "sha256": "8dc66453e493db514ed43b9da073d26eb2f70987685eb1047d61b26b065bb6dc"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/legomario.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/legomario.mjs",
+          "sha256": "b83b952ec9e04a47caf8edae9385a4906c5df59587ebc582fd7b7b530b61688b"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/legoluigi.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/legoluigi.mjs",
+          "sha256": "9e6b3603bd1af43f5a2e7531c944c47ed75c141cb8657ec4f58b89d0a99e0f85"
+        }
+      ]
+    },
+    {
+      "url": "https://bricklife.com/scratch-gui/xcratch/legopeach.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://bricklife.com/scratch-gui/xcratch/legopeach.mjs",
+          "sha256": "a0f81e100e5ee41c258266de11747e3fc8df0951af19a3d28a99a4e6634e9028"
+        }
+      ]
+    },
+    {
+      "url": "https://champierre.github.io/ml2scratch/ml2scratch.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://champierre.github.io/ml2scratch/ml2scratch.mjs",
+          "sha256": "0010ef9b27f21748a2fa20427d842e8527ce0cb55201ec92c374996a5bad5f6f"
+        }
+      ]
+    },
+    {
+      "url": "https://champierre.github.io/speech2scratch/speech2scratch.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://champierre.github.io/speech2scratch/speech2scratch.mjs",
+          "sha256": "a2fce4aaaf8b9758b5f99d120f9147de72d08e8d53bd62ce60fd405d71b49ab6"
+        }
+      ]
+    },
+    {
+      "url": "https://champierre.github.io/posenet2scratch/posenet2scratch.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://champierre.github.io/posenet2scratch/posenet2scratch.mjs",
+          "sha256": "6fd5019a79a2d70d2457e552050de48a53fd21eaa23a59e11d0bfcc4739f58eb"
+        }
+      ]
+    },
+    {
+      "url": "https://yokobond.github.io/xcx-gai/dist/gai.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://yokobond.github.io/xcx-gai/dist/gai.mjs",
+          "sha256": "0b42b0c403fa3a8f9ec400d2b25f96d3abfcfa390dcd0f2c4d867746e0f3f3ad"
+        }
+      ]
+    },
+    {
+      "url": "https://yokobond.github.io/xcx-mp-image-embed/dist/mpImageEmbed.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://yokobond.github.io/xcx-mp-image-embed/dist/mpImageEmbed.mjs",
+          "sha256": "fb5cf2085ed6b6e079c4b78ab839237ead8639c35dee69f61baf01bbd7f224c5"
+        }
+      ]
+    },
+    {
+      "url": "https://yokobond.github.io/xcx-mp-hand/dist/xcxMPHand.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://yokobond.github.io/xcx-mp-hand/dist/xcxMPHand.mjs",
+          "sha256": "d5404222da9308d5913f08d5534166b4872e4087ad9dd35aff189ce1139ea56a"
+        }
+      ]
+    },
+    {
+      "url": "https://yokobond.github.io/xcx-tf-knn/dist/tfknn-entry.mjs",
+      "files": [
+        {
+          "name": "entry.mjs",
+          "url": "https://yokobond.github.io/xcx-tf-knn/dist/tfknn-entry.mjs",
+          "sha256": "55fffc29b4562f2a7a6379ccc5ced487efb0119be84edf0cc287c19f39b5a7ce"
+        },
+        {
+          "name": "extension.mjs",
+          "url": "https://yokobond.github.io/xcx-tf-knn/dist/tfknn.mjs",
+          "sha256": "b989902e348431c72666087c984d6158ddc0f236d3864070d427eeb5b74aaf06"
+        }
+      ]
+    },
+    {
+      "url": "https://champierre.github.io/chatgpt2scratch/chatgpt2scratch.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://champierre.github.io/chatgpt2scratch/chatgpt2scratch.mjs",
+          "sha256": "2d1cccb69beeafd1a03fb29baeb9596e541e093577a703bd02c604460a22c9c0"
+        }
+      ]
+    },
+    {
+      "url": "https://yokobond.github.io/xcx-arduino/dist/xcxArduino.mjs",
+      "files": [
+        {
+          "name": "extension.mjs",
+          "url": "https://yokobond.github.io/xcx-arduino/dist/xcxArduino.mjs",
+          "sha256": "c9e685c8f9bffcac5c609a914888972fe14d8e49af394e8af860e2b055a26b20"
+        }
+      ]
+    }
+  ]
+}

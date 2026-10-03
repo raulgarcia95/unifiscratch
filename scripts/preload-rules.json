@@ -1,0 +1,23 @@
+{
+    "approved": [
+        "https://microbit-more.github.io/dist/microbitMore.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/spikeessential.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/legoble.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/poweredup.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/legoremote.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/controlplus.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/duplotrain.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/legomario.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/legoluigi.mjs",
+        "https://bricklife.com/scratch-gui/xcratch/legopeach.mjs",
+        "https://champierre.github.io/ml2scratch/ml2scratch.mjs",
+        "https://champierre.github.io/speech2scratch/speech2scratch.mjs",
+        "https://champierre.github.io/posenet2scratch/posenet2scratch.mjs",
+        "https://yokobond.github.io/xcx-gai/dist/gai.mjs",
+        "https://yokobond.github.io/xcx-mp-image-embed/dist/mpImageEmbed.mjs",
+        "https://yokobond.github.io/xcx-mp-hand/dist/xcxMPHand.mjs",
+        "https://yokobond.github.io/xcx-tf-knn/dist/tfknn-entry.mjs",
+        "https://champierre.github.io/chatgpt2scratch/chatgpt2scratch.mjs",
+        "https://yokobond.github.io/xcx-arduino/dist/xcxArduino.mjs"
+    ]
+}

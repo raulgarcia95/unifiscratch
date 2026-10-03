@@ -1,0 +1,33 @@
+html,
+body,
+.app {
+    /* probably unecessary, transitional until layout is refactored */
+    width: 100%; 
+    height: 100%;
+    margin: 0;
+
+    /* Setting min height/width makes the UI scroll below those sizes */
+    min-width: 1024px;
+    min-height: 640px; /* Min height to fit sprite/backdrop button */
+}
+
+/* @todo: move globally? Safe / side FX, for blocks particularly? */
+* { box-sizing: border-box; }
+
+/* Show whole shape of blocks when mouse over on the pallet. */
+:global(.blocklyFlyout:hover) {
+    overflow: visible;
+}
+
+:global(.blocklyFlyout:hover .blocklyWorkspace) {
+  -webkit-clip-path: none;
+          clip-path: none;
+}
+
+:global(.blocklyScrollbarBackground:hover) {
+  opacity: 0.05;
+}
+
+:global(.blocklyFlyoutScrollbar) {
+    margin-left: 4px;
+}

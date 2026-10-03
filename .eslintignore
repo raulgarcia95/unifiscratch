@@ -1,0 +1,10 @@
+/node_modules/
+/build/
+/dist/
+/test/
+/src/examples/
+/preload/
+
+# Original upstream libraries retain their own formatting.
+/src/lib/libraries/extensions/stretch/vendor/
+/static/extensions/stretch/
