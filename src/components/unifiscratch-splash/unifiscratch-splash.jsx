@@ -34,7 +34,7 @@ class UnifiscratchSplash extends React.PureComponent {
                 >
                     <h1 className={styles.title}>
                         <FormattedMessage
-                            defaultMessage="Welcome to Unifiscratch"
+                            defaultMessage="Welcome to Unfyscratch"
                             id="unifiscratch.splash.title"
                         />
                     </h1>
@@ -51,7 +51,7 @@ class UnifiscratchSplash extends React.PureComponent {
                             defaultMessage={
                                 'This environment has been created using freely distributed resources available ' +
                                 'on the ' +
-                                'internet. For questions, suggestions or claims, contact the creator of Unifiscratch.'
+                                'internet. For questions, suggestions or claims, contact the creator of Unfyscratch.'
                             }
                             id="unifiscratch.splash.disclaimer"
                         />

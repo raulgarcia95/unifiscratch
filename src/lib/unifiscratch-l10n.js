@@ -24,9 +24,9 @@ const localize = (intl, value) => {
 
 const unifiscratchMessages = {
     en: {
-        'unifiscratch.splash.title': 'Welcome to Unifiscratch',
+        'unifiscratch.splash.title': 'Welcome to Unfyscratch',
         'unifiscratch.splash.body': 'The extensions for the different robots and boards are in the Add Extension menu.',
-        'unifiscratch.splash.disclaimer': 'This environment has been created using freely distributed resources available on the internet. For questions, suggestions or claims, contact the creator of Unifiscratch.',
+        'unifiscratch.splash.disclaimer': 'This environment has been created using freely distributed resources available on the internet. For questions, suggestions or claims, contact the creator of Unfyscratch.',
         'unifiscratch.splash.close': 'Start',
         'gui.extension.extensionLoader.name': 'Extension Loader',
         'gui.extension.extensionLoader.description': 'Load an extension from the internet.',
@@ -91,9 +91,9 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.faceSensing.description': 'AI face sensing card. A public standalone module was not available in the current extension format.'
     },
     es: {
-        'unifiscratch.splash.title': 'Bienvenido a Unifiscratch',
+        'unifiscratch.splash.title': 'Bienvenido a Unfyscratch',
         'unifiscratch.splash.body': 'Las extensiones de los diferentes robots y placas están en el menú Añadir extensión de la aplicación.',
-        'unifiscratch.splash.disclaimer': 'Este entorno se ha creado utilizando recursos de libre distribución disponibles en internet. En caso de consulta, sugerencia o reclamación, contacta con el creador de Unifiscratch.',
+        'unifiscratch.splash.disclaimer': 'Este entorno se ha creado utilizando recursos de libre distribución disponibles en internet. En caso de consulta, sugerencia o reclamación, contacta con el creador de Unfyscratch.',
         'unifiscratch.splash.close': 'Empezar',
         'gui.extension.extensionLoader.name': 'Cargador de extensiones',
         'gui.extension.extensionLoader.description': 'Carga una extensión desde internet.',
@@ -158,9 +158,9 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.faceSensing.description': 'Tarjeta IA de detección de caras. No hay un módulo público independiente disponible en el formato actual de extensiones.'
     },
     ca: {
-        'unifiscratch.splash.title': 'Benvingut a Unifiscratch',
+        'unifiscratch.splash.title': 'Benvingut a Unfyscratch',
         'unifiscratch.splash.body': 'Les extensions dels diferents robots i plaques són al menú Afegeix extensió de l’aplicació.',
-        'unifiscratch.splash.disclaimer': 'Aquest entorn s’ha creat utilitzant recursos de lliure distribució disponibles a internet. En cas de consulta, suggeriment o reclamació, contacta amb el creador d’Unifiscratch.',
+        'unifiscratch.splash.disclaimer': 'Aquest entorn s’ha creat utilitzant recursos de lliure distribució disponibles a internet. En cas de consulta, suggeriment o reclamació, contacta amb el creador d’Unfyscratch.',
         'unifiscratch.splash.close': 'Començar',
         'gui.extension.extensionLoader.name': 'Carregador d’extensions',
         'gui.extension.extensionLoader.description': 'Carrega una extensió des d’internet.',
