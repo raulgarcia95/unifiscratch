@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 
 // Package the already verified editor, excluding debugging examples and source maps.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -19,6 +20,13 @@ for (const item of await fs.readdir(build, {withFileTypes: true})) {
     });
 }
 await fs.copyFile(path.join(root, 'LICENSE'), path.join(output, 'LICENSE'));
+// Pages caches stable filenames. Change the entry URL whenever the editor changes.
+const editorHash = createHash('sha256').update(await fs.readFile(path.join(output, 'gui.js')))
+    .digest('hex').slice(0, 16);
+const htmlPath = path.join(output, 'index.html');
+const html = await fs.readFile(htmlPath, 'utf8');
+if (!html.includes('src="gui.js"')) throw new Error('Editor script missing from index.html');
+await fs.writeFile(htmlPath, html.replace('src="gui.js"', `src="gui.js?v=${editorHash}"`));
 await fs.writeFile(path.join(output, '.nojekyll'), '');
 await fs.writeFile(path.join(output, 'SOURCE.txt'),
     'Unifiscratch source and audit: https://github.com/raulgarcia95/unifiscratch\n' +
