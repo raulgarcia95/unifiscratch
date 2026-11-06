@@ -21,21 +21,38 @@ const loadScript = file => new Promise((resolve, reject) => {
     document.head.appendChild(script);
 });
 
+// TensorFlow.js keeps its engine and kernel registry in window._tfengine and
+// window._tfGlobals, reuses whatever it finds there and reads the engine from
+// that global every time a tensor is read. Other curated modules (for example
+// xcx-tf-knn) load a much newer TensorFlow at start-up, and ML5's TensorFlow
+// 1.7 then fails with "forwardFunc is not a function" or "reading 'backend'".
+// Two TensorFlow versions cannot work at the same time in one page, so the
+// Stretch3 libraries get a fresh engine that stays installed once they load.
+// Modules built on a newer TensorFlow (KNN) may fail afterwards in the same
+// session; reloading the page restores them.
+const withOwnTensorFlow = async load => {
+    const hadTf = Object.prototype.hasOwnProperty.call(window, 'tf');
+    const previousTf = window.tf;
+    delete window._tfengine;
+    delete window._tfGlobals;
+    try {
+        await load();
+    } finally {
+        if (hadTf) window.tf = previousTf; // eslint-disable-line require-atomic-updates
+        else delete window.tf;
+    }
+};
+
 export const librariesReady = () => {
     if (!ready) {
-        ready = (async () => {
+        ready = withOwnTensorFlow(async () => {
             await loadScript('ml5.min.js');
             ml5Library = window.ml5;
-            const previousTf = window.tf;
-            try {
-                await loadScript('tf.min.js');
-                await loadScript('pose.min.js');
-                poseLibrary = window.tmPose;
-            } finally {
-                window.tf = previousTf;
-            }
+            await loadScript('tf.min.js');
+            await loadScript('pose.min.js');
+            poseLibrary = window.tmPose;
             if (!ml5Library || !poseLibrary) throw new Error('Bibliotecas de IA incompletas.');
-        })();
+        });
     }
     return ready;
 };

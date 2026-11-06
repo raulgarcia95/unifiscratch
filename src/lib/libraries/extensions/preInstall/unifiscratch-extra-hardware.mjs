@@ -484,16 +484,9 @@ const createInfoExtension = ({
     };
 };
 
+// ED1, Dash and Face Sensing have their own modules (ed1-board.mjs,
+// dash-robot.mjs and face-sensing.mjs).
 const entries = [
-    createInfoExtension({
-        id: 'ed1Board',
-        name: 'ED1',
-        collaborator: 'Unifiscratch',
-        message: 'ED1 pendiente: no se ha verificado firmware, protocolo ni mapa de pines.',
-        icon: {title: 'ED1', body: 'FIRMATA', kind: 'arduino', color1: '#7c3aed', color2: '#22c55e', color3: '#4c1d95'},
-        description: msg('ed1Board.description', 'Experimental USB control for ED1 boards compatible with Firmata.'),
-        helpLink: 'https://docs.arduino.cc/built-in-examples/communication/StandardFirmata/'
-    }),
     createMicroPythonBoard({
         id: 'keyestudioEsp32',
         board: 'esp32',
@@ -550,38 +543,6 @@ const entries = [
         helpLink: 'https://www.tts-group.co.uk/blue-bot-bluetooth-programmable-floor-robot/1015268.html',
         message: 'BlueBot usa Bluetooth, pero no he encontrado un protocolo Scratch 3 abierto y estable ' +
             'para enviar movimientos desde navegador. La extension queda visible como punto de integracion.'
-    }),
-    createInfoExtension({
-        id: 'dashRobot',
-        category: 'robots',
-        name: 'Dash',
-        collaborator: 'Wonder Workshop / Unifiscratch',
-        icon: {title: 'DASH', body: 'ROBOT', kind: 'dash', color1: '#0ea5e9', color2: '#f97316', color3: '#075985'},
-        description: msg('dashRobot.description',
-            'Experimental access: Dash uses apps and protocols not published for Scratch web.'),
-        helpLink: 'https://www.makewonder.com/',
-        message: 'Dash no tiene un protocolo Scratch 3 web abierto equivalente a Web Serial. ' +
-            'La extension queda preparada para anadir un puente local si encontramos uno fiable.'
-    }),
-    createInfoExtension({
-        id: 'faceSensing',
-        name: 'Face Sensing',
-        collaborator: 'Unifiscratch',
-        icon: {
-            title: 'FACE',
-            body: 'SENSING',
-            kind: 'face',
-            color1: '#7c3aed',
-            color2: '#facc15',
-            color3: '#4c1d95'
-        },
-        description: msg('faceSensing.description',
-            'AI face sensing card. A public standalone module was not available in the current extension format.'),
-        helpLink: 'https://www.scratchfoundation.org/learn/learning-library/video-sensing',
-        message: 'Face Sensing existe como extension experimental de Scratch Lab, pero no he encontrado un modulo ' +
-            '.mjs publico compatible con el cargador. Esta tarjeta queda en IA hasta integrar un modulo abierto.',
-        category: 'ai',
-        tags: ['ai', 'image']
     }),
     createInfoExtension({
         id: 'tm2scratch',
@@ -645,4 +606,4 @@ const entries = [
     })
 ];
 
-export {entries};
+export {entries, makeIcon, msg, colorToRgb};

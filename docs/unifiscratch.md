@@ -38,6 +38,6 @@ Los 19 módulos remotos se comprueban contra `scripts/preload-lock.json`. `npm r
 
 Ejecuta `npm run test:hardware` para las pruebas de transporte, contratos y compatibilidad. Los adaptadores locales de MicroPython limitan cada movimiento o salida a cinco segundos y rechazan Python libre. Esto no garantiza la parada de un dispositivo con firmware bloqueado ni cubre la pérdida de Bluetooth en los módulos LEGO originales.
 
-Edison, BlueBot, Dash, ED1 y Face Sensing permanecen como tarjetas informativas desactivadas. El cargador manual por URL sigue habilitado; ese código no está cubierto por la lista curada.
+Dash (Web Bluetooth), ED1 (MicroPython por USB) y Face Sensing (MediaPipe) tienen implementación desde el 6 de noviembre de 2026; falta probarlas con el dispositivo real. Edison V3 y BlueBot permanecen como tarjetas informativas desactivadas porque no hay protocolo público. El cargador manual por URL sigue habilitado; ese código no está cubierto por la lista curada.
 
 La vista de revisión en `http://127.0.0.1:8610/` sirve el directorio `build`. Para el servidor de desarrollo normal, usa la dirección que muestre `npm start`.
