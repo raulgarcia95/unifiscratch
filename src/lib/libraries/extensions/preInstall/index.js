@@ -5,6 +5,7 @@ const importModules = [
     import('./dash-robot.mjs'),
     import('./ed1-board.mjs'),
     import('./face-sensing.mjs'),
+    import('./edison-v3.mjs'),
     import('../stretch/index.js')
 ];
 

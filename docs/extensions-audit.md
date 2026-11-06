@@ -28,7 +28,8 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 | Dash (Wonder Workshop) | Nuevo adaptador Web Bluetooth (6 nov 2026); carga, bloques en es/ca/en, transporte simulado y SB3 probados | Robot real: conexión, avances, giros, luces, sonidos y sensores |
 | ED1 (Citilab) | Nuevo adaptador MicroPython USB (6 nov 2026); carga, código generado y SB3 probados | Placa real con MicroPython, robot Fantàstic, sentido de giro y umbral táctil |
 | Face Sensing | Nueva implementación con MediaPipe Face Landmarker 0.10.14 (6 nov 2026); detección probada con una foto como cámara simulada | Cámara real, permisos y rendimiento en los ordenadores del centro |
-| Edison V3, BlueBot | Tarjetas informativas desactivadas | Sin protocolo público verificable (ver más abajo) |
+| Edison V3 (Microbric) | Nuevo adaptador WebUSB con programa puente EdPy (6 nov 2026); el puente compila sin errores en el comprobador oficial de EdPy V3; transporte simulado probado | Robot real: cargar el puente, conexión, movimientos, parada con bandera roja y sensores |
+| BlueBot | Tarjeta informativa desactivada («Pronto») | Sin protocolo público verificable (ver más abajo) |
 | EV3, BOOST, WeDo 2.0 y otras extensiones Scratch | Implementación heredada conservada | Validación física |
 
 ## Revisión del 6 de noviembre de 2026: extensiones «próximamente»
@@ -59,10 +60,16 @@ Las extensiones de Stretch3 basadas en ML5 (FaceMesh2Scratch, HandPose2Scratch, 
 
 Observación: los módulos originales MediaPipe Hand e Image Embed importan `@mediapipe/tasks-vision@latest`. Esa versión no está fijada y puede cambiar sin aviso.
 
-### Edison V3 y BlueBot siguen desactivados
+### Edison V3: activado mediante programa puente
 
-- Edison V3: se programa con EdScratch/EdPy, que compilan el programa y lo descargan por WebUSB. No hay especificación pública ni cliente abierto de ese protocolo. El compilador abierto [EdPy](https://github.com/Bdanilko/EdPy) corresponde a la descarga por audio de versiones anteriores.
-- BlueBot: Terrapin Logo lo controla por Web Bluetooth, pero no hay documentación ni implementación abierta del protocolo. Para activarlo haría falta registrar la comunicación de la app oficial con un BlueBot real, por ejemplo con un rastreador BLE.
+- Los programas de Edison V3 se compilan en los servidores de Microbric, así que Unifiscratch no puede generarlos. El lenguaje EdPy V3 sí incluye `Ed.ReadUSB()` y `Ed.WriteUSB()`. El firmware intercambia esos números por WebUSB (fabricante 0x16D0, producto 0x1207, paquetes de 8 bytes con cabecera 0x58). El formato procede del código JavaScript público de la app oficial edpyapp.com/v3.
+- `static/extensions/edison/unfyscratch-puente-edison-v3.py` es un programa EdPy que se carga **una vez** con la app oficial. Recibe órdenes numeradas (número de orden × 4096 + orden × 256 + valor, siempre por debajo de 32768), las ejecuta y confirma cada una. Compila sin errores en el comprobador oficial de EdPy V3; como control, ese comprobador rechazó una versión con una función inexistente.
+- Seguridad: cada movimiento lleva su distancia (máximo 30 cm) o su ángulo (máximo 360°), así que el robot se detiene solo. La bandera roja envía la orden de firmware STOP_USER_PROGRAM, borra la última orden y vuelve a arrancar el puente sin repetir órdenes antiguas. El botón cuadrado del robot y la desconexión USB obligan a reconectar explícitamente.
+- Pendiente con el robot real: comprobar que STOP_USER_PROGRAM detiene los motores a mitad de un movimiento, la velocidad real con `SPEED_5` y que los giros se miden en grados.
+
+### BlueBot sigue desactivado
+
+Terrapin Logo lo controla por Web Bluetooth, pero no hay documentación ni implementación abierta del protocolo. Las búsquedas del 6 de noviembre de 2026 tampoco encontraron ingeniería inversa publicada. Para activarlo hay que registrar la comunicación de la app oficial con un BlueBot real. Un método posible es usar nRF Connect para listar sus servicios y el registro HCI de Bluetooth de Android mientras la app envía avances y giros.
 
 ### Proyecto SB3 de ida y vuelta
 
@@ -94,7 +101,7 @@ Fuentes de API: [MicroPython REPL](https://docs.micropython.org/en/latest/refere
 
 ## Validación
 
-`npm run test:hardware`: 40 pruebas aprobadas (6 nov 2026; antes, 27). Cubren metadatos de solo lectura, hashes/exports, opcodes de diez módulos físicos originales, parada LEGO con periférico simulado, REPL fragmentado, errores, pérdida USB, límites, cancelación y cámara ausente. No emulan la electrónica ni el firmware completo.
+`npm run test:hardware`: 45 pruebas aprobadas (6 nov 2026; antes, 27). Cubren metadatos de solo lectura, hashes/exports, opcodes de diez módulos físicos originales, parada LEGO con periférico simulado, REPL fragmentado, errores, pérdida USB, límites, cancelación y cámara ausente. No emulan la electrónica ni el firmware completo.
 
 Compilación de desarrollo sin errores, con cinco avisos de dependencias dinámicas de xcx-gai. ESLint se aplica a los archivos propios modificados, excluyendo las fuentes originales de terceros.
 

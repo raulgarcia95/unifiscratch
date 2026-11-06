@@ -11,6 +11,9 @@ import {
     blockClass as Face, facePart, faceTilt, faceSize, partIndices
 } from '../../src/lib/libraries/extensions/preInstall/face-sensing.mjs';
 import {entries} from '../../src/lib/libraries/extensions/preInstall/unifiscratch-extra-hardware.mjs';
+import {
+    blockClass as Edison, encodeOrder, ORDER
+} from '../../src/lib/libraries/extensions/preInstall/edison-v3.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
@@ -278,9 +281,178 @@ test('Face Sensing moves the sprite only while a face is visible', () => {
     assert.equal(face.size(), 0);
 });
 
-test('only Edison V3 and BlueBot remain as disabled information cards', () => {
-    const disabled = entries.filter(item => item.entry.disabled).map(item => item.entry.extensionId);
-    assert.ok(disabled.includes('edisonV3'));
-    assert.ok(disabled.includes('blueBot'));
-    ['dashRobot', 'ed1Board', 'faceSensing'].forEach(id => assert.equal(disabled.includes(id), false));
+test('only BlueBot remains as a disabled information card', () => {
+    // The AI placeholders here are replaced by the working Stretch3 entries in stretch/index.js.
+    const disabled = entries.filter(item => item.entry.disabled && item.entry.category !== 'ai')
+        .map(item => item.entry.extensionId);
+    assert.deepEqual(disabled, ['blueBot']);
+});
+
+// ---------- Edison V3: simulated WebUSB firmware running the bridge ----------
+
+class FakeEdison {
+    constructor ({bridge = true, bootloader = false, sensors = {}} = {}) {
+        this.opened = false;
+        this.configuration = null;
+        this.bridge = bridge;
+        this.bootloader = bootloader;
+        this.sensors = sensors;
+        this.running = false;
+        this.usbValue = 0;
+        this.lastOrder = 0;
+        this.log = [];
+        this.inbox = [];
+        this.readers = [];
+        this.hold = false;
+    }
+    async open () { this.opened = true; }
+    async close () { this.opened = false; this.readers.splice(0).forEach(r => r.reject(new Error('closed'))); }
+    async selectConfiguration () { this.configuration = {configurationValue: 1}; }
+    async claimInterface () {}
+    push (bytes) {
+        const data = new DataView(new Uint8Array(bytes).buffer);
+        const reader = this.readers.shift();
+        if (reader) reader.resolve({status: 'ok', data});
+        else this.inbox.push(data);
+    }
+    transferIn () {
+        if (this.inbox.length) return Promise.resolve({status: 'ok', data: this.inbox.shift()});
+        return new Promise((resolve, reject) => this.readers.push({resolve, reject}));
+    }
+    async transferOut (endpoint, packet) {
+        const [header, code] = packet;
+        assert.equal(header, 0x58);
+        assert.equal(packet.length, 8);
+        this.log.push(code === 0x17 ? ['data', new DataView(packet.buffer).getInt32(2, true)] : [code]);
+        if (code === 0x10) {
+            const version = 'v0.3.0';
+            this.push([0x58, 0x10, this.bootloader ? 0 : 2, 8, ...[...version].map(c => c.charCodeAt(0)), 0, 0,
+                ...[...version].map(c => c.charCodeAt(0)), 0, 0]);
+            return;
+        }
+        this.push([0x58, code, 1, 0, 0, 0, 0, 0]);
+        if (code === 0x15) this.running = this.bridge;
+        if (code === 0x16) {
+            this.running = false;
+            this.motorsStoppedBy = 'firmware';
+        }
+        if (code === 0x17) {
+            this.usbValue = new DataView(packet.buffer).getInt32(2, true);
+            if (this.running) setImmediate(() => this.step());
+        }
+    }
+    // Same decoding as unfyscratch-puente-edison-v3.py.
+    step () {
+        const data = this.usbValue;
+        const order = Math.floor(data / 4096);
+        if (!this.running || data <= 0 || order === this.lastOrder || this.hold) return;
+        this.lastOrder = order;
+        const rest = data - (order * 4096);
+        const command = Math.floor(rest / 256);
+        const value = rest - (command * 256);
+        this.executed = [...(this.executed || []), [command, value]];
+        let result = 0;
+        if (command === 7) result = this.sensors[value] || 0;
+        if (command === 9) result = 3001;
+        this.push([0x58, 0x18, ...new Uint8Array(new Int32Array([(order * 4096) + result]).buffer)]);
+    }
+}
+
+const edisonFixture = options => {
+    const device = new FakeEdison(options);
+    let requests = 0;
+    Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {
+        usb: {requestDevice: async ({filters}) => {
+            requests++;
+            assert.deepEqual(filters, [{vendorId: 0x16d0, productId: 0x1207}]);
+            return device;
+        }}
+    }});
+    const runtime = new EventEmitter();
+    const robot = new Edison(runtime);
+    return {device, robot, runtime, requests: () => requests};
+};
+
+test('Edison order numbers fit EdPy integers', () => {
+    assert.equal(encodeOrder(1, ORDER.forward, 30), 4096 + 256 + 30);
+    assert.equal(encodeOrder(7, 15, 255), 32767);
+    assert.throws(() => encodeOrder(8, 1, 1), /Identificador/);
+    assert.throws(() => encodeOrder(1, 1, 256), /rango/);
+});
+
+test('Edison connects only after the bridge answers, clearing stale orders first', async () => {
+    const {robot, device, requests} = edisonFixture();
+    await assert.rejects(robot.move({DIRECTION: 'forward', DISTANCE: 10}), /explícitamente/);
+    assert.equal(requests(), 0);
+    await robot.connect();
+    assert.equal(robot.isConnected(), true);
+    // version, clear USB value, run program, then ping.
+    assert.deepEqual(device.log.slice(0, 3), [[0x10], ['data', 0], [0x15]]);
+    assert.deepEqual(device.executed, [[ORDER.ping, 0]]);
+    await robot.disconnect();
+    assert.equal(device.log.at(-1)[0], 0x16);
+    assert.equal(device.opened, false);
+
+    const {robot: noBridge} = edisonFixture({bridge: false});
+    noBridge.link.timeout = 50;
+    await assert.rejects(Promise.race([noBridge.connect(), new Promise((r, j) => setTimeout(() => j(new Error('slow')), 5000))]), /puente/);
+    assert.equal(noBridge.isConnected(), false);
+
+    const {robot: boot} = edisonFixture({bootloader: true});
+    await assert.rejects(boot.connect(), /actualización/);
+});
+
+test('Edison movements are bounded and sensors are decoded', async () => {
+    const {robot, device} = edisonFixture({sensors: {1: 3, 2: 1, 3: 812, 5: 2, 6: 0}});
+    await robot.connect();
+    await robot.move({DIRECTION: 'backward', DISTANCE: 500});
+    await robot.turn({SIDE: 'left', DEGREES: 1000});
+    await robot.setLeds({LEFT: 'off', RIGHT: 'on'});
+    assert.deepEqual(device.executed.slice(1), [[ORDER.backward, 30], [ORDER.spinLeft, 180], [ORDER.leds, 2]]);
+    assert.equal(await robot.obstacle({WHERE: 'ahead'}), true);
+    assert.equal(await robot.obstacle({WHERE: 'left'}), false);
+    assert.equal(await robot.onBlack(), true);
+    assert.equal(await robot.lightLevel({SIDE: 'left'}), 812);
+    assert.equal(await robot.buttonPressed({BUTTON: 'round'}), true);
+    assert.equal(await robot.clap(), false);
+    assert.throws(() => robot.move({DIRECTION: '__proto__', DISTANCE: 1}), /Dirección/);
+    assert.throws(() => robot.setLeds({LEFT: 'constructor', RIGHT: 'on'}), /LED/);
+    await robot.disconnect();
+});
+
+test('Edison red flag stops the program in firmware and re-arms the bridge without replaying orders', async () => {
+    const {robot, device, runtime} = edisonFixture();
+    await robot.connect();
+    device.hold = true; // the robot is still driving
+    const moving = robot.move({DIRECTION: 'forward', DISTANCE: 20});
+    await tick();
+    runtime.emit('PROJECT_STOP_ALL');
+    await assert.rejects(moving, /cancelada/);
+    await robot.link.queue;
+    assert.equal(device.motorsStoppedBy, 'firmware');
+    const afterStop = device.log.slice(device.log.findIndex(entry => entry[0] === 0x16));
+    assert.deepEqual(afterStop.slice(0, 3), [[0x16], ['data', 0], [0x15]]);
+    device.hold = false;
+    // The order cut off by the stop is not executed when the bridge restarts.
+    assert.equal(device.executed.some(([code]) => code === ORDER.forward), false);
+    await robot.beep();
+    assert.deepEqual(device.executed.at(-1), [ORDER.beep, 0]);
+    await robot.disconnect();
+});
+
+test('Edison square-button stop and USB loss require an explicit reconnection', async () => {
+    const {robot, device, requests} = edisonFixture();
+    await robot.connect();
+    robot.link.stoppedAt = 0;
+    device.push([0x58, 0x19, 3, 2]);
+    await tick();
+    assert.equal(robot.isConnected(), false);
+    assert.match(robot.connectionError(), /cuadrado/);
+    await robot.connect();
+    device.readers.splice(0).forEach(reader => reader.reject(new Error('USB removed')));
+    await tick();
+    assert.equal(robot.isConnected(), false);
+    assert.match(robot.connectionError(), /USB/);
+    await assert.rejects(robot.beep(), /explícitamente/);
+    assert.equal(requests(), 2);
 });

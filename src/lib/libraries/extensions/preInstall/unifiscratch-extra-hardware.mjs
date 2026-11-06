@@ -484,8 +484,8 @@ const createInfoExtension = ({
     };
 };
 
-// ED1, Dash and Face Sensing have their own modules (ed1-board.mjs,
-// dash-robot.mjs and face-sensing.mjs).
+// ED1, Dash, Face Sensing and Edison V3 have their own modules (ed1-board.mjs,
+// dash-robot.mjs, face-sensing.mjs and edison-v3.mjs).
 const entries = [
     createMicroPythonBoard({
         id: 'keyestudioEsp32',
@@ -520,18 +520,6 @@ const entries = [
         helpLink: 'https://bit.wappsto.com/'
     }),
     smartCutebot,
-    createInfoExtension({
-        id: 'edisonV3',
-        category: 'robots',
-        name: 'Edison V3',
-        collaborator: 'Microbric / Unifiscratch',
-        icon: {title: 'EDISON', body: 'V3', kind: 'edison', color1: '#475569', color2: '#f97316', color3: '#1f2937'},
-        description: msg('edisonV3.description',
-            'Experimental access: Edison V3 uses EdScratch/EdPy and program download.'),
-        helpLink: 'https://meetedison.com/robot-programming-software/edscratch/',
-        message: 'Edison V3 no expone un protocolo Web Serial/Web Bluetooth directo documentado para control ' +
-            'en vivo desde Scratch. Usa EdScratch/EdPy para cargar programas; esta entrada queda preparada.'
-    }),
     createInfoExtension({
         id: 'blueBot',
         category: 'robots',
