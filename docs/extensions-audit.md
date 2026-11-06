@@ -66,6 +66,7 @@ Observación: los módulos originales MediaPipe Hand e Image Embed importan `@me
 - `static/extensions/edison/unfyscratch-puente-edison-v3.py` es un programa EdPy que se carga **una vez** con la app oficial. Recibe órdenes numeradas (número de orden × 4096 + orden × 256 + valor, siempre por debajo de 32768), las ejecuta y confirma cada una. Compila sin errores en el comprobador oficial de EdPy V3; como control, ese comprobador rechazó una versión con una función inexistente.
 - Seguridad: cada movimiento lleva su distancia (máximo 30 cm) o su ángulo (máximo 360°), así que el robot se detiene solo. La bandera roja envía la orden de firmware STOP_USER_PROGRAM, borra la última orden y vuelve a arrancar el puente sin repetir órdenes antiguas. El botón cuadrado del robot y la desconexión USB obligan a reconectar explícitamente.
 - Pendiente con el robot real: comprobar que STOP_USER_PROGRAM detiene los motores a mitad de un movimiento, la velocidad real con `SPEED_5` y que los giros se miden en grados.
+- Guía de conexión (`src/components/edison-setup`): ventana con los pasos para programar el puente con EdPy V3 y conectarlo, con botones para copiar o descargar el programa y abrir EdPy. Se abre al añadir Edison V3, desde el enlace «Cómo conectar Edison» de la tarjeta y desde el bloque «cómo conectar Edison (ayuda)». La tarjeta también enlaza el archivo `.py`. Si el navegador bloquea el portapapeles, se usa el método clásico de copia; se comprobó en el editor que el texto quedaba copiado.
 
 ### BlueBot sigue desactivado
 

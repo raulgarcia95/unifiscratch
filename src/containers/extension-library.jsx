@@ -383,6 +383,8 @@ class ExtensionLibrary extends React.PureComponent {
                     throw new Error(`No se ha podido cargar la extensión ${id}.`);
                 }
                 this.props.onCategorySelected(id);
+                // Extensions that need a setup step (Edison V3) show their guide when added.
+                if (item.setupHelpEvent) window.dispatchEvent(new Event(item.setupHelpEvent));
             } catch (error) {
                 log.error(error);
                 await alert({message: error.message});
@@ -444,7 +446,11 @@ class ExtensionLibrary extends React.PureComponent {
             ...extension,
             category: categoryForExtension(extension),
             name: localizeKnownExtensionCard(this.props.intl, extension, 'name', extension.name),
-            description: localizeKnownExtensionCard(this.props.intl, extension, 'description', extension.description)
+            description: localizeKnownExtensionCard(this.props.intl, extension, 'description', extension.description),
+            extraLinks: extension.extraLinks && extension.extraLinks.map(link => ({
+                ...link,
+                text: localize(this.props.intl, link.text)
+            }))
         }));
         const visibleCategories = ['robots', 'boards', 'ai', 'other']
             .filter(category => extensionLibraryThumbnailData.some(item => item.category === category));

@@ -1,0 +1,108 @@
+@import "../../css/colors.css";
+@import "../../css/z-index.css";
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: calc($z-index-menu-bar + 110);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .52);
+}
+
+.panel {
+    width: min(40rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    background: $ui-white;
+    color: $text-primary;
+    border-radius: .5rem;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 1rem 3rem rgba(0, 0, 0, .25);
+    padding: 1.5rem 1.75rem;
+    text-align: left;
+}
+
+.title {
+    margin: 0 0 .5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.intro,
+.note {
+    margin: 0 0 1rem;
+    line-height: 1.5;
+}
+
+.note {
+    color: $text-primary-transparent;
+    font-size: .9rem;
+}
+
+.subtitle {
+    margin: 1rem 0 .4rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f97316;
+}
+
+.steps {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+
+.step {
+    margin-bottom: .45rem;
+    line-height: 1.45;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.primary,
+.secondary,
+.close {
+    border: 0;
+    border-radius: .25rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .9rem;
+    padding: .55rem 1rem;
+    text-decoration: none;
+}
+
+.primary,
+.close {
+    background: $motion-primary;
+    color: $ui-white;
+}
+
+.secondary {
+    background: $ui-secondary;
+    color: $text-primary;
+}
+
+.close {
+    display: block;
+    margin: 1rem auto 0;
+    min-width: 7.5rem;
+}
+
+.ok,
+.error {
+    margin: .6rem 0 0;
+    font-weight: 700;
+}
+
+.ok {
+    color: #15803d;
+}
+
+.error {
+    color: #b91c1c;
+}

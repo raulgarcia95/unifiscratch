@@ -31,7 +31,16 @@ const STATE_PROGRAM_COMPLETE = 3;
 export const BRIDGE_ID = 3001;
 export const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
 const BRIDGE_HELP = `Carga en el Edison el programa puente ${BRIDGE_FILE} con https://www.edpyapp.com/v3/ ` +
-    '(botón de programar) y vuelve a conectar.';
+    '(botón de programar) y vuelve a conectar. Haz clic en el bloque «cómo conectar Edison» para ver los pasos.';
+
+// The editor shows a step-by-step window (src/components/edison-setup) on this event.
+export const EDISON_HELP_EVENT = 'unifiscratch-edison-help';
+export const openEdisonHelp = () => {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new Event(EDISON_HELP_EVENT));
+    }
+};
+export const BRIDGE_PATH = `static/extensions/edison/${BRIDGE_FILE}`;
 
 export const ORDER = {forward: 1, backward: 2, spinRight: 3, spinLeft: 4, leds: 5, beep: 6, sensor: 7, ping: 9};
 export const SENSOR = {obstacle: 1, line: 2, leftLight: 3, rightLight: 4, keypad: 5, clap: 6};
@@ -286,6 +295,7 @@ const blockClass = class EdisonV3 {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
+                {opcode: 'showHelp', blockType: 'command', text: t('showHelp', 'how to connect Edison (help)')},
                 {opcode: 'connect', blockType: 'command', text: t('connect', 'connect Edison V3 by USB')},
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect Edison')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'Edison connected?')},
@@ -373,6 +383,10 @@ const blockClass = class EdisonV3 {
                     ]}
             }
         };
+    }
+
+    showHelp () {
+        openEdisonHelp();
     }
 
     connect () {
@@ -467,7 +481,12 @@ const entry = {
     featured: true,
     disabled: false,
     category: 'robots',
-    helpLink: 'https://github.com/raulgarcia95/unifiscratch/blob/main/static/extensions/edison/unfyscratch-puente-edison-v3.py'
+    // Shown on the library card; the extension library also opens the help window on selection.
+    extraLinks: [
+        {text: msg('edisonV3.bridgeLink', 'Edison bridge program (.py)'), href: BRIDGE_PATH, download: BRIDGE_FILE},
+        {text: msg('edisonV3.helpLink', 'How to connect Edison'), event: EDISON_HELP_EVENT}
+    ],
+    setupHelpEvent: EDISON_HELP_EVENT
 };
 
 export {entry, blockClass};

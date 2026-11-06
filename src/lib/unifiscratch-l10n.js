@@ -99,6 +99,9 @@ const newExtensionTexts = {
     'ed1Board.clockwise': ['clockwise', 'sentido horario', 'sentit horari'],
     'ed1Board.counterclockwise': ['counter-clockwise', 'sentido antihorario', 'sentit antihorari'],
     'edisonV3.description': ['USB control of Edison V3 through a bridge program loaded once with EdPy: moves, spins, LEDs, beep and sensors.', 'Control USB de Edison V3 mediante un programa puente cargado una vez con EdPy: avances, giros, LED, pitido y sensores.', 'Control USB d’Edison V3 amb un programa pont carregat una vegada amb EdPy: avanços, girs, LED, xiulet i sensors.'],
+    'edisonV3.showHelp': ['how to connect Edison (help)', 'cómo conectar Edison (ayuda)', 'com connectar Edison (ajuda)'],
+    'edisonV3.bridgeLink': ['Edison bridge program (.py)', 'Programa puente para Edison (.py)', 'Programa pont per a Edison (.py)'],
+    'edisonV3.helpLink': ['How to connect Edison', 'Cómo conectar Edison', 'Com connectar Edison'],
     'edisonV3.connect': ['connect Edison V3 by USB', 'conectar Edison V3 por USB', 'connecta Edison V3 per USB'],
     'edisonV3.disconnect': ['disconnect Edison', 'desconectar Edison', 'desconnecta Edison'],
     'edisonV3.connected': ['Edison connected?', '¿Edison conectado?', 'Edison connectat?'],
@@ -147,10 +150,39 @@ const newExtensionTexts = {
     'faceSensing.on': ['on', 'encendido', 'encès'],
     'faceSensing.flipped': ['on flipped', 'encendido sin espejo', 'encès sense mirall']
 };
-const newExtensionMessages = language => Object.keys(newExtensionTexts).reduce((messages, key) => {
-    messages[`unifiscratch.extensions.${key}`] = newExtensionTexts[key][{en: 0, es: 1, ca: 2}[language]];
+// Edison V3 connection guide (src/components/edison-setup): [English, Spanish, Catalan].
+const edisonSetupTexts = {
+    title: ['Connect Edison V3 to Unfyscratch', 'Conectar Edison V3 con Unfyscratch', 'Connectar Edison V3 amb Unfyscratch'],
+    intro: ['Edison needs a small bridge program. You only load it once; it stays on the robot until you load another program.', 'Edison necesita un pequeño programa puente. Solo hay que cargarlo una vez: se queda en el robot hasta que cargues otro programa.', 'Edison necessita un petit programa pont. Només cal carregar-lo una vegada: es queda al robot fins que en carreguis un altre.'],
+    copy: ['Copy bridge program', 'Copiar programa puente', 'Copiar el programa pont'],
+    download: ['Download bridge program', 'Descargar programa puente', 'Descarregar el programa pont'],
+    openEdpy: ['Open EdPy V3', 'Abrir EdPy V3', 'Obrir EdPy V3'],
+    copied: ['Copied. Now paste it into EdPy V3.', 'Copiado. Ahora pégalo en EdPy V3.', 'Copiat. Ara enganxa’l a EdPy V3.'],
+    copyFailed: ['It could not be copied. Use «Download bridge program» instead.', 'No se ha podido copiar. Usa «Descargar programa puente».', 'No s’ha pogut copiar. Fes servir «Descarregar el programa pont».'],
+    programTitle: ['1. Program Edison (only the first time)', '1. Programar el Edison (solo la primera vez)', '1. Programar l’Edison (només la primera vegada)'],
+    step1: ['Press «Copy bridge program» (or download it).', 'Pulsa «Copiar programa puente» (o descárgalo).', 'Prem «Copiar el programa pont» (o descarrega’l).'],
+    step2: ['Open {edpy}, delete all the code in the editor and paste the bridge program.', 'Abre {edpy}, borra todo el código del editor y pega el programa puente.', 'Obre {edpy}, esborra tot el codi de l’editor i enganxa el programa pont.'],
+    step3: ['Switch Edison on and connect it to the computer with the USB cable.', 'Enciende el Edison y conéctalo al ordenador con el cable USB.', 'Encén l’Edison i connecta’l a l’ordinador amb el cable USB.'],
+    step4: ['Press «Program Edison», then «Connect Edison» and choose Edison V3 in the browser window. Press «Download program» and wait until it finishes.', 'Pulsa «Program Edison», después «Connect Edison» y elige Edison V3 en la ventana del navegador. Pulsa «Download program» y espera a que termine.', 'Prem «Program Edison», després «Connect Edison» i tria Edison V3 a la finestra del navegador. Prem «Download program» i espera que acabi.'],
+    step5: ['Close the EdPy tab: only one page at a time can use Edison.', 'Cierra la pestaña de EdPy: solo una página a la vez puede usar el Edison.', 'Tanca la pestanya d’EdPy: només una pàgina alhora pot fer servir l’Edison.'],
+    useTitle: ['2. Use it in Unfyscratch (every time)', '2. Usarlo en Unfyscratch (cada vez)', '2. Fer-lo servir a Unfyscratch (cada vegada)'],
+    step6: ['Connect Edison by USB and switch it on. Use Chrome or Edge.', 'Conecta el Edison por USB y enciéndelo. Usa Chrome o Edge.', 'Connecta l’Edison per USB i encén-lo. Fes servir Chrome o Edge.'],
+    step7: ['Click the block «connect Edison V3 by USB» and choose Edison in the browser window. Edison beeps when it is ready.', 'Haz clic en el bloque «conectar Edison V3 por USB» y elige el Edison en la ventana del navegador. El Edison pita cuando está listo.', 'Fes clic al bloc «connecta Edison V3 per USB» i tria l’Edison a la finestra del navegador. L’Edison xiula quan està a punt.'],
+    step8: ['Try it on a table: each block moves at most 30 cm or 360°. The red flag stops Edison. If you press the square button on the robot, connect again.', 'Pruébalo sobre una mesa: cada bloque mueve como máximo 30 cm o 360°. La bandera roja detiene el Edison. Si pulsas el botón cuadrado del robot, vuelve a conectar.', 'Prova’l sobre una taula: cada bloc mou com a màxim 30 cm o 360°. La bandera vermella atura l’Edison. Si prems el botó quadrat del robot, torna a connectar.'],
+    trouble: ['If Edison does not answer, load the bridge program again with EdPy and check the «last connection error» block.', 'Si el Edison no responde, vuelve a cargar el programa puente con EdPy y mira el bloque «último error de conexión».', 'Si l’Edison no respon, torna a carregar el programa pont amb EdPy i mira el bloc «últim error de connexió».'],
+    close: ['Understood', 'Entendido', 'Entesos']
+};
+const newExtensionMessages = language => {
+    const index = {en: 0, es: 1, ca: 2}[language];
+    const messages = {};
+    Object.keys(newExtensionTexts).forEach(key => {
+        messages[`unifiscratch.extensions.${key}`] = newExtensionTexts[key][index];
+    });
+    Object.keys(edisonSetupTexts).forEach(key => {
+        messages[`unifiscratch.edisonSetup.${key}`] = edisonSetupTexts[key][index];
+    });
     return messages;
-}, {});
+};
 
 const unifiscratchMessages = {
     en: {

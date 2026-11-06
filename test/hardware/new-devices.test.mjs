@@ -12,7 +12,7 @@ import {
 } from '../../src/lib/libraries/extensions/preInstall/face-sensing.mjs';
 import {entries} from '../../src/lib/libraries/extensions/preInstall/unifiscratch-extra-hardware.mjs';
 import {
-    blockClass as Edison, encodeOrder, ORDER
+    blockClass as Edison, entry as edisonEntry, encodeOrder, ORDER, EDISON_HELP_EVENT
 } from '../../src/lib/libraries/extensions/preInstall/edison-v3.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -372,6 +372,23 @@ const edisonFixture = options => {
     const robot = new Edison(runtime);
     return {device, robot, runtime, requests: () => requests};
 };
+
+test('Edison card links to the bridge program and the help block opens the guide', async () => {
+    const {access} = await import('node:fs/promises');
+    await access(new URL(`../../${edisonEntry.extraLinks[0].href}`, import.meta.url));
+    assert.equal(edisonEntry.extraLinks[0].download, 'unfyscratch-puente-edison-v3.py');
+    assert.equal(edisonEntry.setupHelpEvent, EDISON_HELP_EVENT);
+    let opened = 0;
+    const target = new EventTarget();
+    target.addEventListener(EDISON_HELP_EVENT, () => opened++);
+    Object.defineProperty(globalThis, 'window', {configurable: true, value: target});
+    try {
+        new Edison(new EventEmitter()).showHelp();
+    } finally {
+        delete globalThis.window;
+    }
+    assert.equal(opened, 1);
+});
 
 test('Edison order numbers fit EdPy integers', () => {
     assert.equal(encodeOrder(1, ORDER.forward, 30), 4096 + 256 + 30);

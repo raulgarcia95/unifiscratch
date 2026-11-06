@@ -34,6 +34,17 @@ class LibraryItemComponent extends React.PureComponent {
             });
     }
     
+    // Extra links must not also select (add) the extension from the card.
+    handleExtraLink (link) {
+        return event => {
+            event.stopPropagation();
+            if (link.event) {
+                event.preventDefault();
+                window.dispatchEvent(new Event(link.event));
+            }
+        };
+    }
+
     render () {
         return this.props.featured ? (
             <div
@@ -95,6 +106,21 @@ class LibraryItemComponent extends React.PureComponent {
                                 >{'👉 Help Link'}</a></span>
                         </div>
                     ) : null}
+                    {(this.props.extraLinks || []).map(link => (
+                        <div key={link.href || link.event}>
+                            <span className={styles.featuredExtensionHelp}>
+                                <a
+                                    download={link.download}
+                                    href={link.href || '#'}
+                                    rel="noreferrer"
+                                    target={link.href && !link.download ? '_blank' : null}
+                                    onClick={this.handleExtraLink(link)}
+                                >
+                                    {`👉 ${link.text}`}
+                                </a>
+                            </span>
+                        </div>
+                    ))}
                     {this.props.extensionURL ? (
                         <div>
                             <span className={styles.featuredExtensionUrl}>{'Module: '}
@@ -209,6 +235,12 @@ LibraryItemComponent.propTypes = {
     disabled: PropTypes.bool,
     extensionId: PropTypes.string,
     extensionURL: PropTypes.string,
+    extraLinks: PropTypes.arrayOf(PropTypes.shape({
+        text: PropTypes.string,
+        href: PropTypes.string,
+        download: PropTypes.string,
+        event: PropTypes.string
+    })),
     featured: PropTypes.bool,
     helpLink: PropTypes.string,
     hidden: PropTypes.bool,
