@@ -4,8 +4,8 @@
 // same line protocol as Cutebot. The firmware drives the shield's PCA9685
 // (DC motors, steppers, servos) and the free micro:bit pins, and stops the
 // motors if the link goes quiet.
-import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
-import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
+import {getShieldLink} from './microbit-shield-link.mjs';
+import {boundedNumber} from './micropython-transport.mjs';
 import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
@@ -91,21 +91,18 @@ class MicroShield {
         this.pins = {};
         this.watched = {};
         this.sonar = '';
-        this.transport = new MicrobitUartTransport(name, {
-            expect: 'MS',
-            noReply: 'La micro:bit no responde: carga el firmware de Unifiscratch para micro:shield (ver la guía).',
-            notConnected: 'Conecta la micro:shield (Bluetooth o USB) antes de usar los bloques.',
-            onLine: line => {
-                const sensors = parseSensors(line);
-                if (sensors) {
-                    this.sensors = sensors;
-                    return;
-                }
-                const pins = parsePins(line);
-                if (pins) Object.assign(this.pins, pins);
+        // Shared with the "micro:bit · sensor kit" extension: same board, one link.
+        this.transport = getShieldLink(runtime);
+        this.transport.addLineListener(line => {
+            const sensors = parseSensors(line);
+            if (sensors) {
+                this.sensors = sensors;
+                return;
             }
+            const pins = parsePins(line);
+            if (pins) Object.assign(this.pins, pins);
         });
-        bindSafetyEvents(runtime, this.transport);
+        this.transport.addConnectListener(() => this.resetState());
     }
 
     getInfo () {
@@ -292,6 +289,10 @@ class MicroShield {
     // A fresh link means fresh firmware state: forget pin watches and sonar.
     async connected (opening) {
         await opening;
+        this.resetState();
+    }
+
+    resetState () {
         this.watched = {};
         this.pins = {};
         this.sonar = '';

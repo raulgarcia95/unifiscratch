@@ -5,6 +5,7 @@ const importModules = [
     import('./microbit-cutebot.mjs'),
     import('./microbit-wappsto.mjs'),
     import('./microbit-microshield.mjs'),
+    import('./microbit-sensor-kit.mjs'),
     import('./dash-robot.mjs'),
     import('./ed1-board.mjs'),
     import('./face-sensing.mjs'),

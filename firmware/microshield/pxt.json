@@ -9,6 +9,7 @@
     },
     "files": [
         "main.ts",
+        "kit.ts",
         "README.md"
     ],
     "yotta": {

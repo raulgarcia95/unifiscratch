@@ -30,12 +30,26 @@ pantalla LED y sonido.
    `pxt.json` (botón «Explorer» > rueda > «Edit settings as text»).
    Sustituye su contenido por el `pxt.json` de esta carpeta.
 3. Sustituye el contenido de `main.ts` por el `main.ts` de esta carpeta.
+   Haz lo mismo con `kit.ts` (los sensores de los kits del XTEC): tras pegar
+   `pxt.json` aparece en el explorador; si no, créalo con el botón «+» y
+   llámalo `kit.ts`.
 4. Comprueba en «Project settings» que esté marcada
    «No Pairing Required: Anyone can connect via Bluetooth».
 5. Pulsa **Download** y guarda el archivo como `unifiscratch-microshield.hex`
    en `static/extensions/microshield/`.
 
 Ese .hex vale para micro:bit V1 y V2.
+
+## Kits de sensores del XTEC (`kit.ts`)
+
+El mismo firmware sirve a la extensión «Kit micro:bit», con los sensores y
+actuadores de los kits de primaria y secundaria (básico y avanzado): DHT11,
+pantalla OLED SSD1306, giroscopio MPU6050, CO2 CCS811, barómetro BMP280 o
+BMP180, receptor y emisor de infrarrojos (NEC) y lecturas puntuales de pines.
+Código propio (MIT) a partir de las hojas de datos de cada chip.
+
+Con Bluetooth activado la micro:bit V1 va justa de memoria: si se cuelga al
+usar el OLED o los sensores I2C, usa una micro:bit V2 o conéctala por USB.
 
 ## Protocolo
 

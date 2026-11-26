@@ -4,7 +4,7 @@
 // from MakeAndLearn/pxt-microshield (MIT, Copyright (c) 2019 MakeAndLearn).
 //
 // Line protocol, identical over Bluetooth UART and USB serial (115200):
-//   ?                  -> replies "MS1"
+//   ?                  -> replies "MS2" (MS2 = with the kit.ts orders)
 //   K                  keepalive (host sends every 500 ms)
 //   M n v t            DC motor n (1..4, 0 = all), speed v -100..100,
 //                      t ms (0 = until next order, max. 5000)
@@ -21,6 +21,7 @@
 //   T text             scroll text
 //   C                  clear matrix
 //   B freq ms          tone
+//   X id ...           XTEC kit sensors (DHT11, OLED, IMU, CO2, barometer, IR): see kit.ts
 // Every 100 ms while the host talks: "D cm a b" and, for watched pins,
 // "E pin:value pin:value ...".
 // Safety: motors and steppers stop if nothing arrives for 1.5 s,
@@ -214,7 +215,8 @@ function handle(line: string) {
     const cmd = line.charAt(0)
     const rest = clean(line.substr(1))
     const n = rest.split(" ").map(s => parseInt(s))
-    if (cmd == "?") send("MS1")
+    if (cmd == "?") send("MS2")
+    else if (cmd == "X") kitHandle(rest) // kit.ts: XTEC kit sensors
     else if (cmd == "K") { }
     else if (cmd == "M") {
         const which = n[0] || 0
