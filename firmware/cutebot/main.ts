@@ -96,7 +96,7 @@ function handle(line: string) {
             underglow[i * 3 + 1] = byte(n[0])
             underglow[i * 3 + 2] = byte(n[2])
         }
-        ws2812b.sendBuffer(underglow, DigitalPin.P15)
+        light.sendWS2812Buffer(underglow, DigitalPin.P15)
     }
     else if (cmd == "V") i2c(n[0] == 2 ? 0x06 : 0x05, Math.constrain(n[1] || 0, 0, 180), 0, 0)
     else if (cmd == "I") showBits(n[0] || 0)

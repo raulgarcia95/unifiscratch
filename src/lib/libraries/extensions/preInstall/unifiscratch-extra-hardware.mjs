@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import {MicroPythonTransport, bindSafetyEvents, boundedMotion, boundedNumber} from './micropython-transport.mjs';
 import {deviceIconURL} from './device-icons.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const clamp = boundedNumber;
 const msg = (id, defaultText) => ({
@@ -161,7 +162,7 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
                 color2: icon.color2,
                 color3: icon.color3,
                 blocks: [
-                    {opcode: 'connect', blockType: 'command', text: msg('connectUsb', 'connect by USB')},
+                    ...actionButton('connect', msg('connectUsb', 'connect by USB')),
                     {opcode: 'disconnect', blockType: 'command', text: msg('disconnect', 'disconnect')},
                     {opcode: 'isConnected', blockType: 'Boolean', text: msg('connected', 'connected?')},
                     {opcode: 'connectionError',

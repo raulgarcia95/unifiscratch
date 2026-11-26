@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-// "Kit micro:bit": blocks for every sensor and actuator of the three XTEC
+// "Sensores y actuadores" (formerly "Kit micro:bit"): blocks for every sensor and actuator of the three XTEC
 // micro:bit kits (primary with challenges, secondary basic, secondary
 // advanced). All of them plug into the micro:shield, so this extension shares
 // the micro:shield link and firmware (firmware/microshield, orders in kit.ts):
@@ -12,9 +12,10 @@ import {colorToRgb} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {sensorKitTexts} from './microbit-sensor-kit-texts.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const id = 'microbitSensorKit';
-const name = 'Kit micro:bit';
+const name = 'Sensores y actuadores';
 const t = key => ({
     id: `unifiscratch.extensions.sensorKit.${key}`,
     default: sensorKitTexts[key][0],
@@ -93,9 +94,9 @@ class MicrobitSensorKit {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'showHelp', blockType: 'command', text: t('showHelp')},
-                {opcode: 'connectBluetooth', blockType: 'command', text: t('connectBluetooth')},
-                {opcode: 'connectUsb', blockType: 'command', text: t('connectUsb')},
+                ...actionButton('showHelp', t('showHelp')),
+                ...actionButton('connectBluetooth', t('connectBluetooth')),
+                ...actionButton('connectUsb', t('connectUsb')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected')},
                 '---',

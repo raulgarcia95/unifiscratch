@@ -17,6 +17,14 @@ y por **USB** (puerto serie a 115200), con el mismo protocolo de texto.
 
 Ese .hex vale para micro:bit V1 y V2.
 
+### Sin navegador (pxt CLI)
+
+En una carpeta de trabajo fuera del repositorio:
+`npm install pxt pxt-microbit` y `npx pxt target microbit`. Copia ahí esta
+carpeta y, dentro de ella, `npx pxt install` y `npx pxt build`. El .hex
+universal (V1 y V2) queda en `built/binary.hex`; las piezas en C++ las compila
+el servicio en la nube de MakeCode. Así se generaron los .hex publicados
+(pxt-microbit 9.1.2, 26-11-2026).
 ## Protocolo
 
 Una orden por línea (`\n`). Ver la cabecera de `main.ts`.

@@ -40,6 +40,22 @@
     stroke: none;
 }
 
+/* Connection and help buttons of Unifiscratch extensions (action-buttons.mjs):
+   a button, not a block, in a colour of its own. */
+.blocks :global(.unifiscratchActionButton .blocklyFlyoutButtonBackground) {
+    fill: #ffb300;
+    stroke: #c77c00;
+}
+
+.blocks :global(.unifiscratchActionButton:hover .blocklyFlyoutButtonBackground) {
+    fill: #ffc533;
+}
+
+.blocks :global(.unifiscratchActionButton .blocklyText) {
+    fill: #3d2a00;
+    font-weight: bold;
+}
+
 .blocks :global(.blocklyToolboxDiv) {
     border-right: 1px solid $ui-black-transparent;
     border-bottom: 1px solid $ui-black-transparent;

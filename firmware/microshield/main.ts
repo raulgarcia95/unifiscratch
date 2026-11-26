@@ -196,7 +196,7 @@ function setStrip(p: number, n: number, index: number, r: number, g: number, b: 
             strip[i * 3 + 2] = b
         }
     }
-    ws2812b.sendBuffer(strip.slice(0, stripCount * 3), pinOf(p))
+    light.sendWS2812Buffer(strip.slice(0, stripCount * 3), pinOf(p))
 }
 
 // Drop CR, spaces and control characters at both ends.
@@ -274,7 +274,7 @@ function handle(line: string) {
     else if (cmd == "B") {
         const f = n[0] || 440
         const ms = Math.constrain(n[1] || 200, 0, 3000)
-        control.inBackground(() => music.playTone(f, ms))
+        control.inBackground(() => pins.analogPitch(f, ms))
     }
 }
 
@@ -306,12 +306,12 @@ function pinReport(): string {
 bluetooth.startUartService()
 bluetooth.onBluetoothConnected(() => {
     bleConnected = true
-    basic.showIcon(IconNames.Yes, 0)
+    showBits(0x22a200) // tick, without the icon table (V1 flash)
 })
 bluetooth.onBluetoothDisconnected(() => {
     bleConnected = false
     stopAll()
-    basic.showIcon(IconNames.No, 0)
+    showBits(0x1151151) // cross
 })
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), () => {
     handle(bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine)))

@@ -19,6 +19,7 @@ import {ChunkBuilder, CHUNK_COMMAND, CHUNK_REPORTER, MicroBlocksTransport} from 
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const MAX_SECONDS = 5;
 const MAX_STEPS = 2400;
@@ -179,7 +180,7 @@ const blockClass = class Ed1Board {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'connect', blockType: 'command', text: t('connect', 'connect ED1 by USB')},
+                ...actionButton('connect', t('connect', 'connect ED1 by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect ED1')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'ED1 connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},

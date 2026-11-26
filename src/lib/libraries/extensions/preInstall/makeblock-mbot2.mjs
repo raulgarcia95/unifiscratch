@@ -7,6 +7,7 @@ import {
     pyArgs
 } from './makeblock-serial.mjs';
 import {deviceIconURL} from './device-icons.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const EXTENSION_ID = 'makeblockMbot2';
 const iconURL = deviceIconURL('mbot2');
@@ -43,11 +44,7 @@ const blockClass = class MakeblockMbot2 {
             color2: '#484eb8',
             color3: '#343881',
             blocks: [
-                {
-                    opcode: 'connect',
-                    blockType: 'command',
-                    text: msg('mbot2.connect', 'connect mBot2 by USB')
-                },
+                ...actionButton('connect', msg('mbot2.connect', 'connect mBot2 by USB')),
                 {
                     opcode: 'disconnect',
                     blockType: 'command',

@@ -7,6 +7,7 @@ import {
 } from '../../src/lib/libraries/extensions/preInstall/microbit-sensor-kit.mjs';
 import {blockClass as MicroShield} from '../../src/lib/libraries/extensions/preInstall/microbit-microshield.mjs';
 import {sensorKitTexts} from '../../src/lib/libraries/extensions/preInstall/microbit-sensor-kit-texts.mjs';
+import {ACTION_BUTTON_PREFIX} from '../../src/lib/libraries/extensions/preInstall/action-buttons.mjs';
 
 // ---------- Simulated micro:bit with the micro:shield firmware + kit.ts ----------
 class Firmware {
@@ -104,7 +105,9 @@ test('every block has its three translations and every menu value is handled', (
     info.blocks.filter(block => typeof block === 'object').forEach(block => {
         const key = block.text.id.replace('unifiscratch.extensions.sensorKit.', '');
         assert.equal(sensorKitTexts[key].length, 3, key);
-        assert.equal(typeof SensorKit.prototype[block.opcode], 'function', block.opcode);
+        // A connection or help button runs the method named after its prefix.
+        const method = block.blockType === 'button' ? block.func.replace(ACTION_BUTTON_PREFIX, '') : block.opcode;
+        assert.equal(typeof SensorKit.prototype[method], 'function', method);
     });
     assert.equal(entry.extensionId, 'microbitSensorKit');
 });

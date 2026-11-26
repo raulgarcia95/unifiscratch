@@ -8,6 +8,7 @@ import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const id = 'wappstoBit';
 const name = 'Wappsto:bit';
@@ -126,9 +127,9 @@ class WappstoBit {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'showHelp', blockType: 'command', text: t('showHelp', 'how to connect Wappsto:bit (help)')},
-                {opcode: 'connectBluetooth', blockType: 'command', text: t('connectBluetooth', 'connect micro:bit by Bluetooth')},
-                {opcode: 'connectUsb', blockType: 'command', text: t('connectUsb', 'connect micro:bit by USB')},
+                ...actionButton('showHelp', t('showHelp', 'how to connect Wappsto:bit (help)')),
+                ...actionButton('connectBluetooth', t('connectBluetooth', 'connect micro:bit by Bluetooth')),
+                ...actionButton('connectUsb', t('connectUsb', 'connect micro:bit by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect micro:bit')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'micro:bit connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},

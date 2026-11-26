@@ -20,6 +20,7 @@ import DragConstants from '../lib/drag-constants';
 import defineDynamicBlock from '../lib/define-dynamic-block';
 import {DEFAULT_THEME, getColorsForTheme, themeMap} from '../lib/themes';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
+import {actionButtonsOf, markActionButtons} from '../lib/libraries/extensions/preInstall/action-buttons.mjs';
 
 import {connect} from 'react-redux';
 import {updateToolbox} from '../reducers/toolbox';
@@ -359,10 +360,10 @@ class Blocks extends React.Component {
             const stageCostumes = stage.getCostumes();
             const targetCostumes = target.getCostumes();
             const targetSounds = target.getSounds();
-            const dynamicBlocksXML = injectExtensionCategoryTheme(
+            const dynamicBlocksXML = markActionButtons(injectExtensionCategoryTheme(
                 this.props.vm.runtime.getBlocksXML(target),
                 this.props.theme
-            );
+            ));
             return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
@@ -471,12 +472,32 @@ class Blocks extends React.Component {
                 .map(fieldTypeName => categoryInfo.customFieldTypes[fieldTypeName].scratchBlocksDefinition));
         defineBlocks(categoryInfo.menus);
         defineBlocks(categoryInfo.blocks);
+        this.registerActionButtons(categoryInfo);
 
         // Update the toolbox with new blocks if possible
         const toolboxXML = this.getToolboxXML();
         if (toolboxXML) {
             this.props.updateToolboxState(toolboxXML);
         }
+    }
+    // Connection and help buttons of Unifiscratch extensions (action-buttons.mjs):
+    // a click runs the hidden block's function right away, with the click as the
+    // user gesture that USB and Bluetooth device choosers need.
+    registerActionButtons (categoryInfo) {
+        const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
+        actionButtonsOf(categoryInfo).forEach(({key, opcode}) => {
+            toolboxWorkspace.registerButtonCallback(key, () => {
+                const {runtime, editingTarget} = this.props.vm;
+                const run = runtime._primitives[`${categoryInfo.id}_${opcode}`];
+                if (!run) return;
+                try {
+                    Promise.resolve(run({}, {runtime, target: editingTarget || runtime.getTargetForStage()}))
+                        .catch(error => log.warn(error));
+                } catch (error) {
+                    log.warn(error);
+                }
+            });
+        });
     }
     handleBlocksInfoUpdate (categoryInfo) {
         // @todo Later we should replace this to avoid all the warnings from redefining blocks.

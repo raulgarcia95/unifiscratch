@@ -7,6 +7,7 @@ import {
     pyArgs
 } from './makeblock-serial.mjs';
 import {deviceIconURL} from './device-icons.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const EXTENSION_ID = 'makeblockCodeyRocky';
 const iconURL = deviceIconURL('codeyRocky');
@@ -40,11 +41,7 @@ const blockClass = class MakeblockCodeyRocky {
             color2: '#0b86a4',
             color3: '#086177',
             blocks: [
-                {
-                    opcode: 'connect',
-                    blockType: 'command',
-                    text: msg('codey.connect', 'connect Codey Rocky by USB')
-                },
+                ...actionButton('connect', msg('codey.connect', 'connect Codey Rocky by USB')),
                 {
                     opcode: 'disconnect',
                     blockType: 'command',

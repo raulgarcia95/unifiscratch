@@ -17,6 +17,7 @@ import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 export const EDISON_VENDOR_ID = 0x16d0;
 export const EDISON_PRODUCT_ID = 0x1207;
@@ -33,7 +34,7 @@ const STATE_PROGRAM_COMPLETE = 3;
 export const BRIDGE_ID = 3001;
 export const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
 const BRIDGE_HELP = `Carga en el Edison el programa puente ${BRIDGE_FILE} con https://www.edpyapp.com/v3/ ` +
-    '(botón de programar) y vuelve a conectar. Haz clic en el bloque «cómo conectar Edison» para ver los pasos.';
+    '(botón de programar) y vuelve a conectar. Pulsa el botón «cómo conectar Edison» para ver los pasos.';
 
 export const ORDER = {forward: 1, backward: 2, spinRight: 3, spinLeft: 4, leds: 5, beep: 6, sensor: 7, ping: 9};
 export const SENSOR = {obstacle: 1, line: 2, leftLight: 3, rightLight: 4, keypad: 5, clap: 6};
@@ -288,8 +289,8 @@ const blockClass = class EdisonV3 {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'showHelp', blockType: 'command', text: t('showHelp', 'how to connect Edison (help)')},
-                {opcode: 'connect', blockType: 'command', text: t('connect', 'connect Edison V3 by USB')},
+                ...actionButton('showHelp', t('showHelp', 'how to connect Edison (help)')),
+                ...actionButton('connect', t('connect', 'connect Edison V3 by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect Edison')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'Edison connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},

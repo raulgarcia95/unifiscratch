@@ -1,6 +1,6 @@
 // One Bluetooth/USB link per Scratch runtime to a micro:bit running the
 // Unifiscratch micro:shield firmware (firmware/microshield). The micro:shield
-// extension and the "micro:bit · sensor kit" extension both use it, so the
+// extension and the "Sensores y actuadores" extension both use it, so the
 // board is connected once and either extension's blocks work.
 import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
 import {bindSafetyEvents} from './micropython-transport.mjs';

@@ -8,6 +8,7 @@ import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 const id = 'smartCutebot';
 const name = 'Cutebot';
@@ -69,9 +70,9 @@ class Cutebot {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'showHelp', blockType: 'command', text: t('showHelp', 'how to connect Cutebot (help)')},
-                {opcode: 'connectBluetooth', blockType: 'command', text: t('connectBluetooth', 'connect Cutebot by Bluetooth')},
-                {opcode: 'connectUsb', blockType: 'command', text: t('connectUsb', 'connect Cutebot by USB')},
+                ...actionButton('showHelp', t('showHelp', 'how to connect Cutebot (help)')),
+                ...actionButton('connectBluetooth', t('connectBluetooth', 'connect Cutebot by Bluetooth')),
+                ...actionButton('connectUsb', t('connectUsb', 'connect Cutebot by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect Cutebot')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'Cutebot connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},

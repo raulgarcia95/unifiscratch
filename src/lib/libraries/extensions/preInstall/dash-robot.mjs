@@ -14,6 +14,7 @@
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg, colorToRgb} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 export const DASH_SERVICE = 'af237777-879d-6186-1f49-deca0e85d9c1';
 export const DASH_COMMAND = 'af230002-879d-6186-1f49-deca0e85d9c1';
@@ -286,7 +287,7 @@ const blockClass = class DashRobot {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'connect', blockType: 'command', text: t('connect', 'connect Dash by Bluetooth')},
+                ...actionButton('connect', t('connect', 'connect Dash by Bluetooth')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect Dash')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'Dash connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},

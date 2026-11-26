@@ -9,6 +9,7 @@ import {boundedNumber} from './micropython-transport.mjs';
 import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {actionButton} from './action-buttons.mjs';
 
 // Kept from the earlier MicroPython profile so saved projects still load.
 const id = 'microShield';
@@ -91,7 +92,7 @@ class MicroShield {
         this.pins = {};
         this.watched = {};
         this.sonar = '';
-        // Shared with the "micro:bit · sensor kit" extension: same board, one link.
+        // Shared with the "Sensores y actuadores" extension: same board, one link.
         this.transport = getShieldLink(runtime);
         this.transport.addLineListener(line => {
             const sensors = parseSensors(line);
@@ -114,9 +115,9 @@ class MicroShield {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
-                {opcode: 'showHelp', blockType: 'command', text: t('showHelp', 'how to connect micro:shield (help)')},
-                {opcode: 'connectBluetooth', blockType: 'command', text: t('connectBluetooth', 'connect micro:shield by Bluetooth')},
-                {opcode: 'connectUsb', blockType: 'command', text: t('connectUsb', 'connect micro:shield by USB')},
+                ...actionButton('showHelp', t('showHelp', 'how to connect micro:shield (help)')),
+                ...actionButton('connectBluetooth', t('connectBluetooth', 'connect micro:shield by Bluetooth')),
+                ...actionButton('connectUsb', t('connectUsb', 'connect micro:shield by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect micro:shield')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'micro:shield connected?')},
                 {opcode: 'connectionError', blockType: 'reporter', text: msg('connectionError', 'last connection error')},
