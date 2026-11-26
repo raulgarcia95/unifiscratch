@@ -27,10 +27,12 @@ const EDPY_URL = 'https://www.edpyapp.com/v3/';
 const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
 const BRIDGE_PATH = `static/extensions/edison/${BRIDGE_FILE}`;
 const SCRATCH_LINK_URL = 'https://scratch.mit.edu/download/scratch-link';
-const MICROBIT_PYTHON_URL = 'https://python.microbit.org/';
 const MICROBIT_MORE_HEX = 'https://github.com/microbit-more/pxt-mbit-more-v2/releases/download/0.2.5/microbit-mbit-more-v2-0_2_5.hex';
 const CUTEBOT_HEX_FILE = 'unifiscratch-cutebot.hex';
 const CUTEBOT_HEX_PATH = `static/extensions/cutebot/${CUTEBOT_HEX_FILE}`;
+const WAPPSTO_HEX_FILE = 'unifiscratch-wappsto-bit.hex';
+const WAPPSTO_HEX_PATH = `static/extensions/wappsto-bit/${WAPPSTO_HEX_FILE}`;
+const WAPPSTO_SETUP_URL = 'https://bit.wappsto.com/setup';
 const MICROSHIELD_HEX_FILE = 'unifiscratch-microshield.hex';
 const MICROSHIELD_HEX_PATH = `static/extensions/microshield/${MICROSHIELD_HEX_FILE}`;
 const ESP32_FIRMWARE_URL = 'https://micropython.org/download/ESP32_GENERIC/';
@@ -73,29 +75,6 @@ const scratchLinkGuide = (name, turnOn) => ({
 });
 const PRESS_HUB = ['Switch on the hub and press its button so that its light blinks.', 'Enciende el hub y pulsa su botón para que la luz parpadee.', 'Encén el hub i prem el botó perquè la llum parpellegi.'];
 const SWITCH_ON = ['Switch on the device and keep it close to the computer.', 'Enciende el dispositivo y mantenlo cerca del ordenador.', 'Encén el dispositiu i mantén-lo a prop de l’ordinador.'];
-
-// ---------- MicroPython on micro:bit ----------
-const microbitFirmwareSteps = [
-    [`Connect the micro:bit by USB and open the [Python editor](${MICROBIT_PYTHON_URL}).`, `Conecta la micro:bit por USB y abre el [editor de Python](${MICROBIT_PYTHON_URL}).`, `Connecta la micro:bit per USB i obre l’[editor de Python](${MICROBIT_PYTHON_URL}).`],
-    ['Press «Send to micro:bit» and choose the board. This loads MicroPython onto it.', 'Pulsa «Send to micro:bit» y elige la placa. Así se carga MicroPython en ella.', 'Prem «Send to micro:bit» i tria la placa. Així s’hi carrega MicroPython.'],
-    CLOSE_TAB
-];
-const microbitGuide = name => ({
-    name,
-    intro: [`${name} uses a micro:bit with MicroPython. Loading it replaces the program the micro:bit had.`, `${name} usa una micro:bit con MicroPython. Al cargarlo se sustituye el programa que tuviera la micro:bit.`, `${name} fa servir una micro:bit amb MicroPython. En carregar-lo se substitueix el programa que tingués la micro:bit.`],
-    actions: [{type: 'link', href: MICROBIT_PYTHON_URL, label: ['Open Python editor', 'Abrir editor de Python', 'Obrir l’editor de Python']}],
-    cardLinks: [{href: MICROBIT_PYTHON_URL, text: ['MicroPython for micro:bit', 'MicroPython para micro:bit', 'MicroPython per a micro:bit']}],
-    sections: [
-        {title: FIRST_TIME, steps: microbitFirmwareSteps},
-        {title: EVERY_TIME,
-            steps: [
-                CHROME_USB,
-                connectBlock('connect by USB', 'conectar por USB', 'connecta per USB'),
-                ['The blocks can use pins 0, 1 and 2, for at most 5 seconds per block.', 'Los bloques pueden usar los pines 0, 1 y 2, durante 5 segundos como máximo por bloque.', 'Els blocs poden fer servir els pins 0, 1 i 2, durant 5 segons com a màxim per bloc.']
-            ]}
-    ],
-    note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
-});
 
 // ---------- MicroPython on ESP32 ----------
 const esp32FirmwareSteps = [
@@ -212,7 +191,31 @@ const guides = {
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
     },
-    wappstoBit: microbitGuide('Wappsto:Bit'),
+    wappstoBit: {
+        name: 'Wappsto:bit',
+        warning: ['The micro:bit needs the Unifiscratch program for Wappsto:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:bit necesita el programa de Unifiscratch para Wappsto:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:bit necessita el programa d’Unifiscratch per a Wappsto:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
+        intro: ['With this program Unifiscratch controls the micro:bit by Bluetooth or USB, and the micro:bit sends and receives Wappsto cloud data through the Wappsto:bit board.', 'Con este programa Unifiscratch controla la micro:bit por Bluetooth o USB, y la micro:bit envía y recibe datos de la nube Wappsto a través de la placa Wappsto:bit.', 'Amb aquest programa Unifiscratch controla la micro:bit per Bluetooth o USB, i la micro:bit envia i rep dades del núvol Wappsto a través de la placa Wappsto:bit.'],
+        actions: [
+            {type: 'download', path: WAPPSTO_HEX_PATH, file: WAPPSTO_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']},
+            {type: 'link', href: WAPPSTO_SETUP_URL, label: ['Wappsto:bit setup', 'Configurar la Wappsto:bit', 'Configurar la Wappsto:bit']}
+        ],
+        cardLinks: [{href: WAPPSTO_HEX_PATH, download: WAPPSTO_HEX_FILE, text: ['Wappsto:bit program for micro:bit (.hex)', 'Programa de Wappsto:bit para micro:bit (.hex)', 'Programa de Wappsto:bit per a micro:bit (.hex)']}],
+        sections: [
+            {title: FIRST_TIME,
+                steps: [
+                    [`Create a Wappsto account in the Wappsto app or at [wappsto.com](https://wappsto.com), add the Wappsto:bit with the (+) button and follow the app to set up its WiFi ([guide](${WAPPSTO_SETUP_URL})).`, `Crea una cuenta de Wappsto en la app Wappsto o en [wappsto.com](https://wappsto.com), añade la Wappsto:bit con el botón (+) y sigue la app para configurar su WiFi ([guía](${WAPPSTO_SETUP_URL})).`, `Crea un compte de Wappsto a l’app Wappsto o a [wappsto.com](https://wappsto.com), afegeix la Wappsto:bit amb el botó (+) i segueix l’app per configurar-ne la WiFi ([guia](${WAPPSTO_SETUP_URL})).`],
+                    ['Press «Download micro:bit program (.hex)», connect the micro:bit by USB and copy the file to the MICROBIT drive. The display shows a «W» when it is ready.', 'Pulsa «Descargar programa para micro:bit (.hex)», conecta la micro:bit por USB y copia el archivo en la unidad MICROBIT. La pantalla muestra una «W» cuando está lista.', 'Prem «Descarregar el programa per a micro:bit (.hex)», connecta la micro:bit per USB i copia el fitxer a la unitat MICROBIT. La pantalla mostra una «W» quan està a punt.']
+                ]},
+            {title: EVERY_TIME,
+                steps: [
+                    ['With everything switched off, insert the micro:bit in the Wappsto:bit (LEDs and buttons facing out) and power the board through its own micro USB, never through the micro:bit.', 'Con todo apagado, inserta la micro:bit en la Wappsto:bit (LEDs y botones hacia fuera) y alimenta la placa por su propio micro USB, nunca a través de la micro:bit.', 'Amb tot apagat, insereix la micro:bit a la Wappsto:bit (LEDs i botons cap enfora) i alimenta la placa pel seu propi micro USB, mai a través de la micro:bit.'],
+                    ['Click «connect micro:bit by Bluetooth» and choose «BBC micro:bit» (Chrome or Edge). Without Bluetooth, connect a USB cable to the micro:bit itself and use «connect micro:bit by USB».', 'Haz clic en «conectar micro:bit por Bluetooth» y elige «BBC micro:bit» (Chrome o Edge). Sin Bluetooth, conecta un cable USB a la propia micro:bit y usa «conectar micro:bit por USB».', 'Fes clic a «connecta micro:bit per Bluetooth» i tria «BBC micro:bit» (Chrome o Edge). Sense Bluetooth, connecta un cable USB a la mateixa micro:bit i fes servir «connecta micro:bit per USB».'],
+                    ['Use «set up Wappsto number value» to create values, and «send number» to publish them. The block «Wappsto:bit online?» says when the board has reached the cloud; settings given before are sent when it connects.', 'Usa «configurar valor numérico de Wappsto» para crear valores y «enviar número» para publicarlos. El bloque «¿Wappsto:bit en línea?» indica cuándo la placa ha llegado a la nube; lo configurado antes se envía al conectarse.', 'Fes servir «configura el valor numèric de Wappsto» per crear valors i «envia el número» per publicar-los. El bloc «Wappsto:bit en línia?» indica quan la placa ha arribat al núvol; el que s’hagi configurat abans s’envia en connectar-se.'],
+                    ['In the Wappsto dashboard add a dashboard (template «Wappsto:bit» or blank): the values appear under IoT devices.', 'En el panel de Wappsto añade un dashboard (plantilla «Wappsto:bit» o en blanco): los valores aparecen en «IoT Devices».', 'Al tauler de Wappsto afegeix un dashboard (plantilla «Wappsto:bit» o en blanc): els valors apareixen a «IoT Devices».']
+                ]}
+        ],
+        note: [`The free Wappsto plan allows 1,000,000 data points a month: send with «if changed» or with waits. ${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `El plan gratuito de Wappsto permite 1.000.000 de datos al mes: envía con «si cambia» o con esperas. ${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `El pla gratuït de Wappsto permet 1.000.000 de dades al mes: envia amb «si canvia» o amb esperes. ${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    },
     smartCutebot: {
         name: 'Cutebot',
         warning: ['Cutebot needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'El Cutebot necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'El Cutebot necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],

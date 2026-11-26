@@ -344,14 +344,6 @@ const entries = [
         description: msg('keyestudioEsp32.description', 'USB control for Keyestudio ESP32 with MicroPython firmware.'),
         helpLink: 'https://docs.keyestudio.com/projects/KS0809/en/latest/docs/ESP32/Software_Tutorial.html'
     }),
-    createMicroPythonBoard({
-        id: 'wappstoBit',
-        name: 'Wappsto:Bit',
-        collaborator: 'Seluxit / Unifiscratch',
-        icon: {title: 'WAPP', body: 'STO:BIT', kind: 'wappsto', color1: '#0f766e', color2: '#facc15', color3: '#134e4a'},
-        description: msg('wappstoBit.description', 'MicroPython USB blocks for micro:bit-based Wappsto:Bit projects.'),
-        helpLink: 'https://bit.wappsto.com/'
-    }),
     createInfoExtension({
         id: 'blueBot',
         category: 'robots',

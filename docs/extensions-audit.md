@@ -17,7 +17,7 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 | Codey Rocky, mBot2 | Adaptadores locales revisados; carga y transporte simulado probados | Firmware con REPL y API codey/rocky o cyberpi/mbot2 |
 | Smart Cutebot | Adaptador local revisado; carga y comandos acotados probados | Micro:bit, biblioteca Cutebot y cableado |
 | micro:shield | Firmware MakeCode propio (Bluetooth/USB, PCA9685: motores DC, paso a paso, servos; pines, ultrasonidos, tira LED); protocolo y bloques probados con micro:bit simulada | Compilar el .hex en MakeCode; placa, motores y alimentación reales |
-| Wappsto:Bit | Perfil micro:bit con API pinN y salidas temporizadas | Pinout y hardware; no cubre todas las funciones de la placa |
+| Wappsto:bit | Adaptador propio (microbit-wappsto.mjs) y firmware MakeCode propio (firmware/wappsto-bit) que habla I2C 0x11 con la placa según el formato de wappsto/pxt-wappsto (MIT); transporte simulado probado | Compilar el .hex en MakeCode; placa real, cuenta Wappsto y WiFi |
 | Keyestudio ESP32 | Perfil machine.Pin/PWM con lista de pines y salidas temporizadas | Modelo exacto, pinout y firmware |
 | Arduino UNO | Original xcx-arduino con hash y exports comprobados | Firmata, transporte y hardware |
 | ML2Scratch | Original fijado; bloques cargados | Entrenamiento e inferencia con cámara |

@@ -3,6 +3,7 @@ const importModules = [
     import('./makeblock-mbot2.mjs'),
     import('./unifiscratch-extra-hardware.mjs'),
     import('./microbit-cutebot.mjs'),
+    import('./microbit-wappsto.mjs'),
     import('./microbit-microshield.mjs'),
     import('./dash-robot.mjs'),
     import('./ed1-board.mjs'),
