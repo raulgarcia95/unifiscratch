@@ -1,67 +1,136 @@
 /* eslint-disable max-len */
-// Citilab ED1 (ESP32) over USB with MicroPython firmware.
+// Citilab ED1 (ESP32) over USB with the MicroBlocks firmware it ships with.
 //
-// Pin map and the stepper sequence follow the open MicroBlocks libraries
-// "ED1 Buttons", "ED1 Stepper Motor" and "ED1 Fantàstic"
-// (https://github.com/MicroBlocksCN/smallvm, gp/Libraries) and the ESPHome
-// device page for the ED1 (https://devices.esphome.io/devices/Citilab-ED1/):
-//   touch buttons up 4, down 13, left 2, right 27, OK 15, X 14
-//   buzzer 26, light sensor 34 (ADC), I2C SDA 21 / SCL 22
-//   stepper outputs through the I2C expander at 0x20 (MCP23009 on ED1 v2,
-//   output register 0x09; register 0x14 on v1 boards).
+// Nothing has to be installed on the board: on connect, Unifiscratch checks
+// that the board is an ED1 running MicroBlocks, then stores a few small helper
+// programs ("chunks") written with its own bytecode assembler
+// (microblocks-transport.mjs). Each block sets a few global variables and
+// starts one of those chunks, the same way MicroBlocks runs a clicked block.
 //
-// The ED1 ships with MicroBlocks firmware. This extension needs the board to
-// run MicroPython for ESP32 instead (see docs/extensions-audit.md).
-import {MicroPythonTransport, bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
+// Hardware facts follow the open MicroBlocks libraries "ED1 Buttons",
+// "ED1 Stepper Motor" and "ED1 Fantàstic" (MicroBlocks project, MPL-2.0;
+// only pin numbers, registers and the step sequence are reused):
+//   touch buttons up 4, down 13, left 2, right 27, OK 15, X 14 (touched when
+//   the reading is below 16); buzzer on the default tone pin; light sensor
+//   0-1000; stepper motors through the I2C expander at 0x20 (output register
+//   0x09 on ED1 v2, 0x14 on v1); 1.5 ms per phase, four phases per step;
+//   2.3 steps per mm and 1.96 steps per degree on the Fantàstic robot.
+import {ChunkBuilder, CHUNK_COMMAND, CHUNK_REPORTER, MicroBlocksTransport} from './microblocks-transport.mjs';
+import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 
 const MAX_SECONDS = 5;
-const STEP_PHASE_US = 1500; // four phases per step, as in MicroBlocks
-const STEPS_PER_MM = 2.3; // ED1 Fantàstic robot
+const MAX_STEPS = 2400;
+const STEP_PHASE_US = 1500;
+const STEP_MS = (4 * STEP_PHASE_US) / 1000;
+const STEPS_PER_MM = 2.3;
 const STEPS_PER_DEGREE = 1.96;
+const TOUCH_THRESHOLD = 16;
+const EXPANDER = 0x20;
 const CW = [0xc, 0x3];
 const CCW = [0x3, 0xc];
 const BUTTONS = {up: 4, down: 13, left: 2, right: 27, ok: 15, x: 14};
+const SENSOR_ORDER = ['up', 'down', 'left', 'right', 'ok', 'x', 'light', 'tiltX', 'tiltY', 'tiltZ', 'temperature'];
+const SENSOR_CACHE_MS = 40;
 
-const PROBE = `import sys, time
-assert sys.platform == 'esp32', 'No es una placa ESP32 con MicroPython'
-from machine import Pin, PWM, ADC, TouchPad, I2C
-_i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=100000)
-assert 0x20 in _i2c.scan(), 'No se encuentra el expansor de motores de la ED1 (I2C 0x20)'
-_reg = 0x09 if _i2c.readfrom_mem(0x20, 1, 1)[0] == 0 else 0x14
-_i2c.writeto_mem(0x20, 0, b'\\x00')
-_i2c.writeto_mem(0x20, 6, b'\\xff')
-_buz = None
-_touch = {${Object.entries(BUTTONS).map(([button, pin]) => `'${button}': TouchPad(Pin(${pin}))`)
-        .join(', ')}}
-_base = {}
-for _n in _touch:
-    _base[_n] = _touch[_n].read()
-_light = ADC(Pin(34))
-_light.atten(ADC.ATTN_11DB)
-def _unifi_stop():
-    global _buz
-    try:
-        _i2c.writeto_mem(0x20, _reg, b'\\x00')
-    finally:
-        if _buz:
-            _buz.deinit()
-            _buz = None
-        Pin(26, Pin.OUT, value=0)`;
+// Global variable slots used to pass arguments (high numbers, so they do not
+// collide with the variables of a MicroBlocks project on the same board).
+export const G = Object.freeze({text: 116, freq: 118, ms: 119, steps: 120, p1: 121, p2: 122, p3: 123, p4: 124, reg: 127});
 
-// Board-side loop: the deadline and the finally run on the ESP32 itself.
-export const stepperCode = (phases, steps) => `import time
-_end = time.ticks_add(time.ticks_ms(), ${MAX_SECONDS * 1000})
-try:
-    for _s in range(${steps}):
-        if time.ticks_diff(_end, time.ticks_ms()) <= 0:
-            break
-        for _v in (${phases.join(', ')}):
-            _i2c.writeto_mem(0x20, _reg, bytes((_v,)))
-            time.sleep_us(${STEP_PHASE_US})
-finally:
-    _i2c.writeto_mem(0x20, _reg, b'\\x00')`;
+const expanderWrite = (b, pushValue) => {
+    b.int(EXPANDER).global(G.reg);
+    pushValue(b);
+    b.op('i2cSet', 3);
+};
+
+// Detects the expander register (0x09 on ED1 v2, 0x14 on v1) and makes the
+// motor pins outputs, as the "ED1 Stepper Motor" library does.
+const emitExpanderInit = b => {
+    b.int(0x14).setGlobal(G.reg);
+    b.int(EXPANDER).int(1)
+        .op('i2cGet', 2)
+        .int(0)
+        .op('equal', 2);
+    b.ifTrue(c => c.int(0x09).setGlobal(G.reg));
+    b.int(EXPANDER).int(0)
+        .int(0)
+        .op('i2cSet', 3);
+    b.int(EXPANDER).int(6)
+        .int(255)
+        .op('i2cSet', 3);
+};
+
+// The board may have rebooted since connect (globals back to 0): set up the
+// expander again before touching the motors.
+const emitEnsureExpander = b => {
+    b.global(G.reg).int(0)
+        .op('equal', 2);
+    b.ifTrue(emitExpanderInit);
+};
+
+// Helper chunks, stored once per board (the transport compares CRCs first).
+export const buildChunks = () => {
+    const init = new ChunkBuilder();
+    emitExpanderInit(init);
+    init.global(G.reg).ret();
+
+    const motors = new ChunkBuilder();
+    emitEnsureExpander(motors);
+    motors.global(G.steps);
+    motors.repeat(b => {
+        for (const phase of [G.p1, G.p2, G.p3, G.p4]) {
+            expanderWrite(b, c => c.global(phase));
+            b.int(STEP_PHASE_US).op('waitMicros', 1);
+        }
+    });
+    expanderWrite(motors, c => c.int(0));
+
+    const stop = new ChunkBuilder();
+    emitEnsureExpander(stop);
+    expanderWrite(stop, c => c.int(0));
+    stop.int(0).int(0)
+        .prim('io', 'playTone', 2, true);
+
+    const tone = new ChunkBuilder();
+    tone.int(0).global(G.freq)
+        .prim('io', 'playTone', 2, true);
+    tone.global(G.ms).op('waitMillis', 1);
+    tone.int(0).int(0)
+        .prim('io', 'playTone', 2, true);
+
+    const sensors = new ChunkBuilder();
+    for (const button of SENSOR_ORDER.slice(0, 6)) sensors.int(BUTTONS[button]).prim('sensors', 'touchRead', 1, false);
+    sensors.prim('display', 'lightLevel', 0, false);
+    sensors.prim('sensors', 'tiltX', 0, false);
+    sensors.prim('sensors', 'tiltY', 0, false);
+    sensors.prim('sensors', 'tiltZ', 0, false);
+    sensors.prim('sensors', 'temperature', 0, false);
+    sensors.prim('data', 'makeList', SENSOR_ORDER.length, false).ret();
+
+    const text = new ChunkBuilder();
+    text.prim('tft', 'clear', 0, true);
+    text.global(G.text).int(4)
+        .int(4)
+        .int(0xFFFFFF)
+        .int(2)
+        .bool(true)
+        .prim('tft', 'text', 6, true);
+
+    const clear = new ChunkBuilder();
+    clear.prim('tft', 'clear', 0, true);
+
+    const chunk = (id, type, builder) => ({id, type, bytes: builder.bytes()});
+    return {
+        init: chunk(230, CHUNK_REPORTER, init),
+        motors: chunk(231, CHUNK_COMMAND, motors),
+        stop: chunk(232, CHUNK_COMMAND, stop),
+        tone: chunk(233, CHUNK_COMMAND, tone),
+        sensors: chunk(234, CHUNK_REPORTER, sensors),
+        text: chunk(235, CHUNK_COMMAND, text),
+        clear: chunk(236, CHUNK_COMMAND, clear)
+    };
+};
 
 export const bothMotorPhases = (direction1, direction2) => {
     const [a1, a2] = direction1 === 'clockwise' ? CW : CCW;
@@ -75,10 +144,13 @@ export const singleMotorPhases = (motor, direction) => {
     return [0x9 << shift, p1 << shift, 0x6 << shift, p2 << shift];
 };
 
-const parseNumber = output => {
-    const value = Number(String(output).trim());
-    if (!Number.isFinite(value)) throw new Error('Respuesta de la ED1 no válida.');
-    return value;
+export const decodeSensors = list => {
+    if (!Array.isArray(list) || list.length < SENSOR_ORDER.length) throw new Error('Respuesta de la ED1 no válida.');
+    const values = {};
+    SENSOR_ORDER.forEach((key, index) => {
+        values[key] = Number(list[index]) || 0;
+    });
+    return values;
 };
 
 const id = 'ed1Board';
@@ -88,7 +160,14 @@ const t = (key, text) => msg(`${id}.${key}`, text);
 
 const blockClass = class Ed1Board {
     constructor (runtime) {
-        this.transport = new MicroPythonTransport(name, {probe: PROBE, stop: '_unifi_stop()'});
+        this.transport = new MicroBlocksTransport(name, {
+            boardMatch: /ED1/i,
+            boardHint: 'una Citilab ED1',
+            chunks: buildChunks(),
+            onReady: transport => transport.run('init'),
+            stop: transport => transport.run('stop')
+        });
+        this.sensorCache = null;
         bindSafetyEvents(runtime, this.transport);
     }
 
@@ -145,12 +224,27 @@ const blockClass = class Ed1Board {
                     }
                 },
                 {
+                    opcode: 'showText',
+                    blockType: 'command',
+                    text: t('showText', 'show [TEXT] on screen'),
+                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola!'}}
+                },
+                {opcode: 'clearScreen', blockType: 'command', text: t('clearScreen', 'clear screen')},
+                '---',
+                {
                     opcode: 'buttonTouched',
                     blockType: 'Boolean',
                     text: t('buttonTouched', 'button [BUTTON] touched?'),
                     arguments: {BUTTON: {type: 'string', menu: 'buttons', defaultValue: 'ok'}}
                 },
-                {opcode: 'lightLevel', blockType: 'reporter', text: t('lightLevel', 'light level')}
+                {opcode: 'lightLevel', blockType: 'reporter', text: t('lightLevel', 'light level')},
+                {
+                    opcode: 'tilt',
+                    blockType: 'reporter',
+                    text: t('tilt', 'tilt [AXIS]'),
+                    arguments: {AXIS: {type: 'string', menu: 'axes', defaultValue: 'x'}}
+                },
+                {opcode: 'temperature', blockType: 'reporter', text: t('temperature', 'temperature (°C)')}
             ],
             menus: {
                 directions: {acceptReporters: true,
@@ -177,7 +271,8 @@ const blockClass = class Ed1Board {
                         {text: t('right', 'right'), value: 'right'},
                         {text: 'OK', value: 'ok'},
                         {text: 'X', value: 'x'}
-                    ]}
+                    ]},
+                axes: {acceptReporters: true, items: ['x', 'y', 'z']}
             }
         };
     }
@@ -199,9 +294,12 @@ const blockClass = class Ed1Board {
     }
 
     steps (phases, steps) {
-        const count = Math.round(boundedNumber(steps, 0, 2000));
-        if (count === 0) return this.transport.runPython('_unifi_stop()');
-        return this.transport.runPython(stepperCode(phases, count));
+        const count = Math.round(boundedNumber(steps, 0, MAX_STEPS));
+        if (count === 0) return this.transport.run('stop');
+        const [p1, p2, p3, p4] = phases;
+        return this.transport.run('motors', {
+            [G.steps]: count, [G.p1]: p1, [G.p2]: p2, [G.p3]: p3, [G.p4]: p4
+        }, {timeout: (count * STEP_MS * 2) + 3000});
     }
 
     robotMove (args) {
@@ -224,7 +322,7 @@ const blockClass = class Ed1Board {
         const motor = Number(args.MOTOR);
         if (motor !== 1 && motor !== 2) throw new Error('Motor no válido. Usa 1 o 2.');
         if (args.ROTATION !== 'clockwise' && args.ROTATION !== 'counterclockwise') throw new Error('Sentido no válido.');
-        return this.steps(singleMotorPhases(motor, args.ROTATION), Math.abs(boundedNumber(args.STEPS, -2000, 2000)));
+        return this.steps(singleMotorPhases(motor, args.ROTATION), Math.abs(boundedNumber(args.STEPS, -MAX_STEPS, MAX_STEPS)));
     }
 
     stop () {
@@ -233,26 +331,49 @@ const blockClass = class Ed1Board {
 
     playTone (args) {
         const freq = Math.round(boundedNumber(args.FREQ, 20, 10000));
-        const seconds = boundedNumber(args.SECONDS, 0, MAX_SECONDS);
-        // Top-level code in the raw REPL already assigns module globals.
-        return this.transport.runPython(`_buz = PWM(Pin(26), freq=${freq}, duty=512)
-try:
-    time.sleep(${seconds})
-finally:
-    _buz.deinit()
-    _buz = None
-    Pin(26, Pin.OUT, value=0)`);
+        const ms = Math.round(boundedNumber(args.SECONDS, 0, MAX_SECONDS) * 1000);
+        return this.transport.run('tone', {[G.freq]: freq, [G.ms]: ms}, {timeout: ms + 3000});
+    }
+
+    showText (args) {
+        const text = String(typeof args.TEXT === 'undefined' ? '' : args.TEXT).slice(0, 120);
+        return this.transport.run('text', {[G.text]: text});
+    }
+
+    clearScreen () {
+        return this.transport.run('clear');
+    }
+
+    // One board round trip reads every sensor; blocks in the same frame share it.
+    readSensors () {
+        const now = Date.now();
+        if (this.sensorCache && now - this.sensorCache.time < SENSOR_CACHE_MS) return this.sensorCache.promise;
+        const promise = this.transport.run('sensors').then(decodeSensors);
+        this.sensorCache = {time: now, promise};
+        promise.catch(() => {
+            if (this.sensorCache && this.sensorCache.promise === promise) this.sensorCache = null;
+        });
+        return promise;
     }
 
     buttonTouched (args) {
         if (!Object.prototype.hasOwnProperty.call(BUTTONS, args.BUTTON)) throw new Error('Botón no válido.');
-        // Capacitive pads read lower when touched; compare with the reading taken on connect.
-        return this.transport.runPython(`print(int(_touch['${args.BUTTON}'].read() < _base['${args.BUTTON}'] * 0.6))`)
-            .then(output => parseNumber(output) === 1);
+        return this.readSensors().then(values => values[args.BUTTON] < TOUCH_THRESHOLD);
     }
 
     lightLevel () {
-        return this.transport.runPython('print(_light.read() * 100 // 4095)').then(parseNumber);
+        // MicroBlocks reports 0-1000; Unifiscratch keeps the 0-100 scale.
+        return this.readSensors().then(values => Math.round(values.light / 10));
+    }
+
+    tilt (args) {
+        const axis = String(args.AXIS).toLowerCase();
+        if (!['x', 'y', 'z'].includes(axis)) throw new Error('Eje no válido.');
+        return this.readSensors().then(values => values[`tilt${axis.toUpperCase()}`]);
+    }
+
+    temperature () {
+        return this.readSensors().then(values => values.temperature);
     }
 
     runPython () {
@@ -268,12 +389,12 @@ const entry = {
     collaborator: 'Citilab / Unifiscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('ed1Board.description', 'USB control for the Citilab ED1 with MicroPython: Fantàstic robot motors, buzzer, touch buttons and light sensor.'),
+    description: msg('ed1Board.description', 'USB control for the Citilab ED1 with its MicroBlocks firmware: Fantàstic robot motors, buzzer, screen, touch buttons and sensors.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,
     category: 'boards',
-    helpLink: 'https://devices.esphome.io/devices/Citilab-ED1/'
+    helpLink: 'https://microblocks.fun/run/microblocks.html'
 };
 
 export {entry, blockClass};

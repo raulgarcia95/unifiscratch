@@ -5,9 +5,6 @@ import {
     blockClass as Dash, DASH_COMMAND, DASH_SENSOR, DOT_SENSOR, movePayload, angleByte, decodeDotSensors
 } from '../../src/lib/libraries/extensions/preInstall/dash-robot.mjs';
 import {
-    blockClass as Ed1, stepperCode, bothMotorPhases, singleMotorPhases
-} from '../../src/lib/libraries/extensions/preInstall/ed1-board.mjs';
-import {
     blockClass as Face, facePart, faceTilt, faceSize, partIndices
 } from '../../src/lib/libraries/extensions/preInstall/face-sensing.mjs';
 import {entries} from '../../src/lib/libraries/extensions/preInstall/unifiscratch-extra-hardware.mjs';
@@ -192,46 +189,7 @@ test('Dash rejects values outside its menus', async () => {
     await robot.disconnect();
 });
 
-// ---------- ED1 ----------
-
-test('ED1 stepper phases follow the MicroBlocks sequence', () => {
-    // Motor 1 clockwise + motor 2 counter-clockwise = Fantàstic forward.
-    assert.deepEqual(bothMotorPhases('clockwise', 'counterclockwise'), [0x99, 0xc3, 0x66, 0x3c]);
-    assert.deepEqual(singleMotorPhases(1, 'clockwise'), [0x90, 0xc0, 0x60, 0x30]);
-    assert.deepEqual(singleMotorPhases(2, 'counterclockwise'), [0x9, 0x3, 0x6, 0xc]);
-    const code = stepperCode([1, 2, 3, 4], 10);
-    assert.match(code, /ticks_add\(time\.ticks_ms\(\), 5000\)/);
-    assert.match(code, /finally:\n {4}_i2c\.writeto_mem\(0x20, _reg, b'\\x00'\)$/);
-});
-
-test('ED1 blocks emit bounded board-side code and parse sensor replies', async () => {
-    const board = new Ed1(new EventEmitter());
-    const sent = [];
-    board.transport.runPython = source => {
-        sent.push(source);
-        return Promise.resolve(source.includes('_light') ? '57\r\n' : '1\r\n');
-    };
-    await board.robotMove({DIRECTION: 'forward', DISTANCE: 100000});
-    assert.match(sent.at(-1), /range\(2000\)/);
-    assert.match(sent.at(-1), /0x99, 195, 0x66, 60|153, 195, 102, 60/);
-    await board.robotTurn({SIDE: 'left', DEGREES: 90});
-    assert.match(sent.at(-1), /range\(176\)/);
-    await board.playTone({FREQ: 99999, SECONDS: 60});
-    assert.match(sent.at(-1), /freq=10000/);
-    assert.match(sent.at(-1), /time\.sleep\(5\)\nfinally:/);
-    assert.equal(await board.buttonTouched({BUTTON: 'ok'}), true);
-    assert.equal(await board.lightLevel(), 57);
-    assert.throws(() => board.buttonTouched({BUTTON: "ok'] + __import__('os')"}), /Botón/);
-    assert.throws(() => board.motorSteps({MOTOR: 3, ROTATION: 'clockwise', STEPS: 1}), /Motor/);
-    assert.throws(() => board.runPython({CODE: 'while True: pass'}), /desactivada/);
-    assert.equal(board.getInfo().blocks.some(block => block.opcode === 'runPython'), false);
-});
-
-test('ED1 connection probes the I2C motor expander before declaring itself ready', () => {
-    const board = new Ed1();
-    assert.match(board.transport.probe, /assert 0x20 in _i2c\.scan\(\)/);
-    assert.equal(board.transport.stopCode, '_unifi_stop()');
-});
+// ED1 tests live in ed1-microblocks.test.mjs.
 
 // ---------- Face Sensing ----------
 

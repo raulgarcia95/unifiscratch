@@ -137,17 +137,20 @@ const guides = {
     },
     ed1Board: {
         name: 'ED1',
-        warning: ['The ED1 comes with MicroBlocks. This extension needs MicroPython, which replaces it. You can go back to MicroBlocks later from its editor.', 'La ED1 viene con MicroBlocks. Esta extensión necesita MicroPython, que lo sustituye. Más adelante puedes volver a MicroBlocks desde su editor.', 'L’ED1 ve amb MicroBlocks. Aquesta extensió necessita MicroPython, que el substitueix. Més endavant pots tornar a MicroBlocks des del seu editor.'],
-        intro: ['The ED1 needs MicroPython firmware for ESP32. You only load it once.', 'La ED1 necesita el firmware MicroPython para ESP32. Solo hay que cargarlo una vez.', 'L’ED1 necessita el firmware MicroPython per a ESP32. Només cal carregar-lo una vegada.'],
-        actions: [...esp32Actions, {type: 'link', href: MICROBLOCKS_URL, label: ['Open MicroBlocks', 'Abrir MicroBlocks', 'Obrir MicroBlocks']}],
-        cardLinks: [{href: ESP32_FIRMWARE_URL, text: ['MicroPython firmware for ED1', 'Firmware MicroPython para ED1', 'Firmware MicroPython per a ED1']}],
+        intro: ['The ED1 works with the MicroBlocks firmware it comes with. You do not need to install anything else.', 'La ED1 funciona con el firmware MicroBlocks que trae de fábrica. No hace falta instalar nada más.', 'L’ED1 funciona amb el firmware MicroBlocks que porta de fàbrica. No cal instal·lar res més.'],
+        actions: [{type: 'link', href: MICROBLOCKS_URL, label: ['Open MicroBlocks', 'Abrir MicroBlocks', 'Obrir MicroBlocks']}],
+        cardLinks: [{href: MICROBLOCKS_URL, text: ['MicroBlocks (firmware update)', 'MicroBlocks (actualizar firmware)', 'MicroBlocks (actualitzar el firmware)']}],
         sections: [
-            {title: FIRST_TIME, steps: esp32FirmwareSteps},
+            {title: FIRST_TIME,
+                steps: [
+                    ['Only if the ED1 has another firmware (for example MicroPython) or a very old one: open MicroBlocks, connect the board and use «update firmware on board» in the gear menu.', 'Solo si la ED1 tiene otro firmware (por ejemplo MicroPython) o uno muy antiguo: abre MicroBlocks, conecta la placa y usa «actualizar firmware de la placa» en el menú del engranaje.', 'Només si l’ED1 té un altre firmware (per exemple MicroPython) o un de molt antic: obre MicroBlocks, connecta la placa i fes servir «actualitza el firmware de la placa» al menú de l’engranatge.'],
+                    CLOSE_TAB
+                ]},
             {title: EVERY_TIME,
                 steps: [
                     CHROME_USB,
-                    [...connectBlock('connect ED1 by USB', 'conectar ED1 por USB', 'connecta ED1 per USB')].map((text, index) => `${text} ${['Do not touch the touch buttons while it connects.', 'No toques los botones táctiles mientras conecta.', 'No toquis els botons tàctils mentre connecta.'][index]}`),
-                    ['Each motor or tone block lasts at most 5 seconds. The red flag stops the motors.', 'Cada bloque de motor o de tono dura 5 segundos como máximo. La bandera roja detiene los motores.', 'Cada bloc de motor o de to dura 5 segons com a màxim. La bandera vermella atura els motors.']
+                    connectBlock('connect ED1 by USB', 'conectar ED1 por USB', 'connecta ED1 per USB'),
+                    ['The first time, Unfyscratch saves a few small helper programs on the ED1; it takes a few seconds. The red flag stops the motors and the sound.', 'La primera vez, Unfyscratch guarda en la ED1 unos pequeños programas de ayuda; tarda unos segundos. La bandera roja detiene los motores y el sonido.', 'La primera vegada, Unfyscratch desa a l’ED1 uns petits programes d’ajuda; triga uns segons. La bandera vermella atura els motors i el so.']
                 ]}
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
