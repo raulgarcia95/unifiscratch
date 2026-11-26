@@ -13,7 +13,8 @@
 // The ED1 ships with MicroBlocks firmware. This extension needs the board to
 // run MicroPython for ESP32 instead (see docs/extensions-audit.md).
 import {MicroPythonTransport, bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {msg} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 
 const MAX_SECONDS = 5;
 const STEP_PHASE_US = 1500; // four phases per step, as in MicroBlocks
@@ -260,7 +261,7 @@ finally:
 };
 blockClass.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('ed1');
 const entry = {
     name,
     extensionId: id,

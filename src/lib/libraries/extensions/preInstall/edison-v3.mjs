@@ -14,7 +14,8 @@
 // fits EdPy integers). Every movement carries its own distance or angle, so
 // the robot stops by itself; the red flag uses the firmware's STOP_USER_PROGRAM.
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {msg} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 
 export const EDISON_VENDOR_ID = 0x16d0;
@@ -461,7 +462,7 @@ const blockClass = class EdisonV3 {
 };
 blockClass.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('edisonV3');
 const entry = {
     name,
     extensionId: id,

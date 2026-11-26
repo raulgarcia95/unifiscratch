@@ -6,7 +6,8 @@
 // motors if the link goes quiet.
 import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {colorToRgb, makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 
 // Kept from the earlier MicroPython profile so saved projects still load.
@@ -459,7 +460,7 @@ class MicroShield {
 }
 MicroShield.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('microshield');
 
 export const blockClass = MicroShield;
 export const entry = {

@@ -3,19 +3,13 @@ import {
     MakeblockSerialTransport,
     clamp,
     colorToRgb,
-    makeSvgDataUri,
     msg,
     pyArgs
 } from './makeblock-serial.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 
 const EXTENSION_ID = 'makeblockCodeyRocky';
-const iconURL = makeSvgDataUri({
-    title: 'CODEY',
-    body: 'ROCKY',
-    kind: 'codey',
-    color1: '#12a3c7',
-    color2: '#f2c94c'
-});
+const iconURL = deviceIconURL('codeyRocky');
 
 // In live mode Codey evaluates one Python call per frame with `codey` and `rocky` loaded.
 const ROCKY_STOP = 'rocky.stop()';

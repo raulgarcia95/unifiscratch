@@ -12,7 +12,8 @@
 // in the packet, so the robot stops by itself even if Bluetooth is lost. Each
 // block is limited to five seconds. A continuous "drive" is never sent.
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {makeIcon, msg, colorToRgb} from './unifiscratch-extra-hardware.mjs';
+import {msg, colorToRgb} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 
 export const DASH_SERVICE = 'af237777-879d-6186-1f49-deca0e85d9c1';
 export const DASH_COMMAND = 'af230002-879d-6186-1f49-deca0e85d9c1';
@@ -525,7 +526,7 @@ const blockClass = class DashRobot {
 };
 blockClass.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('dash');
 const entry = {
     name,
     extensionId: id,

@@ -3,19 +3,13 @@ import {
     MakeblockSerialTransport,
     clamp,
     colorToRgb,
-    makeSvgDataUri,
     msg,
     pyArgs
 } from './makeblock-serial.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 
 const EXTENSION_ID = 'makeblockMbot2';
-const iconURL = makeSvgDataUri({
-    title: 'mBOT2',
-    body: 'CYBERPI',
-    kind: 'mbot2',
-    color1: '#5b62d6',
-    color2: '#22c55e'
-});
+const iconURL = deviceIconURL('mbot2');
 
 // In live mode CyberPi evaluates one Python call per frame under the `cyberpi` name.
 // The right encoder motor (EM2) is mounted mirrored, so "forward" is (+p, -p).

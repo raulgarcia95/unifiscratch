@@ -5,7 +5,8 @@
 // the board, which the firmware drives over I2C.
 import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {msg} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 
 const id = 'wappstoBit';
@@ -490,7 +491,7 @@ class WappstoBit {
 }
 WappstoBit.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('wappstoBit');
 
 export const blockClass = WappstoBit;
 export const entry = {

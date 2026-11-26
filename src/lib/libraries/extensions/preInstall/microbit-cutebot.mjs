@@ -5,7 +5,8 @@
 // coprocessor and pins and stops the motors if the link goes quiet.
 import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
-import {colorToRgb, makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 
 const id = 'smartCutebot';
@@ -282,7 +283,7 @@ class Cutebot {
 }
 Cutebot.EXTENSION_ID = id;
 
-const iconURL = makeIcon(icon);
+const iconURL = deviceIconURL('cutebot');
 
 export const blockClass = Cutebot;
 export const entry = {

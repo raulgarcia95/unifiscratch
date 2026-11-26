@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import {MicroPythonTransport, bindSafetyEvents, boundedMotion, boundedNumber} from './micropython-transport.mjs';
+import {deviceIconURL} from './device-icons.mjs';
 
 const clamp = boundedNumber;
 const msg = (id, defaultText) => ({
@@ -252,7 +253,7 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
 
     };
     blockClass.EXTENSION_ID = id;
-    const iconURL = makeIcon(icon);
+    const iconURL = icon.device ? deviceIconURL(icon.device) : makeIcon(icon);
     return {
         entry: {
             name,
@@ -305,7 +306,7 @@ const createInfoExtension = ({
         }
     };
     blockClass.EXTENSION_ID = id;
-    const iconURL = makeIcon(icon);
+    const iconURL = icon.device ? deviceIconURL(icon.device) : makeIcon(icon);
     return {
         entry: {
             name,
@@ -337,6 +338,7 @@ const entries = [
             title: 'ESP32',
             body: 'KEYESTUDIO',
             kind: 'esp32',
+            device: 'keyestudioEsp32',
             color1: '#2563eb',
             color2: '#f97316',
             color3: '#1e3a8a'
@@ -349,7 +351,8 @@ const entries = [
         category: 'robots',
         name: 'BlueBot',
         collaborator: 'TTS / Unifiscratch',
-        icon: {title: 'BLUE', body: 'BOT', kind: 'bluebot', color1: '#0284c7', color2: '#facc15', color3: '#075985'},
+        icon: {title: 'BLUE', body: 'BOT', kind: 'bluebot', device: 'blueBot',
+            color1: '#0284c7', color2: '#facc15', color3: '#075985'},
         description: msg('blueBot.description',
             'Experimental access: BlueBot depends on a proprietary Bluetooth protocol.'),
         helpLink: 'https://www.tts-group.co.uk/blue-bot-bluetooth-programmable-floor-robot/1015268.html',
