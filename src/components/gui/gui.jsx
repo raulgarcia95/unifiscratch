@@ -29,7 +29,7 @@ import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
 import UnifiscratchSplash from '../unifiscratch-splash/unifiscratch-splash.jsx';
-import EdisonSetup from '../edison-setup/edison-setup.jsx';
+import SetupGuide from '../setup-guide/setup-guide.jsx';
 
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
@@ -180,7 +180,7 @@ const GUIComponent = props => {
                     />
                 ) : null}
                 <UnifiscratchSplash />
-                <EdisonSetup />
+                <SetupGuide />
                 {loading ? (
                     <Loader />
                 ) : null}

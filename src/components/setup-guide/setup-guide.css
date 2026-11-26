@@ -30,6 +30,15 @@
     color: #475569;
 }
 
+.warning {
+    margin: 0 0 1rem;
+    padding: .6rem .8rem;
+    border-left: .25rem solid #f97316;
+    border-radius: .25rem;
+    background: #fff7ed;
+    line-height: 1.45;
+}
+
 .intro,
 .note {
     margin: 0 0 1rem;

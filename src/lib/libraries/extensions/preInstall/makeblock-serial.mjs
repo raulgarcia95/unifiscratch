@@ -1,4 +1,5 @@
-import {MicroPythonTransport as MakeblockSerialTransport, boundedNumber} from './micropython-transport.mjs';
+import {boundedNumber} from './micropython-transport.mjs';
+import {MakeblockF3Transport as MakeblockSerialTransport, pyArgs} from './makeblock-f3-transport.mjs';
 
 const clamp = boundedNumber;
 
@@ -64,5 +65,6 @@ export {
     colorToRgb,
     makeSvgDataUri,
     msg,
+    pyArgs,
     toPythonString
 };

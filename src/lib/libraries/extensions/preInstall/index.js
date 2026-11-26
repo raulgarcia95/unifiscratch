@@ -2,6 +2,7 @@ const importModules = [
     import('./makeblock-codey-rocky.mjs'),
     import('./makeblock-mbot2.mjs'),
     import('./unifiscratch-extra-hardware.mjs'),
+    import('./microbit-cutebot.mjs'),
     import('./dash-robot.mjs'),
     import('./ed1-board.mjs'),
     import('./face-sensing.mjs'),

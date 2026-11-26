@@ -15,6 +15,7 @@
 // the robot stops by itself; the red flag uses the firmware's STOP_USER_PROGRAM.
 import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {openSetupGuide} from '../setup-guides.mjs';
 
 export const EDISON_VENDOR_ID = 0x16d0;
 export const EDISON_PRODUCT_ID = 0x1207;
@@ -32,15 +33,6 @@ export const BRIDGE_ID = 3001;
 export const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
 const BRIDGE_HELP = `Carga en el Edison el programa puente ${BRIDGE_FILE} con https://www.edpyapp.com/v3/ ` +
     '(botón de programar) y vuelve a conectar. Haz clic en el bloque «cómo conectar Edison» para ver los pasos.';
-
-// The editor shows a step-by-step window (src/components/edison-setup) on this event.
-export const EDISON_HELP_EVENT = 'unifiscratch-edison-help';
-export const openEdisonHelp = () => {
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
-        window.dispatchEvent(new Event(EDISON_HELP_EVENT));
-    }
-};
-export const BRIDGE_PATH = `static/extensions/edison/${BRIDGE_FILE}`;
 
 export const ORDER = {forward: 1, backward: 2, spinRight: 3, spinLeft: 4, leds: 5, beep: 6, sensor: 7, ping: 9};
 export const SENSOR = {obstacle: 1, line: 2, leftLight: 3, rightLight: 4, keypad: 5, clap: 6};
@@ -386,7 +378,7 @@ const blockClass = class EdisonV3 {
     }
 
     showHelp () {
-        openEdisonHelp();
+        openSetupGuide(id);
     }
 
     connect () {
@@ -480,13 +472,7 @@ const entry = {
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,
-    category: 'robots',
-    // Shown on the library card; the extension library also opens the help window on selection.
-    extraLinks: [
-        {text: msg('edisonV3.bridgeLink', 'Edison bridge program (.py)'), href: BRIDGE_PATH, download: BRIDGE_FILE},
-        {text: msg('edisonV3.helpLink', 'How to connect Edison'), event: EDISON_HELP_EVENT}
-    ],
-    setupHelpEvent: EDISON_HELP_EVENT
+    category: 'robots'
 };
 
 export {entry, blockClass};

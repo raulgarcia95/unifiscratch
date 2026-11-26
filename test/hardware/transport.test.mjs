@@ -2,9 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {MicroPythonTransport, bindSafetyEvents, boundedMotion} from '../../src/lib/libraries/extensions/preInstall/micropython-transport.mjs';
-import {blockClass as Codey} from '../../src/lib/libraries/extensions/preInstall/makeblock-codey-rocky.mjs';
-import {blockClass as Mbot} from '../../src/lib/libraries/extensions/preInstall/makeblock-mbot2.mjs';
 import {entries} from '../../src/lib/libraries/extensions/preInstall/unifiscratch-extra-hardware.mjs';
+import {blockClass as CutebotRobot} from '../../src/lib/libraries/extensions/preInstall/microbit-cutebot.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 class SerialDevice {
@@ -159,18 +158,16 @@ test('motion always has a board-side finally and a maximum five-second duration'
 });
 
 test('robot blocks emit bounded commands and cannot execute arbitrary Python', async () => {
-    for (const Robot of [Codey, Mbot, entries.find(x => x.entry.extensionId === 'smartCutebot').blockClass]) {
-        const robot = new Robot();
-        let code;
-        robot.transport.runPython = source => { code = source; };
-        const drive = robot.drivePower || robot.drive;
-        await drive.call(robot, {LEFT: 150, RIGHT: -150, SECONDS: 100});
-        assert.match(code, /\(100, -100\)/);
-        assert.match(code, /finally:/);
-        assert.match(code, /sleep\(5\)/);
-        assert.throws(() => robot.runPython({CODE: 'drive_forever()'}), /desactivada/);
-        assert.equal(robot.getInfo().blocks.some(b => b.opcode === 'runPython'), false);
-    }
+    // mBot2 and Codey Rocky use the Makeblock live protocol: see makeblock-f3.test.mjs.
+    // Cutebot uses the micro:bit line protocol: see microbit-cutebot.test.mjs.
+    const robot = new CutebotRobot();
+    const sent = [];
+    robot.transport.send = line => { sent.push(line); return Promise.resolve(); };
+    robot.transport.wait = () => Promise.resolve();
+    await robot.driveTimed({LEFT: 150, RIGHT: -150, SECONDS: 100});
+    assert.deepEqual(sent, ['M 100 -100 5000']);
+    assert.equal(robot.getInfo().blocks.some(b => b.opcode === 'runPython'), false);
+    assert.equal(typeof robot.runPython, 'undefined');
 });
 
 test('micro:bit uses its own pin API, rejects invalid pins and stops timed outputs', () => {

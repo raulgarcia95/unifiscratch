@@ -12,8 +12,11 @@ import {
 } from '../../src/lib/libraries/extensions/preInstall/face-sensing.mjs';
 import {entries} from '../../src/lib/libraries/extensions/preInstall/unifiscratch-extra-hardware.mjs';
 import {
-    blockClass as Edison, entry as edisonEntry, encodeOrder, ORDER, EDISON_HELP_EVENT
+    blockClass as Edison, encodeOrder, ORDER
 } from '../../src/lib/libraries/extensions/preInstall/edison-v3.mjs';
+import {
+    SETUP_GUIDE_EVENT, cardLinksFor, guideFor, guideIds, pickText
+} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
@@ -375,19 +378,62 @@ const edisonFixture = options => {
 
 test('Edison card links to the bridge program and the help block opens the guide', async () => {
     const {access} = await import('node:fs/promises');
-    await access(new URL(`../../${edisonEntry.extraLinks[0].href}`, import.meta.url));
-    assert.equal(edisonEntry.extraLinks[0].download, 'unfyscratch-puente-edison-v3.py');
-    assert.equal(edisonEntry.setupHelpEvent, EDISON_HELP_EVENT);
-    let opened = 0;
+    const [bridge, guideLink] = cardLinksFor('edisonV3', 'es');
+    await access(new URL(`../../${bridge.href}`, import.meta.url));
+    assert.equal(bridge.download, 'unfyscratch-puente-edison-v3.py');
+    assert.equal(bridge.text, 'Programa puente para Edison (.py)');
+    assert.equal(guideLink.guideId, 'edisonV3');
+    const opened = [];
     const target = new EventTarget();
-    target.addEventListener(EDISON_HELP_EVENT, () => opened++);
+    target.addEventListener(SETUP_GUIDE_EVENT, event => opened.push(event.detail.id));
     Object.defineProperty(globalThis, 'window', {configurable: true, value: target});
     try {
         new Edison(new EventEmitter()).showHelp();
     } finally {
         delete globalThis.window;
     }
-    assert.equal(opened, 1);
+    assert.deepEqual(opened, ['edisonV3']);
+});
+
+test('every extension that needs preparation has a complete guide in three languages', () => {
+    const required = [
+        'edisonV3', 'ed1Board', 'keyestudioEsp32', 'microShield', 'wappstoBit', 'smartCutebot',
+        'makeblockCodeyRocky', 'makeblockMbot2', 'xcxArduino', 'microbitMore', 'spikeessential', 'legoble',
+        'poweredup', 'legoremote', 'controlplus', 'duplotrain', 'legomario', 'legoluigi', 'legopeach',
+        'ev3', 'boost', 'wedo2', 'gdxfor'
+    ];
+    assert.deepEqual(guideIds().sort(), [...required].sort());
+    const translated = text => assert.ok(
+        Array.isArray(text) && text.length === 3 && text.every(item => typeof item === 'string' && item.length > 0),
+        JSON.stringify(text)
+    );
+    required.forEach(id => {
+        const guide = guideFor(id);
+        translated(guide.intro);
+        if (guide.note) translated(guide.note);
+        if (guide.warning) translated(guide.warning);
+        guide.actions.forEach(action => translated(action.label));
+        assert.ok(guide.sections.length === 2, id);
+        guide.sections.forEach(section => {
+            translated(section.title);
+            assert.ok(section.steps.length > 0, id);
+            section.steps.forEach(translated);
+        });
+        ['en', 'es', 'ca', 'es-419', 'fr'].forEach(locale => {
+            const links = cardLinksFor(id, locale);
+            assert.ok(links.length >= 2, id);
+            links.forEach(link => assert.equal(typeof link.text, 'string'));
+            assert.equal(links.at(-1).guideId, id);
+        });
+    });
+    // Robots that work without preparation get no extra card links, and inherited keys are not guides.
+    assert.deepEqual(cardLinksFor('dashRobot', 'es'), []);
+    assert.equal(guideFor('constructor'), null);
+    assert.equal(pickText(['a', 'b', 'c'], 'ca-ES'), 'c');
+    assert.equal(pickText(['a', 'b', 'c'], 'fr'), 'a');
+    // Makeblock robots stay unconfirmed until tested on real hardware.
+    assert.equal(guideFor('makeblockMbot2').status, 'unconfirmed');
+    assert.equal(guideFor('makeblockCodeyRocky').status, 'unconfirmed');
 });
 
 test('Edison order numbers fit EdPy integers', () => {

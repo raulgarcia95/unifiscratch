@@ -1,11 +1,11 @@
-import {bindSafetyEvents, boundedMotion} from './micropython-transport.mjs';
+import {bindSafetyEvents} from './micropython-transport.mjs';
 import {
     MakeblockSerialTransport,
     clamp,
     colorToRgb,
     makeSvgDataUri,
     msg,
-    toPythonString
+    pyArgs
 } from './makeblock-serial.mjs';
 
 const EXTENSION_ID = 'makeblockCodeyRocky';
@@ -17,13 +17,24 @@ const iconURL = makeSvgDataUri({
     color2: '#f2c94c'
 });
 
+// In live mode Codey evaluates one Python call per frame with `codey` and `rocky` loaded.
+const ROCKY_STOP = 'rocky.stop()';
+const MOVES = {
+    forward: 'forward',
+    backward: 'backward',
+    left: 'turn_left',
+    right: 'turn_right'
+};
+const BUTTONS = {a: 'button_a', b: 'button_b', c: 'button_c'};
+
 const blockClass = class MakeblockCodeyRocky {
     constructor (runtime) {
         this.runtime = runtime;
         this.transport = new MakeblockSerialTransport('Codey Rocky', {
-            probe: 'import codey\nimport rocky\nassert callable(rocky.drive) and callable(rocky.stop)',
-            stop: 'import rocky\nrocky.stop()'
+            probe: 'codey.light_sensor.get_value()',
+            stop: ROCKY_STOP
         });
+        this.motion = 0;
         bindSafetyEvents(runtime, this.transport);
     }
 
@@ -55,14 +66,37 @@ const blockClass = class MakeblockCodeyRocky {
                     text: msg('connectionError', 'last connection error')},
                 '---',
                 {
+                    opcode: 'move',
+                    blockType: 'command',
+                    text: msg('codey.move', 'move [DIRECTION] power [POWER] for [SECONDS] s'),
+                    arguments: {
+                        DIRECTION: {type: 'string', menu: 'directions', defaultValue: 'forward'},
+                        POWER: {type: 'number', defaultValue: 50},
+                        SECONDS: {type: 'number', defaultValue: 1}
+                    }
+                },
+                {
+                    opcode: 'drive',
+                    blockType: 'command',
+                    text: msg('codey.drive', 'left wheel [LEFT] right [RIGHT] for [SECONDS] s'),
+                    arguments: {
+                        LEFT: {type: 'number', defaultValue: 50},
+                        RIGHT: {type: 'number', defaultValue: 50},
+                        SECONDS: {type: 'number', defaultValue: 1}
+                    }
+                },
+                {
+                    opcode: 'stop',
+                    blockType: 'command',
+                    text: msg('codey.stop', 'stop Rocky')
+                },
+                '---',
+                {
                     opcode: 'showText',
                     blockType: 'command',
                     text: msg('codey.showText', 'show text [TEXT]'),
                     arguments: {
-                        TEXT: {
-                            type: 'string',
-                            defaultValue: 'Hola'
-                        }
+                        TEXT: {type: 'string', defaultValue: 'Hola'}
                     }
                 },
                 {
@@ -75,10 +109,7 @@ const blockClass = class MakeblockCodeyRocky {
                     blockType: 'command',
                     text: msg('codey.setLed', 'RGB LED [COLOR]'),
                     arguments: {
-                        COLOR: {
-                            type: 'color',
-                            defaultValue: '#ff0000'
-                        }
+                        COLOR: {type: 'color', defaultValue: '#ff0000'}
                     }
                 },
                 {
@@ -86,62 +117,34 @@ const blockClass = class MakeblockCodeyRocky {
                     blockType: 'command',
                     text: msg('codey.playNote', 'play note [NOTE] for [BEATS] beats'),
                     arguments: {
-                        NOTE: {
-                            type: 'note',
-                            defaultValue: 60
-                        },
-                        BEATS: {
-                            type: 'number',
-                            defaultValue: 1
-                        }
+                        NOTE: {type: 'note', defaultValue: 60},
+                        BEATS: {type: 'number', defaultValue: 1}
                     }
                 },
                 '---',
                 {
-                    opcode: 'move',
-                    blockType: 'command',
-                    text: msg('codey.move', 'move [DIRECTION] power [POWER] for [SECONDS] s'),
+                    opcode: 'buttonPressed',
+                    blockType: 'Boolean',
+                    text: msg('codey.buttonPressed', 'button [BUTTON] pressed?'),
                     arguments: {
-                        DIRECTION: {
-                            type: 'string',
-                            menu: 'directions',
-                            defaultValue: 'forward'
-                        },
-                        POWER: {
-                            type: 'number',
-                            defaultValue: 50
-                        },
-                        SECONDS: {
-                            type: 'number',
-                            defaultValue: 1
-                        }
+                        BUTTON: {type: 'string', menu: 'buttons', defaultValue: 'a'}
                     }
                 },
                 {
-                    opcode: 'drive',
-                    blockType: 'command',
-                    text: msg('codey.drive', 'left wheel [LEFT] right [RIGHT] for [SECONDS] s'),
-                    arguments: {
-                        LEFT: {
-                            type: 'number',
-                            defaultValue: 50
-                        },
-                        RIGHT: {
-                            type: 'number',
-                            defaultValue: 50
-                        },
-                        SECONDS: {
-                            type: 'number',
-                            defaultValue: 1
-                        }
-                    }
+                    opcode: 'lightLevel',
+                    blockType: 'reporter',
+                    text: msg('codey.lightLevel', 'light level')
                 },
                 {
-                    opcode: 'stop',
-                    blockType: 'command',
-                    text: msg('codey.stop', 'stop Rocky')
+                    opcode: 'loudness',
+                    blockType: 'reporter',
+                    text: msg('codey.loudness', 'loudness')
+                },
+                {
+                    opcode: 'dial',
+                    blockType: 'reporter',
+                    text: msg('codey.dial', 'gear potentiometer')
                 }
-
             ],
             menus: {
                 directions: {
@@ -151,6 +154,14 @@ const blockClass = class MakeblockCodeyRocky {
                         {text: msg('codey.backward', 'backward'), value: 'backward'},
                         {text: msg('codey.left', 'left'), value: 'left'},
                         {text: msg('codey.right', 'right'), value: 'right'}
+                    ]
+                },
+                buttons: {
+                    acceptReporters: true,
+                    items: [
+                        {text: 'A', value: 'a'},
+                        {text: 'B', value: 'b'},
+                        {text: 'C', value: 'c'}
                     ]
                 }
             }
@@ -177,52 +188,75 @@ const blockClass = class MakeblockCodeyRocky {
         throw new Error('La ejecución libre de Python está desactivada para este dispositivo.');
     }
 
-    showText (args) {
-        return this.transport.runPython(`import codey\ncodey.display.show(${toPythonString(args.TEXT)})`);
-    }
-
-    clearDisplay () {
-        return this.transport.runPython('import codey\ncodey.display.clear()');
-    }
-
-    setLed (args) {
-        const {r, g, b} = colorToRgb(args.COLOR);
-        return this.transport.runPython(`import codey\ncodey.led.show(${r}, ${g}, ${b})`);
-    }
-
-    playNote (args) {
-        const note = clamp(args.NOTE, 48, 72);
-        const beats = clamp(args.BEATS, 0, 16);
-        return this.transport.runPython(`import codey\ncodey.speaker.play_note(${note}, ${beats})`);
+    // Starts Rocky, waits on the computer, then stops unless a newer motion took over.
+    async timedMotion (script, seconds) {
+        const duration = clamp(seconds, 0, 5);
+        const token = ++this.motion;
+        if (duration === 0) return this.transport.run(ROCKY_STOP);
+        await this.transport.run(script);
+        try {
+            await this.transport.wait(duration * 1000);
+        } finally {
+            if (token === this.motion && this.transport.isConnected()) {
+                await this.transport.run(ROCKY_STOP).catch(() => {});
+            }
+        }
     }
 
     move (args) {
-        const methods = {
-            forward: 'forward',
-            backward: 'backward',
-            left: 'turn_left',
-            right: 'turn_right'
-        };
-        const method = Object.prototype.hasOwnProperty.call(methods, args.DIRECTION) && methods[args.DIRECTION];
+        const method = Object.prototype.hasOwnProperty.call(MOVES, args.DIRECTION) && MOVES[args.DIRECTION];
         if (!method) throw new Error('Dirección no válida.');
         const power = clamp(args.POWER, -100, 100);
-        const seconds = clamp(args.SECONDS, 0, 5);
-        return this.transport.runPython(boundedMotion(
-            'import rocky', `rocky.${method}(${power})`, 'rocky.stop()', seconds
-        ));
+        return this.timedMotion(`rocky.${method}(${pyArgs(power)})`, args.SECONDS);
     }
 
     drive (args) {
         const left = clamp(args.LEFT, -100, 100);
         const right = clamp(args.RIGHT, -100, 100);
-        const seconds = clamp(args.SECONDS, 0, 5);
-        return this.transport.runPython(
-            boundedMotion('import rocky', `rocky.drive(${left}, ${right})`, 'rocky.stop()', seconds)
-        );
+        return this.timedMotion(`rocky.drive(${pyArgs(left, right)})`, args.SECONDS);
     }
 
     stop () {
+        this.motion++;
         return this.transport.emergencyStop();
+    }
+
+    showText (args) {
+        return this.transport.run(`codey.display.show(${pyArgs(String(args.TEXT))})`);
+    }
+
+    clearDisplay () {
+        return this.transport.run('codey.display.clear()');
+    }
+
+    setLed (args) {
+        const {r, g, b} = colorToRgb(args.COLOR);
+        return this.transport.run(`codey.led.show(${pyArgs(r, g, b)})`);
+    }
+
+    playNote (args) {
+        const note = clamp(args.NOTE, 48, 72);
+        const beats = clamp(args.BEATS, 0, 16);
+        // The robot answers when the note ends; allow for its length.
+        return this.transport.run(`codey.speaker.play_note(${pyArgs(note, beats)})`, {timeout: 3000 + (beats * 1500)});
+    }
+
+    async buttonPressed (args) {
+        const button = BUTTONS[String(args.BUTTON).toLowerCase()];
+        if (!button) throw new Error('Botón no válido.');
+        return (await this.transport.run(`codey.${button}.is_pressed()`)) === true;
+    }
+
+    lightLevel () {
+        return this.transport.run('codey.light_sensor.get_value()');
+    }
+
+    loudness () {
+        return this.transport.run('codey.sound_sensor.get_loudness()');
+    }
+
+    dial () {
+        return this.transport.run('codey.potentiometer.get_value()');
     }
 };
 
@@ -234,7 +268,7 @@ const entry = {
     collaborator: 'Makeblock / Unifiscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('codey.description', 'Basic USB control using MicroPython.'),
+    description: msg('codey.description', 'USB control of Codey Rocky in live mode.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

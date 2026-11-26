@@ -9,6 +9,7 @@ import log from '../lib/log.js';
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 import initializeExtensions from '../lib/libraries/extensions/initialize';
 import {localize} from '../lib/unifiscratch-l10n';
+import {cardLinksFor, openSetupGuide} from '../lib/libraries/extensions/setup-guides.mjs';
 
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
@@ -383,8 +384,8 @@ class ExtensionLibrary extends React.PureComponent {
                     throw new Error(`No se ha podido cargar la extensión ${id}.`);
                 }
                 this.props.onCategorySelected(id);
-                // Extensions that need a setup step (Edison V3) show their guide when added.
-                if (item.setupHelpEvent) window.dispatchEvent(new Event(item.setupHelpEvent));
+                // Extensions that need preparation show their guide when added.
+                openSetupGuide(id);
             } catch (error) {
                 log.error(error);
                 await alert({message: error.message});
@@ -447,10 +448,7 @@ class ExtensionLibrary extends React.PureComponent {
             category: categoryForExtension(extension),
             name: localizeKnownExtensionCard(this.props.intl, extension, 'name', extension.name),
             description: localizeKnownExtensionCard(this.props.intl, extension, 'description', extension.description),
-            extraLinks: extension.extraLinks && extension.extraLinks.map(link => ({
-                ...link,
-                text: localize(this.props.intl, link.text)
-            }))
+            extraLinks: cardLinksFor(extension.extensionId, this.props.intl.locale)
         }));
         const visibleCategories = ['robots', 'boards', 'ai', 'other']
             .filter(category => extensionLibraryThumbnailData.some(item => item.category === category));

@@ -1,0 +1,26 @@
+{
+    "name": "unifiscratch-cutebot",
+    "version": "1.0.0",
+    "description": "Firmware de Unifiscratch para Cutebot: ordenes por Bluetooth (UART) y USB",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "bluetooth": "*"
+    },
+    "files": [
+        "main.ts",
+        "README.md"
+    ],
+    "yotta": {
+        "config": {
+            "microbit-dal": {
+                "bluetooth": {
+                    "open": 1,
+                    "whitelist": 0,
+                    "security_level": null
+                }
+            }
+        }
+    },
+    "preferredEditor": "tsprj"
+}

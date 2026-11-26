@@ -6,6 +6,7 @@ import Box from '../box/box.jsx';
 import PlayButton from '../../containers/play-button.jsx';
 import styles from './library-item.css';
 import classNames from 'classnames';
+import {openSetupGuide} from '../../lib/libraries/extensions/setup-guides.mjs';
 
 import bluetoothIconURL from './bluetooth.svg';
 import internetConnectionIconURL from './internet-connection.svg';
@@ -38,9 +39,9 @@ class LibraryItemComponent extends React.PureComponent {
     handleExtraLink (link) {
         return event => {
             event.stopPropagation();
-            if (link.event) {
+            if (link.guideId) {
                 event.preventDefault();
-                window.dispatchEvent(new Event(link.event));
+                openSetupGuide(link.guideId);
             }
         };
     }
@@ -107,7 +108,7 @@ class LibraryItemComponent extends React.PureComponent {
                         </div>
                     ) : null}
                     {(this.props.extraLinks || []).map(link => (
-                        <div key={link.href || link.event}>
+                        <div key={link.href || link.guideId}>
                             <span className={styles.featuredExtensionHelp}>
                                 <a
                                     download={link.download}
@@ -239,7 +240,7 @@ LibraryItemComponent.propTypes = {
         text: PropTypes.string,
         href: PropTypes.string,
         download: PropTypes.string,
-        event: PropTypes.string
+        guideId: PropTypes.string
     })),
     featured: PropTypes.bool,
     helpLink: PropTypes.string,
