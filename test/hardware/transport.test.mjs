@@ -170,16 +170,16 @@ test('robot blocks emit bounded commands and cannot execute arbitrary Python', a
     assert.equal(typeof robot.runPython, 'undefined');
 });
 
-test('micro:bit uses its own pin API, rejects invalid pins and stops timed outputs', () => {
-    const board = new (entries.find(x => x.entry.extensionId === 'microShield').blockClass)();
+test('ESP32 board uses its own pin API, rejects invalid pins and stops timed outputs', () => {
+    const board = new (entries.find(x => x.entry.extensionId === 'keyestudioEsp32').blockClass)();
     let source;
     board.transport.runPython = code => { source = code; };
-    board.digitalWrite({PIN: 1, VALUE: '1', SECONDS: 1});
-    assert.match(source, /microbit.pin1/);
-    assert.match(source, /finally:\n    _pin.write_digital\(0\)/);
+    board.digitalWrite({PIN: 2, VALUE: '1', SECONDS: 1});
+    assert.match(source, /Pin\(2, Pin.OUT\)/);
+    assert.match(source, /finally:\n    _pin.value\(0\)/);
     assert.throws(() => board.digitalWrite({PIN: 1.5}), /Pin no permitido/);
     assert.throws(() => board.digitalWrite({PIN: 37}), /Pin no permitido/);
     board.pwmWrite({PIN: 2, VALUE: 9999, FREQ: 50000, SECONDS: 1});
-    assert.match(source, /write_analog\(1023\)/);
-    assert.match(source, /set_analog_period_microseconds\(256\)/);
+    assert.match(source, /_pwm.duty\(1023\)/);
+    assert.match(source, /freq=40000/);
 });

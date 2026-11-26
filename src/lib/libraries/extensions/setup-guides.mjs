@@ -31,6 +31,8 @@ const MICROBIT_PYTHON_URL = 'https://python.microbit.org/';
 const MICROBIT_MORE_HEX = 'https://github.com/microbit-more/pxt-mbit-more-v2/releases/download/0.2.5/microbit-mbit-more-v2-0_2_5.hex';
 const CUTEBOT_HEX_FILE = 'unifiscratch-cutebot.hex';
 const CUTEBOT_HEX_PATH = `static/extensions/cutebot/${CUTEBOT_HEX_FILE}`;
+const MICROSHIELD_HEX_FILE = 'unifiscratch-microshield.hex';
+const MICROSHIELD_HEX_PATH = `static/extensions/microshield/${MICROSHIELD_HEX_FILE}`;
 const ESP32_FIRMWARE_URL = 'https://micropython.org/download/ESP32_GENERIC/';
 const ESP_FLASHER_URL = 'https://espressif.github.io/esptool-js/';
 const MICROBLOCKS_URL = 'https://microblocks.fun/run/microblocks.html';
@@ -187,7 +189,29 @@ const guides = {
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
     },
-    microShield: microbitGuide('Micro:Shield'),
+    microShield: {
+        name: 'micro:shield',
+        warning: ['micro:shield needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:shield necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:shield necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
+        intro: ['The program (.hex) lets Unifiscratch control the board and its motors, servos and sensors by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifiscratch controle la placa y sus motores, servos y sensores por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifiscratch controli la placa i els seus motors, servos i sensors per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
+        actions: [{type: 'download', path: MICROSHIELD_HEX_PATH, file: MICROSHIELD_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
+        cardLinks: [{href: MICROSHIELD_HEX_PATH, download: MICROSHIELD_HEX_FILE, text: ['micro:shield program for micro:bit (.hex)', 'Programa de micro:shield para micro:bit (.hex)', 'Programa de micro:shield per a micro:bit (.hex)']}],
+        sections: [
+            {title: FIRST_TIME,
+                steps: [
+                    ['Press «Download micro:bit program (.hex)».', 'Pulsa «Descargar programa para micro:bit (.hex)».', 'Prem «Descarregar el programa per a micro:bit (.hex)».'],
+                    ['Connect the micro:bit to the computer by USB. It appears as a drive called MICROBIT.', 'Conecta la micro:bit al ordenador por USB. Aparece como una unidad llamada MICROBIT.', 'Connecta la micro:bit a l’ordinador per USB. Apareix com una unitat anomenada MICROBIT.'],
+                    ['Copy the .hex file to the MICROBIT drive and wait until the light stops blinking. The display shows an «S» when it is ready.', 'Copia el archivo .hex en la unidad MICROBIT y espera a que la luz deje de parpadear. La pantalla muestra una «S» cuando está lista.', 'Copia el fitxer .hex a la unitat MICROBIT i espera que la llum deixi de parpellejar. La pantalla mostra una «S» quan està a punt.']
+                ]},
+            {title: EVERY_TIME,
+                steps: [
+                    ['Fit the micro:bit on the micro:shield and power the board (motors and servos need its own power supply). Use Chrome or Edge with the computer’s Bluetooth turned on.', 'Coloca la micro:bit en la micro:shield y alimenta la placa (motores y servos necesitan su propia alimentación). Usa Chrome o Edge con el Bluetooth del ordenador activado.', 'Col·loca la micro:bit a la micro:shield i alimenta la placa (motors i servos necessiten la seva pròpia alimentació). Fes servir Chrome o Edge amb el Bluetooth de l’ordinador activat.'],
+                    ['Click the block «connect micro:shield by Bluetooth» and choose «BBC micro:bit» in the browser window. A tick appears on the display.', 'Haz clic en el bloque «conectar micro:shield por Bluetooth» y elige «BBC micro:bit» en la ventana del navegador. En la pantalla aparece un tic.', 'Fes clic al bloc «connecta micro:shield per Bluetooth» i tria «BBC micro:bit» a la finestra del navegador. A la pantalla apareix un tic.'],
+                    ['Without Bluetooth, connect the micro:bit with the USB cable and use «connect micro:shield by USB» instead.', 'Sin Bluetooth, conecta la micro:bit con el cable USB y usa «conectar micro:shield por USB».', 'Sense Bluetooth, connecta la micro:bit amb el cable USB i fes servir «connecta micro:shield per USB».'],
+                    ['Steppers use the same outputs as the DC motors: STEP1 = M1+M2 and STEP2 = M3+M4. The red flag stops every motor; if the connection is lost, they stop by themselves.', 'Los motores paso a paso usan las mismas salidas que los motores DC: STEP1 = M1+M2 y STEP2 = M3+M4. La bandera roja detiene todos los motores; si se pierde la conexión, se paran solos.', 'Els motors pas a pas fan servir les mateixes sortides que els motors DC: STEP1 = M1+M2 i STEP2 = M3+M4. La bandera vermella atura tots els motors; si es perd la connexió, s’aturen sols.']
+                ]}
+        ],
+        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    },
     wappstoBit: microbitGuide('Wappsto:Bit'),
     smartCutebot: {
         name: 'Cutebot',

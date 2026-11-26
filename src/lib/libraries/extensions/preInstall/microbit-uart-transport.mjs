@@ -15,8 +15,14 @@ const KEEPALIVE_MS = 500;
 const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
 
 export class MicrobitUartTransport {
-    constructor (label, {hello = '?', expect = 'CB', stop = 'S', timeout = 3000, onLine = null} = {}) {
+    constructor (label, {
+        hello = '?', expect = 'CB', stop = 'S', timeout = 3000, onLine = null,
+        noReply = 'La micro:bit no responde: carga el firmware de Unifiscratch para Cutebot (ver la guía).',
+        notConnected = 'Conecta el Cutebot (Bluetooth o USB) antes de usar los bloques.'
+    } = {}) {
         this.label = label;
+        this.noReply = noReply;
+        this.notConnected = notConnected;
         this.hello = hello;
         this.expect = expect;
         this.stopLine = stop;
@@ -106,9 +112,7 @@ export class MicrobitUartTransport {
             if (this.keepalive.unref) this.keepalive.unref();
             this.lastError = '';
         } catch (error) {
-            const message = /no respondió/.test(error.message) ?
-                'La micro:bit no responde: carga el firmware de Unifiscratch para Cutebot (ver la guía).' :
-                error.message;
+            const message = /no respondió/.test(error.message) ? this.noReply : error.message;
             this.lastError = `${this.label}: ${message}`;
             await this.close();
             throw new Error(this.lastError);
@@ -169,7 +173,7 @@ export class MicrobitUartTransport {
 
     send (line) {
         if (!this.isConnected()) {
-            return Promise.reject(new Error('Conecta el Cutebot (Bluetooth o USB) antes de usar los bloques.'));
+            return Promise.reject(new Error(this.notConnected));
         }
         return this.sendNow(line);
     }

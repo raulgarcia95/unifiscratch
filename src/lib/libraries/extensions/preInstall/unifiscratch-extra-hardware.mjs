@@ -324,8 +324,9 @@ const createInfoExtension = ({
     };
 };
 
-// ED1, Dash, Face Sensing and Edison V3 have their own modules (ed1-board.mjs,
-// dash-robot.mjs, face-sensing.mjs and edison-v3.mjs).
+// ED1, Dash, Face Sensing, Edison V3 and micro:shield have their own modules
+// (ed1-board.mjs, dash-robot.mjs, face-sensing.mjs, edison-v3.mjs and
+// microbit-microshield.mjs).
 const entries = [
     createMicroPythonBoard({
         id: 'keyestudioEsp32',
@@ -342,14 +343,6 @@ const entries = [
         },
         description: msg('keyestudioEsp32.description', 'USB control for Keyestudio ESP32 with MicroPython firmware.'),
         helpLink: 'https://docs.keyestudio.com/projects/KS0809/en/latest/docs/ESP32/Software_Tutorial.html'
-    }),
-    createMicroPythonBoard({
-        id: 'microShield',
-        name: 'Micro:Shield',
-        collaborator: 'micro:bit / Unifiscratch',
-        icon: {title: 'MICRO', body: 'SHIELD', kind: 'microshield', color1: '#16a34a', color2: '#8b5cf6', color3: '#166534'},
-        description: msg('microShield.description', 'MicroPython USB blocks for micro:bit with Micro:Shield.'),
-        helpLink: 'https://microbit.org/'
     }),
     createMicroPythonBoard({
         id: 'wappstoBit',
