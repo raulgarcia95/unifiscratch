@@ -491,8 +491,8 @@ class Cutebot {
     }
 
     showIcon (args) {
-        const icon = ICONS[args.ICON] || String(args.ICON);
-        return this.transport.send(`I ${matrixBits(icon)}`);
+        const pattern = ICONS[args.ICON] || String(args.ICON);
+        return this.transport.send(`I ${matrixBits(pattern)}`);
     }
 
     plotLed (args) {

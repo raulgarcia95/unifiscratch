@@ -120,7 +120,7 @@ const runtimeWith = socketFactory => {
     runtime.getScratchLinkSocket = type => socketFactory(type);
     return runtime;
 };
-const ScratchLinkBLE = require(new URL('../../node_modules/scratch-vm/src/io/ble.js', import.meta.url).pathname);
+const ScratchLinkBLE = require('../../node_modules/scratch-vm/src/io/ble.js');
 
 test('Scratch Link filters become Web Bluetooth options', () => {
     const options = toRequestDeviceOptions(SPIKE_ESSENTIAL_OPTIONS);
