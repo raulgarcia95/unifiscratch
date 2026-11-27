@@ -9,7 +9,7 @@ const msg = (id, defaultText) => ({
     id: `unifiscratch.extensions.${id}`,
     default: defaultText,
     defaultMessage: defaultText,
-    description: `Unifiscratch hardware extension text: ${id}`
+    description: `Unifyscratch hardware extension text: ${id}`
 });
 
 const colorToRgb = color => {

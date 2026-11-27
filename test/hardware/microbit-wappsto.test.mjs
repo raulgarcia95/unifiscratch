@@ -10,7 +10,7 @@ import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-// Simulated micro:bit with the Unifiscratch Wappsto:bit firmware, over USB.
+// Simulated micro:bit with the Unifyscratch Wappsto:bit firmware, over USB.
 class FakePort {
     constructor ({silent = false} = {}) {
         this.silent = silent;
@@ -136,12 +136,12 @@ test('Wappsto blocks send bounded orders and receive dashboard values', async ()
     });
 });
 
-test('a micro:bit without the Unifiscratch program is reported clearly', async () => {
+test('a micro:bit without the Unifyscratch program is reported clearly', async () => {
     const port = new FakePort({silent: true});
     await withSerial(port, async () => {
         const board = new WappstoBit(new EventEmitter());
         board.transport.timeout = 50;
-        await assert.rejects(board.connectUsb(), /programa de Unifiscratch para Wappsto:bit/);
+        await assert.rejects(board.connectUsb(), /programa de Unifyscratch para Wappsto:bit/);
         assert.equal(board.isConnected(), false);
     });
 });
@@ -152,7 +152,7 @@ test('Wappsto:bit has its own guide with the .hex download', () => {
     const guide = guideFor('wappstoBit');
     assert.ok(guide.warning);
     const download = guide.actions.find(action => action.type === 'download');
-    assert.equal(download.path, 'static/extensions/wappsto-bit/unifiscratch-wappsto-bit.hex');
+    assert.equal(download.path, 'static/extensions/wappsto-bit/unifyscratch-wappsto-bit.hex');
     const blocks = new WappstoBit().getInfo().blocks.map(block => block.opcode);
     assert.ok(blocks.indexOf('connectBluetooth') < blocks.indexOf('connectUsb'), 'Bluetooth comes first');
     assert.ok(blocks.includes('showHelp'));

@@ -9,7 +9,7 @@ const clamp = boundedNumber;
 const msg = (id, defaultText) => ({
     id: `unifiscratch.extensions.${id}`,
     default: defaultText,
-    description: `Unifiscratch hardware extension text: ${id}`
+    description: `Unifyscratch hardware extension text: ${id}`
 });
 
 const colorToRgb = color => {
@@ -342,7 +342,7 @@ const entries = [
         id: 'keyestudioEsp32',
         board: 'esp32',
         name: 'Keyestudio ESP32',
-        collaborator: 'Keyestudio / Unifiscratch',
+        collaborator: 'Keyestudio / Unifyscratch',
         icon: {
             title: 'ESP32',
             body: 'KEYESTUDIO',
@@ -358,7 +358,7 @@ const entries = [
     createInfoExtension({
         id: 'tm2scratch',
         name: 'Teachable Machine',
-        collaborator: 'Unifiscratch',
+        collaborator: 'Unifyscratch',
         icon: {title: 'TM', body: 'IMAGE', kind: 'ai', color1: '#2563eb', color2: '#facc15', color3: '#1e3a8a'},
         description: msg('tm2scratch.description',
             'This AI feature is available in another editor, but not as a compatible standalone module.'),
@@ -373,7 +373,7 @@ const entries = [
     createInfoExtension({
         id: 'tmpose2scratch',
         name: 'Teachable Machine Pose',
-        collaborator: 'Unifiscratch',
+        collaborator: 'Unifyscratch',
         icon: {title: 'TM', body: 'POSE', kind: 'pose', color1: '#0f766e', color2: '#facc15', color3: '#134e4a'},
         description: msg('tmpose2scratch.description',
             'This pose AI feature is available in another editor, but not as a compatible standalone module.'),
@@ -388,7 +388,7 @@ const entries = [
     createInfoExtension({
         id: 'ic2scratch',
         name: msg('ic2scratch.name', 'Image Classifier'),
-        collaborator: 'Unifiscratch',
+        collaborator: 'Unifyscratch',
         icon: {title: 'IMG', body: 'CLASS', kind: 'classifier', color1: '#dc2626', color2: '#facc15', color3: '#7f1d1d'},
         description: msg('ic2scratch.description',
             'This image classifier is available in another editor, but not as a compatible standalone module.'),
@@ -403,7 +403,7 @@ const entries = [
     createInfoExtension({
         id: 'handpose2scratch',
         name: 'HandPose2Scratch',
-        collaborator: 'Unifiscratch',
+        collaborator: 'Unifyscratch',
         icon: {title: 'HAND', body: 'POSE', kind: 'hand', color1: '#ea580c', color2: '#22c55e', color3: '#9a3412'},
         description: msg('handpose2scratch.description',
             'This hand pose feature is available in another editor, but not as a compatible standalone module.'),
@@ -418,7 +418,7 @@ const entries = [
     createInfoExtension({
         id: 'facemesh2scratch',
         name: 'FaceMesh2Scratch',
-        collaborator: 'Unifiscratch',
+        collaborator: 'Unifyscratch',
         icon: {title: 'FACE', body: 'MESH', kind: 'face', color1: '#9333ea', color2: '#22c55e', color3: '#581c87'},
         description: msg('facemesh2scratch.description',
             'This face mesh feature is available in another editor, but not as a compatible standalone module.'),

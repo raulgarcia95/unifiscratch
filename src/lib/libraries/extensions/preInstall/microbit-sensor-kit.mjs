@@ -19,7 +19,7 @@ const id = 'microbitSensorKit';
 const t = key => ({
     id: `unifiscratch.extensions.sensorKit.${key}`,
     default: sensorKitTexts[key][0],
-    description: `Unifiscratch hardware extension text: sensorKit.${key}`
+    description: `Unifyscratch hardware extension text: sensorKit.${key}`
 });
 const name = t('name');
 const icon = {
@@ -530,7 +530,7 @@ export const blockClass = MicrobitSensorKit;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'XTEC / Unifiscratch',
+    collaborator: 'XTEC / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: t('description'),

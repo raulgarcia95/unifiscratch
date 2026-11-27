@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-// micro:bit on a Wappsto:bit board (Seluxit) with the Unifiscratch firmware
+// micro:bit on a Wappsto:bit board (Seluxit) with the Unifyscratch firmware
 // (firmware/wappsto-bit). Bluetooth first, USB as an alternative.
 // The micro:bit blocks work live; the Wappsto blocks reach the cloud through
 // the board, which the firmware drives over I2C.
@@ -100,7 +100,7 @@ class WappstoBit {
         this.transport = new MicrobitUartTransport(name, {
             expect: 'WB',
             notConnected: () => tr('Connect the Wappsto:bit micro:bit (Bluetooth or USB) before using the blocks.', 'Conecta la micro:bit de la Wappsto:bit (Bluetooth o USB) antes de usar los bloques.', 'Connecta la micro:bit de la Wappsto:bit (Bluetooth o USB) abans de fer servir els blocs.'),
-            noReply: () => tr('The micro:bit does not answer: load the Unifiscratch program for Wappsto:bit (see the guide).', 'La micro:bit no responde: carga el programa de Unifiscratch para Wappsto:bit (ver la guía).', 'La micro:bit no respon: carrega el programa d’Unifiscratch per a Wappsto:bit (mira la guia).'),
+            noReply: () => tr('The micro:bit does not answer: load the Unifyscratch program for Wappsto:bit (see the guide).', 'La micro:bit no responde: carga el programa de Unifyscratch para Wappsto:bit (ver la guía).', 'La micro:bit no respon: carrega el programa d’Unifyscratch per a Wappsto:bit (mira la guia).'),
             onLine: text => this.onLine(text)
         });
         if (runtime) bindSafetyEvents(runtime, this.transport);
@@ -143,7 +143,7 @@ class WappstoBit {
                     opcode: 'setName',
                     blockType: 'command',
                     text: t('setName', 'set up micro:bit on Wappsto with name [NAME]'),
-                    arguments: {NAME: {type: 'string', defaultValue: 'Unifiscratch'}}
+                    arguments: {NAME: {type: 'string', defaultValue: 'Unifyscratch'}}
                 },
                 {
                     opcode: 'setupNumber',
@@ -359,7 +359,7 @@ class WappstoBit {
     // ---------- Wappsto ----------
 
     setName (args) {
-        const text = line(args.NAME) || 'Unifiscratch';
+        const text = line(args.NAME) || 'Unifyscratch';
         return this.transport.send(`N ${text}`);
     }
 
@@ -503,7 +503,7 @@ export const blockClass = WappstoBit;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'Seluxit / Unifiscratch',
+    collaborator: 'Seluxit / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('wappstoBit.description', 'micro:bit on Wappsto:bit by Bluetooth or USB: send and receive Wappsto cloud data, sensors, LED display and pins.'),

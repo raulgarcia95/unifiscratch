@@ -7,11 +7,11 @@ Ed.DistanceUnits = Ed.CM
 Ed.Tempo = Ed.TEMPO_MEDIUM
 
 #--------Your code below-----------
-# Unfyscratch bridge for Edison V3, version 1.
+# Unifyscratch bridge for Edison V3, version 1.
 # Load it once from https://www.edpyapp.com/v3/ (Program Edison).
-# Unfyscratch sends numbered orders: number = order_id*4096 + command*256 + value.
+# Unifyscratch sends numbered orders: number = order_id*4096 + command*256 + value.
 # Each movement has a fixed distance or angle, so Edison stops by itself.
-# Reply sent to Unfyscratch: order_id*4096 + result.
+# Reply sent to Unifyscratch: order_id*4096 + result.
 
 Ed.ObstacleDetectionBeam(Ed.ON)
 Ed.LineTrackerLed(Ed.ON)

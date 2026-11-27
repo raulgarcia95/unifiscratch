@@ -21,16 +21,16 @@ export const pickText = (text, locale) => {
 };
 
 const EDPY_URL = 'https://www.edpyapp.com/v3/';
-const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
+const BRIDGE_FILE = 'unifyscratch-puente-edison-v3.py';
 const BRIDGE_PATH = `static/extensions/edison/${BRIDGE_FILE}`;
 const SCRATCH_LINK_URL = 'https://scratch.mit.edu/download/scratch-link';
 const MICROBIT_MORE_HEX = 'https://github.com/microbit-more/pxt-mbit-more-v2/releases/download/0.2.5/microbit-mbit-more-v2-0_2_5.hex';
-const CUTEBOT_HEX_FILE = 'unifiscratch-cutebot.hex';
+const CUTEBOT_HEX_FILE = 'unifyscratch-cutebot.hex';
 const CUTEBOT_HEX_PATH = `static/extensions/cutebot/${CUTEBOT_HEX_FILE}`;
-const WAPPSTO_HEX_FILE = 'unifiscratch-wappsto-bit.hex';
+const WAPPSTO_HEX_FILE = 'unifyscratch-wappsto-bit.hex';
 const WAPPSTO_HEX_PATH = `static/extensions/wappsto-bit/${WAPPSTO_HEX_FILE}`;
 const WAPPSTO_SETUP_URL = 'https://bit.wappsto.com/setup';
-const MICROSHIELD_HEX_FILE = 'unifiscratch-microshield.hex';
+const MICROSHIELD_HEX_FILE = 'unifyscratch-microshield.hex';
 const MICROSHIELD_HEX_PATH = `static/extensions/microshield/${MICROSHIELD_HEX_FILE}`;
 const ESP32_FIRMWARE_URL = 'https://micropython.org/download/ESP32_GENERIC/';
 const ESP_FLASHER_URL = 'https://espressif.github.io/esptool-js/';
@@ -41,7 +41,7 @@ const PYBRICKS_CODE_URL = 'https://code.pybricks.com/';
 const KEYESTUDIO_URL = 'https://docs.keyestudio.com/projects/KS0809/en/latest/docs/ESP32/Software_Tutorial.html';
 
 const FIRST_TIME = ['1. Prepare it (only the first time)', '1. Prepararlo (solo la primera vez)', '1. Preparar-lo (només la primera vegada)'];
-const EVERY_TIME = ['2. Use it in Unfyscratch (every time)', '2. Usarlo en Unfyscratch (cada vez)', '2. Fer-lo servir a Unfyscratch (cada vegada)'];
+const EVERY_TIME = ['2. Use it in Unifyscratch (every time)', '2. Usarlo en Unifyscratch (cada vez)', '2. Fer-lo servir a Unifyscratch (cada vegada)'];
 const CLOSE_TAB = ['Close that tab or program: only one application at a time can use the USB port.', 'Cierra esa pestaña o programa: solo una aplicación a la vez puede usar el puerto USB.', 'Tanca aquesta pestanya o programa: només una aplicació alhora pot fer servir el port USB.'];
 const CHROME_USB = ['Connect it by USB and use Chrome or Edge.', 'Conéctalo por USB y usa Chrome o Edge.', 'Connecta’l per USB i fes servir Chrome o Edge.'];
 const LAST_ERROR = ['If it does not connect, look at the «last connection error» block.', 'Si no conecta, mira el bloque «último error de conexión».', 'Si no connecta, mira el bloc «últim error de connexió».'];
@@ -89,7 +89,7 @@ const webBluetoothGuide = (name, turnOn) => ({
             steps: [
                 turnOn,
                 ['Press the orange warning button next to the extension’s name in the block palette.', 'Pulsa el botón naranja de aviso junto al nombre de la extensión en la paleta de bloques.', 'Prem el botó taronja d’avís al costat del nom de l’extensió a la paleta de blocs.'],
-                ['Choose the device in the browser window and press «Pair». Then press «Connect» in Unfyscratch.', 'Elige el dispositivo en la ventana del navegador y pulsa «Emparejar». Después pulsa «Conectar» en Unfyscratch.', 'Tria el dispositiu a la finestra del navegador i prem «Emparellar». Després prem «Connecta» a Unfyscratch.']
+                ['Choose the device in the browser window and press «Pair». Then press «Connect» in Unifyscratch.', 'Elige el dispositivo en la ventana del navegador y pulsa «Emparejar». Después pulsa «Conectar» en Unifyscratch.', 'Tria el dispositiu a la finestra del navegador i prem «Emparellar». Després prem «Connecta» a Unifyscratch.']
             ]}
     ],
     note: ['Scratch Link is not needed. It is only used if it is already open on the computer, or in browsers without Web Bluetooth, such as Firefox or Safari.', 'No hace falta Scratch Link. Solo se usa si ya está abierto en el ordenador, o en navegadores sin Bluetooth web, como Firefox o Safari.', 'No cal Scratch Link. Només es fa servir si ja és obert a l’ordinador, o en navegadors sense Bluetooth web, com Firefox o Safari.']
@@ -173,7 +173,7 @@ const guides = {
                 steps: [
                     CHROME_USB,
                     connectBlock('connect ED1 by USB', 'conectar ED1 por USB', 'connecta ED1 per USB'),
-                    ['The first time, Unfyscratch saves a few small helper programs on the ED1; it takes a few seconds. The red flag stops the motors and the sound.', 'La primera vez, Unfyscratch guarda en la ED1 unos pequeños programas de ayuda; tarda unos segundos. La bandera roja detiene los motores y el sonido.', 'La primera vegada, Unfyscratch desa a l’ED1 uns petits programes d’ajuda; triga uns segons. La bandera vermella atura els motors i el so.']
+                    ['The first time, Unifyscratch saves a few small helper programs on the ED1; it takes a few seconds. The red flag stops the motors and the sound.', 'La primera vez, Unifyscratch guarda en la ED1 unos pequeños programas de ayuda; tarda unos segundos. La bandera roja detiene los motores y el sonido.', 'La primera vegada, Unifyscratch desa a l’ED1 uns petits programes d’ajuda; triga uns segons. La bandera vermella atura els motors i el so.']
                 ]}
         ],
         note: LAST_ERROR
@@ -195,8 +195,8 @@ const guides = {
     },
     microShield: {
         name: 'micro:shield',
-        warning: ['micro:shield needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:shield necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:shield necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
-        intro: ['The program (.hex) lets Unifiscratch control the board and its motors, servos and sensors by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifiscratch controle la placa y sus motores, servos y sensores por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifiscratch controli la placa i els seus motors, servos i sensors per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
+        warning: ['micro:shield needs the Unifyscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:shield necesita el programa de Unifyscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:shield necessita el programa d’Unifyscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
+        intro: ['The program (.hex) lets Unifyscratch control the board and its motors, servos and sensors by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifyscratch controle la placa y sus motores, servos y sensores por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifyscratch controli la placa i els seus motors, servos i sensors per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
         actions: [{type: 'download', path: MICROSHIELD_HEX_PATH, file: MICROSHIELD_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
@@ -217,8 +217,8 @@ const guides = {
     },
     wappstoBit: {
         name: 'Wappsto:bit',
-        warning: ['The micro:bit needs the Unifiscratch program for Wappsto:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:bit necesita el programa de Unifiscratch para Wappsto:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:bit necessita el programa d’Unifiscratch per a Wappsto:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
-        intro: ['With this program Unifiscratch controls the micro:bit by Bluetooth or USB, and the micro:bit sends and receives Wappsto cloud data through the Wappsto:bit board.', 'Con este programa Unifiscratch controla la micro:bit por Bluetooth o USB, y la micro:bit envía y recibe datos de la nube Wappsto a través de la placa Wappsto:bit.', 'Amb aquest programa Unifiscratch controla la micro:bit per Bluetooth o USB, i la micro:bit envia i rep dades del núvol Wappsto a través de la placa Wappsto:bit.'],
+        warning: ['The micro:bit needs the Unifyscratch program for Wappsto:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:bit necesita el programa de Unifyscratch para Wappsto:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:bit necessita el programa d’Unifyscratch per a Wappsto:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
+        intro: ['With this program Unifyscratch controls the micro:bit by Bluetooth or USB, and the micro:bit sends and receives Wappsto cloud data through the Wappsto:bit board.', 'Con este programa Unifyscratch controla la micro:bit por Bluetooth o USB, y la micro:bit envía y recibe datos de la nube Wappsto a través de la placa Wappsto:bit.', 'Amb aquest programa Unifyscratch controla la micro:bit per Bluetooth o USB, i la micro:bit envia i rep dades del núvol Wappsto a través de la placa Wappsto:bit.'],
         actions: [
             {type: 'download', path: WAPPSTO_HEX_PATH, file: WAPPSTO_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']},
             {type: 'link', href: WAPPSTO_SETUP_URL, label: ['Wappsto:bit setup', 'Configurar la Wappsto:bit', 'Configurar la Wappsto:bit']}
@@ -241,8 +241,8 @@ const guides = {
     },
     smartCutebot: {
         name: 'Cutebot',
-        warning: ['Cutebot needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'El Cutebot necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'El Cutebot necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
-        intro: ['The program (.hex) lets Unifiscratch control the robot by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifiscratch controle el robot por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifiscratch controli el robot per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
+        warning: ['Cutebot needs the Unifyscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'El Cutebot necesita el programa de Unifyscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'El Cutebot necessita el programa d’Unifyscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
+        intro: ['The program (.hex) lets Unifyscratch control the robot by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifyscratch controle el robot por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifyscratch controli el robot per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
         actions: [{type: 'download', path: CUTEBOT_HEX_PATH, file: CUTEBOT_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
@@ -264,7 +264,7 @@ const guides = {
     legoSpikePrime: {
         name: 'LEGO SPIKE Prime',
         warning: ['SPIKE Prime needs the free Pybricks firmware on the hub. Installing it replaces the LEGO firmware; Pybricks Code can put the LEGO firmware back at any time (Tools menu, «Restore official LEGO firmware»).', 'SPIKE Prime necesita el firmware gratuito Pybricks en el hub. Al instalarlo se sustituye el firmware de LEGO; Pybricks Code puede volver a poner el de LEGO cuando quieras (menú Herramientas, «Restore official LEGO firmware»).', 'SPIKE Prime necessita el firmware gratuït Pybricks al hub. En instal·lar-lo se substitueix el firmware de LEGO; Pybricks Code pot tornar a posar el de LEGO quan vulguis (menú Eines, «Restore official LEGO firmware»).'],
-        intro: ['With Pybricks the hub connects to Unifiscratch by Bluetooth, with no cable and no extra program. You only install it once per hub.', 'Con Pybricks el hub se conecta a Unifiscratch por Bluetooth, sin cable ni programas extra. Solo hay que instalarlo una vez en cada hub.', 'Amb Pybricks el hub es connecta a Unifiscratch per Bluetooth, sense cable ni programes extra. Només cal instal·lar-lo una vegada a cada hub.'],
+        intro: ['With Pybricks the hub connects to Unifyscratch by Bluetooth, with no cable and no extra program. You only install it once per hub.', 'Con Pybricks el hub se conecta a Unifyscratch por Bluetooth, sin cable ni programas extra. Solo hay que instalarlo una vez en cada hub.', 'Amb Pybricks el hub es connecta a Unifyscratch per Bluetooth, sense cable ni programes extra. Només cal instal·lar-lo una vegada a cada hub.'],
         actions: [{type: 'link', href: PYBRICKS_CODE_URL, label: ['Open Pybricks Code', 'Abrir Pybricks Code', 'Obrir Pybricks Code']}],
         sections: [
             {title: FIRST_TIME,

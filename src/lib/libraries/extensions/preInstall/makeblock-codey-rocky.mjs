@@ -269,7 +269,7 @@ blockClass.EXTENSION_ID = EXTENSION_ID;
 const entry = {
     name: 'Codey Rocky',
     extensionId: EXTENSION_ID,
-    collaborator: 'Makeblock / Unifiscratch',
+    collaborator: 'Makeblock / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('codey.description', 'USB or Bluetooth control of Codey Rocky in live mode.'),

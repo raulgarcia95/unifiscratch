@@ -1,8 +1,8 @@
 # Publicación en GitHub Pages
 
-Repositorio propio: https://github.com/raulgarcia95/unifiscratch
+Repositorio propio: https://github.com/raulgarcia95/unifyscratch
 
-Dirección pública: https://raulgarcia95.github.io/unifiscratch/
+Dirección pública: https://raulgarcia95.github.io/unifyscratch/
 
 Se publica el editor compilado en la rama `gh-pages`, con GitHub Pages configurado para servir la raíz de esa rama. La rama `main` conserva el código fuente y las licencias.
 
@@ -18,5 +18,11 @@ Notas de la publicación del 26 de noviembre de 2026:
 
 - `npm run preload` se detiene porque el módulo publicado de Microbit More ha cambiado y requiere revisión. Se compiló con la copia en caché de `preload/` de la publicación anterior (sin aceptar el cambio) y con `npx webpack` en lugar de `npm run build`, que ejecuta el preload. `src/generated` y `static/microbit` también vienen de esa copia.
 - Los .hex de micro:bit se generan con la CLI de pxt (ver los README de `firmware/`).
+
+Notas del 27 de noviembre de 2026 (cambio de nombre):
+
+- El proyecto pasa a llamarse Unifyscratch y el repositorio se renombró de `unifiscratch` a `unifyscratch`. GitHub redirige el repositorio antiguo, pero no la web: la dirección antigua `https://raulgarcia95.github.io/unifiscratch/` deja de funcionar.
+- En el PC, el remoto `unifiscratch` y la carpeta `unifiscratch-pages` conservan su nombre; basta con actualizar la URL del remoto: `git remote set-url unifiscratch https://github.com/raulgarcia95/unifyscratch.git`.
+- Las extensiones MediaPipe Mano e Imagen cargan MediaPipe 1.2.3 en lugar de `@latest` (parche en `scripts/extension-compat-loader.cjs`).
 
 GitHub Pages proporciona HTTPS. El control USB/Bluetooth sigue requiriendo un navegador compatible y que el usuario conceda acceso al dispositivo desde el ordenador que utilice la web. No permite controlar desde fuera un robot conectado a otro ordenador.

@@ -1,13 +1,13 @@
 {
-  "name": "unifiscratch",
+  "name": "unifyscratch",
   "version": "5.1.23",
   "description": "Unified block-programming editor for curated robotics, board and AI extensions",
   "author": "Raúl García Antolín (based on Scratch GUI by the Scratch Foundation / MIT and Xcratch by Koji Yokokawa)",
   "license": "AGPL-3.0-only",
-  "homepage": "https://raulgarcia95.github.io/unifiscratch/",
+  "homepage": "https://raulgarcia95.github.io/unifyscratch/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raulgarcia95/unifiscratch.git"
+    "url": "https://github.com/raulgarcia95/unifyscratch.git"
   },
   "main": "./dist/scratch-gui.js",
   "scripts": {

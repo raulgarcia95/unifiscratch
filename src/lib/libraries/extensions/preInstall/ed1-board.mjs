@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 // Citilab ED1 (ESP32) over USB with the MicroBlocks firmware it ships with.
 //
-// Nothing has to be installed on the board: on connect, Unifiscratch checks
+// Nothing has to be installed on the board: on connect, Unifyscratch checks
 // that the board is an ED1 running MicroBlocks, then stores a few small helper
 // programs ("chunks") written with its own bytecode assembler
 // (microblocks-transport.mjs). Each block sets a few global variables and
@@ -370,7 +370,7 @@ const blockClass = class Ed1Board {
     }
 
     lightLevel () {
-        // MicroBlocks reports 0-1000; Unifiscratch keeps the 0-100 scale.
+        // MicroBlocks reports 0-1000; Unifyscratch keeps the 0-100 scale.
         return this.readSensors().then(values => Math.round(values.light / 10));
     }
 
@@ -394,7 +394,7 @@ const iconURL = deviceIconURL('ed1');
 const entry = {
     name,
     extensionId: id,
-    collaborator: 'Citilab / Unifiscratch',
+    collaborator: 'Citilab / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('ed1Board.description', 'USB control for the Citilab ED1 with its MicroBlocks firmware: Fantàstic robot motors, buzzer, screen, touch buttons and sensors.'),

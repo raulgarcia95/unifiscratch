@@ -31,13 +31,13 @@ const UnavailableStep = props => (
                         {props.connection === 'web-bluetooth' ? (
                             <FormattedMessage
                                 defaultMessage="Use Chrome or Edge and turn on the computer’s Bluetooth. Scratch Link is not needed."
-                                description="Unifiscratch text: unavailable step, browser Bluetooth"
+                                description="Unifyscratch text: unavailable step, browser Bluetooth"
                                 id="unifiscratch.extensions.connection.useChromeBluetooth"
                             />
                         ) : props.connection === 'no-web-bluetooth' ? (
                             <FormattedMessage
-                                defaultMessage="This browser cannot use Bluetooth: open Unfyscratch in Chrome or Edge, or install and open Scratch Link."
-                                description="Unifiscratch text: unavailable step, browser without Web Bluetooth"
+                                defaultMessage="This browser cannot use Bluetooth: open Unifyscratch in Chrome or Edge, or install and open Scratch Link."
+                                description="Unifyscratch text: unavailable step, browser without Web Bluetooth"
                                 id="unifiscratch.extensions.connection.noWebBluetooth"
                             />
                         ) : (
@@ -63,7 +63,7 @@ const UnavailableStep = props => (
                         {props.connection === 'web-bluetooth' ? (
                             <FormattedMessage
                                 defaultMessage="Switch on the device, keep it close and choose it in the browser window."
-                                description="Unifiscratch text: unavailable step, pick the device"
+                                description="Unifyscratch text: unavailable step, pick the device"
                                 id="unifiscratch.extensions.connection.pickInBrowser"
                             />
                         ) : (

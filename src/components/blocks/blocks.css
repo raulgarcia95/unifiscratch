@@ -40,7 +40,7 @@
     stroke: none;
 }
 
-/* Connection and help buttons of Unifiscratch extensions (action-buttons.mjs):
+/* Connection and help buttons of Unifyscratch extensions (action-buttons.mjs):
    a button, not a block, in a colour of its own. */
 .blocks :global(.unifiscratchActionButton .blocklyFlyoutButtonBackground) {
     fill: #ffb300;

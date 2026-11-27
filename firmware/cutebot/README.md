@@ -1,7 +1,7 @@
-# Firmware de Unifiscratch para Cutebot
+# Firmware de Unifyscratch para Cutebot
 
 Programa MakeCode (licencia MIT, código propio) que deja la micro:bit del
-Cutebot escuchando órdenes de Unifiscratch por **Bluetooth** (servicio UART)
+Cutebot escuchando órdenes de Unifyscratch por **Bluetooth** (servicio UART)
 y por **USB** (puerto serie a 115200), con el mismo protocolo de texto.
 
 ## Cómo generar el .hex (una sola vez)
@@ -13,7 +13,7 @@ y por **USB** (puerto serie a 115200), con el mismo protocolo de texto.
 3. Sustituye el contenido de `main.ts` por el `main.ts` de esta carpeta.
 4. Comprueba en «Project settings» que esté marcada
    «No Pairing Required: Anyone can connect via Bluetooth».
-5. Pulsa **Download** y guarda el archivo como `unifiscratch-cutebot.hex`.
+5. Pulsa **Download** y guarda el archivo como `unifyscratch-cutebot.hex`.
 
 Ese .hex vale para micro:bit V1 y V2.
 

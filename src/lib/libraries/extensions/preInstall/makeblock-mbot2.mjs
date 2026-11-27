@@ -305,7 +305,7 @@ blockClass.EXTENSION_ID = EXTENSION_ID;
 const entry = {
     name: 'mBot2',
     extensionId: EXTENSION_ID,
-    collaborator: 'Makeblock / Unifiscratch',
+    collaborator: 'Makeblock / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('mbot2.description', 'USB or Bluetooth control of CyberPi in live mode.'),
@@ -313,7 +313,7 @@ const entry = {
     featured: true,
     disabled: false,
     category: 'robots',
-    helpLink: 'https://geekdaxue.co/read/makeblock-help-center-en%40mcode/cyberpi-api-shields'
+    helpLink: 'https://education.makeblock.com/?p=78174'
 };
 
 export {entry, blockClass};

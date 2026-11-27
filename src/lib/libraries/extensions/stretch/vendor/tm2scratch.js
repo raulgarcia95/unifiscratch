@@ -1,5 +1,5 @@
 const {ml5, tmPose, librariesReady} = require('../runtime');
-/* Adapted for Unifiscratch; provenance and original hash: ../upstream.json. */
+/* Adapted for Unifyscratch; provenance and original hash: ../upstream.json. */
 const ArgumentType = require('unifiscratch-vm/extension-support/argument-type');
 const BlockType = require('unifiscratch-vm/extension-support/block-type');
 const Cast = require('unifiscratch-vm/util/cast');

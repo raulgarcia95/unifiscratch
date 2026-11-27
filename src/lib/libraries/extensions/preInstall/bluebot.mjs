@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 // TTS Blue-Bot floor robot, by Web Bluetooth (Bluetooth Low Energy).
 //
-// Written for Unifiscratch. TTS does not publish the protocol; what we use is
+// Written for Unifyscratch. TTS does not publish the protocol; what we use is
 // the interoperability information that two independent public projects show
 // in the same way (only these facts, no code taken from them):
 //  - Vittascience's Blue-Bot web interface (Web Bluetooth): device name
@@ -336,7 +336,7 @@ export const blockClass = BlueBot;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'TTS / Unifiscratch',
+    collaborator: 'TTS / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: t('description'),

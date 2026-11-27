@@ -1,7 +1,7 @@
-# Firmware de Unifiscratch para micro:shield
+# Firmware de Unifyscratch para micro:shield
 
 Programa MakeCode (licencia MIT) que deja la micro:bit montada en la
-**micro:shield** de Make&Learn escuchando órdenes de Unifiscratch por
+**micro:shield** de Make&Learn escuchando órdenes de Unifyscratch por
 **Bluetooth** (servicio UART) y por **USB** (puerto serie a 115200), con el
 mismo protocolo de texto que el firmware del Cutebot.
 
@@ -35,13 +35,13 @@ pantalla LED y sonido.
    llámalo `kit.ts`.
 4. Comprueba en «Project settings» que esté marcada
    «No Pairing Required: Anyone can connect via Bluetooth».
-5. Pulsa **Download** y guarda el archivo como `unifiscratch-microshield.hex`
+5. Pulsa **Download** y guarda el archivo como `unifyscratch-microshield.hex`
    en `static/extensions/microshield/`.
 
 Ese .hex vale para micro:bit V1 y V2.
 
 En la micro:bit V1, con Bluetooth, este programa no cabía en la memoria flash.
-Por eso `pxt.json` quita los servicios Bluetooth que Unifiscratch no usa
+Por eso `pxt.json` quita los servicios Bluetooth que Unifyscratch no usa
 (DFU, eventos, información del dispositivo, Eddystone, flasheo parcial y modo
 de emparejamiento: con «No Pairing Required» no hace falta) y deja solo el UART.
 Si se añade código y vuelve a salir «program too big», hay que recortar código.

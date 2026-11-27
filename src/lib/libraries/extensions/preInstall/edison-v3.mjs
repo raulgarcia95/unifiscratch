@@ -2,8 +2,8 @@
 // Edison V3 (Microbric) over WebUSB.
 //
 // Edison V3 runs programs compiled by Microbric's EdPy/EdScratch servers, so
-// Unifiscratch cannot build them itself. Instead the robot runs a small EdPy
-// "bridge" (static/extensions/edison/unfyscratch-puente-edison-v3.py), loaded
+// Unifyscratch cannot build them itself. Instead the robot runs a small EdPy
+// "bridge" (static/extensions/edison/unifyscratch-puente-edison-v3.py), loaded
 // once with the official app https://www.edpyapp.com/v3/. The bridge reads
 // numbers sent over USB with Ed.ReadUSB() and answers with Ed.WriteUSB().
 //
@@ -33,7 +33,7 @@ const USB = {
 };
 const STATE_PROGRAM_COMPLETE = 3;
 export const BRIDGE_ID = 3001;
-export const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
+export const BRIDGE_FILE = 'unifyscratch-puente-edison-v3.py';
 const bridgeHelp = () => tr(
     `Load the bridge program ${BRIDGE_FILE} on Edison with https://www.edpyapp.com/v3/ ` +
         '(program button) and connect again. Press the «how to connect Edison» button to see the steps.',
@@ -473,7 +473,7 @@ const iconURL = deviceIconURL('edisonV3');
 const entry = {
     name,
     extensionId: id,
-    collaborator: 'Microbric / Unifiscratch',
+    collaborator: 'Microbric / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('edisonV3.description', 'USB control of Edison V3 through a bridge program loaded once with EdPy: moves, spins, LEDs, beep and sensors.'),

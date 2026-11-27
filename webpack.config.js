@@ -116,15 +116,15 @@ if (isDevServer || process.env.NODE_ENV === 'development' || !fs.existsSync(asse
         }))
         .addPlugin(new WebpackPwaManifest({
             publicPath: './',
-            name: 'Unifiscratch',
-            short_name: 'Unifiscratch',
+            name: 'Unifyscratch',
+            short_name: 'Unifyscratch',
             description: 'Unified Scratch editor with curated extension support',
             background_color: '#ffffff',
             orientation: 'any',
             crossorigin: 'use-credentials',
             inject: true,
             ios: {
-                'apple-mobile-web-app-title': 'Unifiscratch',
+                'apple-mobile-web-app-title': 'Unifyscratch',
                 'apple-mobile-web-app-status-bar-style': 'default'
             },
             icons: [
@@ -187,28 +187,28 @@ const buildConfig = baseConfig.clone()
         ...commonHtmlWebpackPluginOptions,
         chunks: ['gui'],
         template: 'src/playground/index.ejs',
-        title: 'Unifiscratch'
+        title: 'Unifyscratch'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['blocksonly'],
         filename: 'blocks-only.html',
         template: 'src/playground/index.ejs',
-        title: 'Unifiscratch: Blocks Only Example'
+        title: 'Unifyscratch: Blocks Only Example'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['compatibilitytesting'],
         filename: 'compatibility-testing.html',
         template: 'src/playground/index.ejs',
-        title: 'Unifiscratch: Compatibility Testing'
+        title: 'Unifyscratch: Compatibility Testing'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['player'],
         filename: 'player.html',
         template: 'src/playground/index.ejs',
-        title: 'Unifiscratch: Player Example'
+        title: 'Unifyscratch: Player Example'
     }))
     .addPlugin(new CopyWebpackPlugin({
         patterns: [

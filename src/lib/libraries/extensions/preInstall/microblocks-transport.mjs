@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {tr, textOf, timeoutError, isTimeout} from './runtime-texts.mjs';
-// MicroBlocks serial protocol for Unifiscratch (Web Serial).
+// MicroBlocks serial protocol for Unifyscratch (Web Serial).
 //
 // Boards that ship with the MicroBlocks firmware (Citilab ED1 and others)
 // speak a small binary protocol over USB serial at 115200 baud:
@@ -14,7 +14,7 @@ import {tr, textOf, timeoutError, isTimeout} from './runtime-texts.mjs';
 // literals, stored with chunkCode16Msg and started with startChunkMsg. The
 // board answers with taskDone, taskReturnedValue or taskError.
 //
-// This file is Unifiscratch's own implementation, written from the public
+// This file is Unifyscratch's own implementation, written from the public
 // protocol description and checked against the MicroBlocks virtual machine
 // (https://bitbucket.org/john_maloney/smallvm, MPL-2.0). No MicroBlocks code
 // is copied here; only protocol numbers and the instruction format are used.

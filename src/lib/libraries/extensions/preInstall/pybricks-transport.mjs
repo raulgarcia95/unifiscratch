@@ -2,7 +2,7 @@
 import {tr, textOf} from './runtime-texts.mjs';
 // Link to a LEGO hub running the Pybricks firmware, over Web Bluetooth.
 //
-// Written for Unifiscratch from the public description of the Pybricks BLE
+// Written for Unifyscratch from the public description of the Pybricks BLE
 // profile (pybricks/technical-info, "pybricks-ble-profile.md"). Commands and
 // events travel on one characteristic: the first byte is the type.
 //
@@ -118,7 +118,7 @@ export class PybricksTransport {
         this.maxWrite = Math.max(DEFAULT_MAX_WRITE, view.getUint16(0, true));
         const features = view.getUint32(2, true);
         if (!(features & FEATURE_REPL)) {
-            throw new Error(tr('This Pybricks firmware does not include the console (REPL) that Unifiscratch uses.', 'Este firmware Pybricks no incluye la consola (REPL) que usa Unifiscratch.', 'Aquest firmware Pybricks no inclou la consola (REPL) que fa servir Unifiscratch.'));
+            throw new Error(tr('This Pybricks firmware does not include the console (REPL) that Unifyscratch uses.', 'Este firmware Pybricks no incluye la consola (REPL) que usa Unifyscratch.', 'Aquest firmware Pybricks no inclou la consola (REPL) que fa servir Unifyscratch.'));
         }
     }
 

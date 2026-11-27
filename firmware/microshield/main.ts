@@ -1,4 +1,4 @@
-// Unifiscratch micro:shield firmware (MIT).
+// Unifyscratch micro:shield firmware (MIT).
 // Drives the Make&Learn micro:shield (PCA9685 at I2C 0x40) and the micro:bit
 // pins. PCA9685 channel map, servo pulse formula and stepper phase values come
 // from MakeAndLearn/pxt-microshield (MIT, Copyright (c) 2019 MakeAndLearn).

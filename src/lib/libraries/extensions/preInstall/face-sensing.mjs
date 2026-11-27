@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-// Face Sensing for Unifiscratch.
+// Face Sensing for Unifyscratch.
 //
 // Independent implementation of the ideas of the Scratch Lab "Face Sensing"
 // experiment: sprites can follow parts of the face, tilt with the head and
@@ -339,7 +339,7 @@ const iconURL = makeIcon(icon);
 const entry = {
     name,
     extensionId: id,
-    collaborator: 'Unifiscratch (MediaPipe)',
+    collaborator: 'Unifyscratch (MediaPipe)',
     iconURL,
     insetIconURL: iconURL,
     description: msg('faceSensing.description', 'Sprites follow the nose, eyes or mouth, tilt with your head and grow with your face. Uses the camera; images stay in the browser.'),

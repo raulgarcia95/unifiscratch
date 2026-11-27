@@ -18,7 +18,7 @@ import {tr, timeoutError, isTimeout} from './runtime-texts.mjs';
 //                      reply 1 asks the robot to answer with the same idx and a
 //                      Python dict text such as "{'ret': 42}".
 //
-// Written for Unifiscratch from the publicly observable frame format; no
+// Written for Unifyscratch from the publicly observable frame format; no
 // Makeblock source code is included.
 
 const HEAD = 0xF3;

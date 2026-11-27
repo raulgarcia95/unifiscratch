@@ -39,8 +39,8 @@ try {
     // Not a git checkout: the published SOURCE.txt then names no commit.
 }
 await fs.writeFile(path.join(output, 'SOURCE.txt'),
-    'Unifiscratch source code: https://github.com/raulgarcia95/unifiscratch\n' +
+    'Unifyscratch source code: https://github.com/raulgarcia95/unifyscratch\n' +
     `Built from commit: ${commit}\n` +
     'License: AGPL-3.0, without any warranty. Third-party licences and credits: THIRD_PARTY_NOTICES.md\n' +
-    'Unifiscratch is not an official Scratch product and is not endorsed by the Scratch Foundation or MIT.\n');
+    'Unifyscratch is not an official Scratch product and is not endorsed by the Scratch Foundation or MIT.\n');
 console.log(output);

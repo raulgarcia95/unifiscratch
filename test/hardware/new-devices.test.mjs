@@ -303,7 +303,7 @@ class FakeEdison {
             if (this.running) setImmediate(() => this.step());
         }
     }
-    // Same decoding as unfyscratch-puente-edison-v3.py.
+    // Same decoding as unifyscratch-puente-edison-v3.py.
     step () {
         const data = this.usbValue;
         const order = Math.floor(data / 4096);
@@ -339,7 +339,7 @@ test('Edison card links to the bridge program and the help block opens the guide
     const {access} = await import('node:fs/promises');
     const [guideLink, bridge] = cardLinksFor('edisonV3', 'es');
     await access(new URL(`../../${bridge.href}`, import.meta.url));
-    assert.equal(bridge.download, 'unfyscratch-puente-edison-v3.py');
+    assert.equal(bridge.download, 'unifyscratch-puente-edison-v3.py');
     assert.equal(bridge.text, 'Descargar programa puente');
     assert.equal(guideLink.guideId, 'edisonV3');
     const opened = [];

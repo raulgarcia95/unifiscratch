@@ -10,7 +10,7 @@ import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-// ---------- Simulated micro:bit with the Unifiscratch micro:shield firmware ----------
+// ---------- Simulated micro:bit with the Unifyscratch micro:shield firmware ----------
 
 class Firmware {
     constructor ({silent = false} = {}) {
@@ -186,7 +186,7 @@ test('a micro:bit without the micro:shield firmware is reported clearly', async 
     await withBluetooth(device, async () => {
         const board = new MicroShield(new EventEmitter());
         board.transport.timeout = 50;
-        await assert.rejects(board.connectBluetooth(), /firmware de Unifiscratch para micro:shield/);
+        await assert.rejects(board.connectBluetooth(), /firmware de Unifyscratch para micro:shield/);
         assert.equal(board.isConnected(), false);
     });
 });
@@ -196,7 +196,7 @@ test('micro:shield keeps its extension id and shows a firmware guide with the .h
     const guide = guideFor('microShield');
     assert.ok(guide.warning);
     const download = guide.actions.find(action => action.type === 'download');
-    assert.equal(download.path, 'static/extensions/microshield/unifiscratch-microshield.hex');
+    assert.equal(download.path, 'static/extensions/microshield/unifyscratch-microshield.hex');
     const blocks = new MicroShield().getInfo().blocks.map(block => block.opcode);
     assert.ok(blocks.indexOf('connectBluetooth') < blocks.indexOf('connectUsb'), 'Bluetooth comes first');
     ['servo', 'motor', 'stepper', 'distance', 'stripAll', 'showHelp'].forEach(opcode => assert.ok(blocks.includes(opcode), opcode));

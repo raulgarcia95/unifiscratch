@@ -9,7 +9,7 @@ import {
 
 import styles from './unifiscratch-splash.css';
 
-const UNIFISCRATCH_SOURCE_URL = 'https://github.com/raulgarcia95/unifiscratch';
+const UNIFISCRATCH_SOURCE_URL = 'https://github.com/raulgarcia95/unifyscratch';
 const UNIFISCRATCH_NOTICES_URL = `${UNIFISCRATCH_SOURCE_URL}/blob/main/THIRD_PARTY_NOTICES.md`;
 const OPEN_EVENT = 'unifiscratch:open-about';
 
@@ -56,7 +56,7 @@ class UnifiscratchSplash extends React.PureComponent {
                 >
                     <h1 className={styles.title}>
                         <FormattedMessage
-                            defaultMessage="Welcome to Unfyscratch"
+                            defaultMessage="Welcome to Unifyscratch"
                             id="unifiscratch.splash.title"
                         />
                     </h1>
@@ -71,9 +71,9 @@ class UnifiscratchSplash extends React.PureComponent {
                     <p className={styles.disclaimer}>
                         <FormattedMessage
                             defaultMessage={
-                                'Unfyscratch is a free, non-commercial educational project based on Scratch ' +
-                                '(Scratch Foundation) and Xcratch, plus open-source extensions by other authors, ' +
-                                'used under their licences. It is not an official Scratch product and is not ' +
+                                'Unifyscratch is a free, non-commercial educational project based on Scratch ' +
+                                '(Scratch Foundation) that uses open-source extensions by other authors, ' +
+                                'under their licences. It is not an official Scratch product and is not ' +
                                 'endorsed by the Scratch Foundation or MIT.'
                             }
                             id="unifiscratch.splash.disclaimer"
@@ -104,7 +104,7 @@ class UnifiscratchSplash extends React.PureComponent {
                         <FormattedMessage
                             defaultMessage={
                                 'Distributed under the AGPL-3.0 licence, without any warranty. For questions, ' +
-                                'suggestions or claims, contact the creator of Unfyscratch.'
+                                'suggestions or claims, contact the creator of Unifyscratch.'
                             }
                             id="unifiscratch.splash.license"
                         />

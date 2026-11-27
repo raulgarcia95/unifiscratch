@@ -1,4 +1,4 @@
-// Unifiscratch: sensors and actuators of the XTEC micro:bit kits (MIT, own code).
+// Unifyscratch: sensors and actuators of the XTEC micro:bit kits (MIT, own code).
 // Lives next to main.ts (micro:shield firmware) and adds the "X" orders.
 // Every order carries an id chosen by the host and gets one reply line:
 //   X id DR p            digital read pin p             -> X id value

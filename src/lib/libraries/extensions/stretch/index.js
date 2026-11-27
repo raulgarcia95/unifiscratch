@@ -61,8 +61,8 @@ export const entries = Object.entries(originals).map(([id, Original]) => {
         entry: {
             ...metadata,
             disabled: false,
-            collaborator: 'champierre / adaptación Unifiscratch',
-            description: 'Extensión original de Stretch3 adaptada a Unifiscratch. ' +
+            collaborator: 'champierre / adaptación Unifyscratch',
+            description: 'Extensión original de Stretch3 adaptada a Unifyscratch. ' +
                 'Requiere cámara e Internet para modelos.',
             helpLink: `https://github.com/champierre/${id}`
         },

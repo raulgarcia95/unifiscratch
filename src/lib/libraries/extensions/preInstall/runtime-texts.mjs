@@ -39,5 +39,5 @@ export const isTimeout = error => Boolean(error && error.code === 'timeout');
 export const defaultText = (key, en) => ({
     id: `unifiscratch.extensions.default.${key}`,
     default: en,
-    description: `Unifiscratch default input text: ${key}`
+    description: `Unifyscratch default input text: ${key}`
 });

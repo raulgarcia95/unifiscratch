@@ -12,7 +12,7 @@ import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-// ---------- Simulated micro:bit with the Unifiscratch firmware ----------
+// ---------- Simulated micro:bit with the Unifyscratch firmware ----------
 
 class Firmware {
     constructor ({silent = false, hello = 'CB2 2'} = {}) {
@@ -196,12 +196,12 @@ test('a stop or a red flag cancels a timed move on the robot', async () => {
     });
 });
 
-test('a micro:bit without the Unifiscratch firmware is reported clearly', async () => {
+test('a micro:bit without the Unifyscratch firmware is reported clearly', async () => {
     const device = new FakeMicrobit({silent: true});
     await withBluetooth(device, async () => {
         const robot = new Cutebot(new EventEmitter());
         robot.transport.timeout = 50;
-        await assert.rejects(robot.connectBluetooth(), /firmware de Unifiscratch/);
+        await assert.rejects(robot.connectBluetooth(), /firmware de Unifyscratch/);
         assert.equal(robot.isConnected(), false);
         assert.equal(device.gatt.connected, false);
     });
@@ -240,7 +240,7 @@ test('Cutebot shows a firmware guide with the .hex download', () => {
     const guide = guideFor('smartCutebot');
     assert.ok(guide.warning);
     const download = guide.actions.find(action => action.type === 'download');
-    assert.equal(download.path, 'static/extensions/cutebot/unifiscratch-cutebot.hex');
+    assert.equal(download.path, 'static/extensions/cutebot/unifyscratch-cutebot.hex');
     const blocks = new Cutebot().getInfo().blocks.map(block => block.opcode);
     assert.ok(blocks.indexOf('connectBluetooth') < blocks.indexOf('connectUsb'), 'Bluetooth comes first');
     assert.ok(blocks.includes('showHelp'));

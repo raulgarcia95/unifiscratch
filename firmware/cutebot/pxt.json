@@ -1,7 +1,7 @@
 {
-    "name": "unifiscratch-cutebot",
+    "name": "unifyscratch-cutebot",
     "version": "1.0.0",
-    "description": "Firmware de Unifiscratch para Cutebot: ordenes por Bluetooth (UART) y USB",
+    "description": "Firmware de Unifyscratch para Cutebot: ordenes por Bluetooth (UART) y USB",
     "license": "MIT",
     "dependencies": {
         "core": "*",

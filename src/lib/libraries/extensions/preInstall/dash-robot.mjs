@@ -532,7 +532,7 @@ const iconURL = deviceIconURL('dash');
 const entry = {
     name,
     extensionId: id,
-    collaborator: 'Wonder Workshop / Unifiscratch',
+    collaborator: 'Wonder Workshop / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('dashRobot.description', 'Bluetooth control of Dash: timed moves, turns, head, lights, sounds and sensors.'),

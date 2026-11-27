@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-// micro:shield (Make&Learn) on a micro:bit with the Unifiscratch firmware
+// micro:shield (Make&Learn) on a micro:bit with the Unifyscratch firmware
 // (firmware/microshield). Bluetooth first, USB as an alternative, with the
 // same line protocol as Cutebot. The firmware drives the shield's PCA9685
 // (DC motors, steppers, servos) and the free micro:bit pins, and stops the
@@ -470,7 +470,7 @@ export const blockClass = MicroShield;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'Make&Learn / Unifiscratch',
+    collaborator: 'Make&Learn / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('microShield.description', 'micro:shield with micro:bit by Bluetooth or USB: DC motors, steppers, servos, pins, sonar and LED strip.'),

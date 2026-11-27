@@ -1,6 +1,6 @@
-// Unifiscratch firmware for micro:bit + Wappsto:bit (MIT). Own implementation.
+// Unifyscratch firmware for micro:bit + Wappsto:bit (MIT). Own implementation.
 //
-// The micro:bit listens to Unifiscratch over Bluetooth UART and USB serial
+// The micro:bit listens to Unifyscratch over Bluetooth UART and USB serial
 // (115200) with the same text protocol, and talks to the Wappsto:bit board
 // over I2C (address 0x11). The I2C frame format follows the public, MIT
 // licensed MakeCode extension wappsto/pxt-wappsto; the code here is our own.
@@ -210,7 +210,7 @@ function readBoard() {
     }
 }
 
-// ---------- Orders from Unifiscratch ----------
+// ---------- Orders from Unifyscratch ----------
 
 function clean(text: string): string {
     let start = 0

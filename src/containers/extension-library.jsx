@@ -11,6 +11,15 @@ import initializeExtensions from '../lib/libraries/extensions/initialize';
 import {localize} from '../lib/unifiscratch-l10n';
 import {cardLinksFor, guideOpensOnAdd, openSetupGuide} from '../lib/libraries/extensions/setup-guides.mjs';
 
+import {deviceIconURL} from '../lib/libraries/extensions/preInstall/device-icons.mjs';
+import legoPeachIconURL from '../lib/libraries/extensions/lego-images/legopeach.svg';
+import tm2scratchIconURL from '../lib/libraries/extensions/ai-images/tm2scratch.png';
+import tmpose2scratchIconURL from '../lib/libraries/extensions/ai-images/tmpose2scratch.png';
+import ic2scratchIconURL from '../lib/libraries/extensions/ai-images/ic2scratch.png';
+import handpose2scratchIconURL from '../lib/libraries/extensions/ai-images/handpose2scratch.png';
+import facemesh2scratchIconURL from '../lib/libraries/extensions/ai-images/facemesh2scratch.png';
+import faceSensingIconURL from '../lib/libraries/extensions/ai-images/faceSensing.png';
+
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
 
@@ -313,6 +322,43 @@ const knownExtensionCardKey = extension => {
     return null;
 };
 
+// Card pictures for modules that ship without one (or with a blank one). The AI
+// pictures are the original authors' card images (champierre, AGPL-3.0;
+// Scratch Foundation, AGPL-3.0); the LEGO ones are drawn for Unifyscratch.
+const cardIconOverrides = {
+    legoble: deviceIconURL('legoBle'),
+    legoremote: deviceIconURL('legoRemote'),
+    controlplus: deviceIconURL('legoControlPlus'),
+    spikeessential: deviceIconURL('spikeEssential'),
+    legopeach: legoPeachIconURL,
+    tm2scratch: tm2scratchIconURL,
+    tmpose2scratch: tmpose2scratchIconURL,
+    ic2scratch: ic2scratchIconURL,
+    handpose2scratch: handpose2scratchIconURL,
+    facemesh2scratch: facemesh2scratchIconURL,
+    facesensing: faceSensingIconURL
+};
+
+// LEGO extensions are shown together at the end of their category, with
+// SPIKE Essential and SPIKE Prime last.
+const legoCardOrder = [
+    'ev3', 'boost', 'wedo2', 'poweredup', 'legoremote', 'controlplus', 'duplotrain',
+    'legomario', 'legoluigi', 'legopeach', 'legoble', 'spikeessential', 'legospikeprime'
+];
+
+const legoRank = extension => {
+    const id = String(extension.extensionId || '').toLowerCase();
+    const key = knownExtensionCardKey(extension);
+    const rank = legoCardOrder.indexOf(legoCardOrder.includes(key) ? key : id);
+    return rank;
+};
+
+const orderLegoLast = items => {
+    const lego = items.filter(item => legoRank(item) !== -1)
+        .sort((a, b) => legoRank(a) - legoRank(b));
+    return items.filter(item => legoRank(item) === -1).concat(lego);
+};
+
 const localizeKnownExtensionCard = (intl, extension, field, fallback) => {
     // A module that could not load keeps its known, translated name; only its
     // description explains why it is not available.
@@ -445,9 +491,13 @@ class ExtensionLibrary extends React.PureComponent {
         
     }
     render () {
-        const extensionLibraryThumbnailData = extensionLibraryContent.map(extension => ({
+        const extensionLibraryThumbnailData = orderLegoLast(extensionLibraryContent).map(extension => ({
             rawURL: extension.iconURL || extensionIcon,
             ...extension,
+            ...(cardIconOverrides[knownExtensionCardKey(extension)] ? {
+                iconURL: cardIconOverrides[knownExtensionCardKey(extension)],
+                rawURL: cardIconOverrides[knownExtensionCardKey(extension)]
+            } : {}),
             category: categoryForExtension(extension),
             name: localizeKnownExtensionCard(this.props.intl, extension, 'name', extension.name),
             description: localizeKnownExtensionCard(this.props.intl, extension, 'description', extension.description),

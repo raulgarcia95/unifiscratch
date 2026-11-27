@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 // One Bluetooth/USB link per Scratch runtime to a micro:bit running the
-// Unifiscratch micro:shield firmware (firmware/microshield). The micro:shield
+// Unifyscratch micro:shield firmware (firmware/microshield). The micro:shield
 // extension and the "Sensores y actuadores" extension both use it, so the
 // board is connected once and either extension's blocks work.
 import {MicrobitUartTransport} from './microbit-uart-transport.mjs';
@@ -14,7 +14,7 @@ const createLink = runtime => {
     const connectListeners = new Set();
     const transport = new MicrobitUartTransport('micro:shield', {
         expect: 'MS',
-        noReply: () => tr('The micro:bit does not answer: load the Unifiscratch firmware for micro:shield (see the guide).', 'La micro:bit no responde: carga el firmware de Unifiscratch para micro:shield (ver la guía).', 'La micro:bit no respon: carrega el firmware d’Unifiscratch per a micro:shield (mira la guia).'),
+        noReply: () => tr('The micro:bit does not answer: load the Unifyscratch firmware for micro:shield (see the guide).', 'La micro:bit no responde: carga el firmware de Unifyscratch para micro:shield (ver la guía).', 'La micro:bit no respon: carrega el firmware d’Unifyscratch per a micro:shield (mira la guia).'),
         notConnected: () => tr('Connect the micro:shield (Bluetooth or USB) before using the blocks.', 'Conecta la micro:shield (Bluetooth o USB) antes de usar los bloques.', 'Connecta la micro:shield (Bluetooth o USB) abans de fer servir els blocs.'),
         onLine: line => lineListeners.forEach(listener => listener(line))
     });

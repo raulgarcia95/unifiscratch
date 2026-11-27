@@ -1,7 +1,7 @@
 {
-    "name": "unifiscratch-microshield",
+    "name": "unifyscratch-microshield",
     "version": "1.0.0",
-    "description": "Firmware de Unifiscratch para micro:shield (Make&Learn): ordenes por Bluetooth (UART) y USB",
+    "description": "Firmware de Unifyscratch para micro:shield (Make&Learn): ordenes por Bluetooth (UART) y USB",
     "license": "MIT",
     "dependencies": {
         "core": "*",

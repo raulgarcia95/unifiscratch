@@ -1,6 +1,6 @@
-# Unifiscratch
+# Unifyscratch
 
-Unifiscratch es un editor Scratch personalizado para reunir extensiones educativas de robotica, placas e IA en una sola aplicacion. La base ya incluye:
+Unifyscratch es un editor Scratch personalizado para reunir extensiones educativas de robotica, placas e IA en una sola aplicacion. La base ya incluye:
 
 - Un cargador manual de extensiones `.mjs` en la biblioteca de extensiones.
 - Un sistema de predescarga desde `scripts/preload-rules.json`.

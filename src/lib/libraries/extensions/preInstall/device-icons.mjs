@@ -1,4 +1,4 @@
-// Unifiscratch device icons: cartoon illustrations drawn from photos of each
+// Unifyscratch device icons: cartoon illustrations drawn from photos of each
 // robot/board, all in the same style (cream card, dark outline, flat colours,
 // ground shadow). Source SVGs live in this file so the modules stay importable
 // from Node (hardware tests) without a bundler.
@@ -263,6 +263,97 @@ const ICONS = {
 <circle cx="279" cy="152" r="9" fill="#0E7490"/>
 <path d="M279 146V158M273 152H285" stroke="#E0F7FA" stroke-width="3.5" stroke-linecap="round"/>
 <path d="M101 52Q104 42 116 40" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.55"/><path d="M116 54H150" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.6"/><path d="M258 124Q262 116 272 115" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.8"/><path d="M20 120Q24 114 32 114" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+</svg>`,
+    legoControlPlus: `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+<defs><radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#FFF8E7"/><stop offset="1" stop-color="#FFE2B0"/></radialGradient></defs>
+<rect width="320" height="240" rx="24" fill="url(#bg)"/>
+<ellipse cx="160" cy="210" rx="136" ry="13" fill="#1F2937" opacity=".14"/>
+<g stroke="#1F2937" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+ <rect x="28" y="62" width="22" height="34" rx="4" fill="#2B2F36"/><rect x="28" y="130" width="22" height="34" rx="4" fill="#2B2F36"/>
+ <rect x="270" y="62" width="22" height="34" rx="4" fill="#2B2F36"/><rect x="270" y="130" width="22" height="34" rx="4" fill="#2B2F36"/>
+ <rect x="44" y="40" width="232" height="160" rx="22" fill="#3A3F47"/>
+ <rect x="66" y="56" width="188" height="128" rx="14" fill="#A0A5A9"/>
+ <rect x="94" y="78" width="132" height="84" rx="10" fill="#2B2F36"/>
+ <circle cx="160" cy="120" r="22" fill="#2B2F36"/>
+</g>
+<g fill="#1F2937"><circle cx="58" cy="56" r="0"/></g>
+<g fill="#55606B"><circle cx="78" cy="68" r="5"/><circle cx="96" cy="68" r="5"/><circle cx="114" cy="68" r="5"/><circle cx="206" cy="68" r="5"/><circle cx="224" cy="68" r="5"/><circle cx="242" cy="68" r="5"/>
+<circle cx="78" cy="172" r="5"/><circle cx="96" cy="172" r="5"/><circle cx="114" cy="172" r="5"/><circle cx="206" cy="172" r="5"/><circle cx="224" cy="172" r="5"/><circle cx="242" cy="172" r="5"/>
+<circle cx="78" cy="100" r="5"/><circle cx="78" cy="120" r="5"/><circle cx="78" cy="140" r="5"/><circle cx="242" cy="100" r="5"/><circle cx="242" cy="120" r="5"/><circle cx="242" cy="140" r="5"/></g>
+<circle cx="160" cy="120" r="14" fill="#22C55E" stroke="#14532D" stroke-width="3"/>
+<circle cx="160" cy="120" r="20" fill="none" stroke="#86EFAC" stroke-width="3" opacity=".9"/>
+<g fill="#E5E7EB" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="0"></g>
+<rect x="34" y="70" width="10" height="18" rx="2" fill="#111827"/><rect x="34" y="138" width="10" height="18" rx="2" fill="#111827"/>
+<rect x="276" y="70" width="10" height="18" rx="2" fill="#111827"/><rect x="276" y="138" width="10" height="18" rx="2" fill="#111827"/>
+<path d="M58 52Q62 46 72 46" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+<path d="M78 60H140" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+<path d="M104 88Q108 84 116 84" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+</svg>`,
+    legoRemote: `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+<defs><radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#FFF8E7"/><stop offset="1" stop-color="#FFE2B0"/></radialGradient></defs>
+<rect width="320" height="240" rx="24" fill="url(#bg)"/>
+<ellipse cx="160" cy="212" rx="120" ry="13" fill="#1F2937" opacity=".14"/>
+<g stroke="#1F2937" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+ <rect x="52" y="44" width="216" height="156" rx="30" fill="#8C939A"/>
+ <rect x="66" y="56" width="188" height="132" rx="22" fill="#D9DCDF"/>
+ <rect x="78" y="66" width="58" height="112" rx="26" fill="#3A3F47"/>
+ <rect x="184" y="66" width="58" height="112" rx="26" fill="#3A3F47"/>
+ <circle cx="160" cy="122" r="16" fill="#22C55E"/>
+</g>
+<g stroke="#1F2937" stroke-width="4" stroke-linejoin="round">
+ <rect x="88" y="74" width="38" height="30" rx="12" fill="#6B7280"/><rect x="88" y="140" width="38" height="30" rx="12" fill="#6B7280"/>
+ <rect x="194" y="74" width="38" height="30" rx="12" fill="#6B7280"/><rect x="194" y="140" width="38" height="30" rx="12" fill="#6B7280"/>
+ <circle cx="107" cy="122" r="13" fill="#EF4444"/><circle cx="213" cy="122" r="13" fill="#EF4444"/>
+</g>
+<path d="M107 81V97M99 89H115M213 81V97M205 89H221M99 155H115M205 155H221" stroke="#F9FAFB" stroke-width="4" stroke-linecap="round"/>
+<circle cx="160" cy="80" r="6" fill="#3B82F6" stroke="#1F2937" stroke-width="3"/>
+<path d="M64 62Q70 52 82 50" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+<path d="M150 116Q154 112 160 112" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<path d="M90 80Q94 76 100 76" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+</svg>`,
+    legoBle: `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+<defs><radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#FFF8E7"/><stop offset="1" stop-color="#FFE2B0"/></radialGradient></defs>
+<rect width="320" height="240" rx="24" fill="url(#bg)"/>
+<ellipse cx="150" cy="212" rx="120" ry="13" fill="#1F2937" opacity=".14"/>
+<g stroke="#1F2937" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+ <rect x="40" y="96" width="24" height="30" rx="4" fill="#2B2F36"/><rect x="40" y="140" width="24" height="30" rx="4" fill="#2B2F36"/>
+ <path d="M60 80Q60 66 74 66H226Q240 66 240 80V196H60Z" fill="#E5E7EB"/>
+ <path d="M60 80Q60 66 74 66H226Q240 66 240 80V108H60Z" fill="#F9FAFB"/>
+ <rect x="60" y="108" width="180" height="88" fill="#C7CCD1"/>
+ <circle cx="150" cy="150" r="20" fill="#22C55E"/>
+</g>
+<g fill="#D1D5DB" stroke="#9CA3AF" stroke-width="2"><circle cx="86" cy="86" r="8"/><circle cx="118" cy="86" r="8"/><circle cx="150" cy="86" r="8"/><circle cx="182" cy="86" r="8"/><circle cx="214" cy="86" r="8"/></g>
+<circle cx="150" cy="150" r="11" fill="#86EFAC"/>
+<g fill="none" stroke="#2563EB" stroke-width="7" stroke-linecap="round"><path d="M256 70Q272 86 256 102"/><path d="M270 56Q296 86 270 116"/></g>
+<path d="M266 134V170L282 156L254 140M266 134L282 148L254 164" fill="none" stroke="#2563EB" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" transform="translate(12 0)"/>
+<path d="M72 74Q76 70 84 70" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+<path d="M70 186H110" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+</svg>`,
+    spikeEssential: `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+<defs><radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#FFF8E7"/><stop offset="1" stop-color="#FFE2B0"/></radialGradient></defs>
+<rect width="320" height="240" rx="24" fill="url(#bg)"/>
+<ellipse cx="160" cy="212" rx="136" ry="13" fill="#1F2937" opacity=".14"/>
+<g fill="none" stroke="#1F2937" stroke-width="10" stroke-linecap="round"><path d="M118 132Q100 132 96 112"/><path d="M200 152Q222 152 228 172"/></g>
+<g fill="none" stroke="#3A3F47" stroke-width="5" stroke-linecap="round"><path d="M118 132Q100 132 96 112"/><path d="M200 152Q222 152 228 172"/></g>
+<g stroke="#1F2937" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+ <rect x="34" y="34" width="96" height="84" rx="14" fill="#F4F5F7"/>
+ <rect x="48" y="46" width="68" height="60" rx="8" fill="#2B2F36"/>
+ <rect x="118" y="96" width="92" height="100" rx="18" fill="#FFD21F"/>
+ <rect x="128" y="106" width="72" height="80" rx="12" fill="#F4F5F7"/>
+ <circle cx="164" cy="132" r="15" fill="#FFFFFF"/>
+ <rect x="208" y="160" width="84" height="50" rx="16" fill="#F4F5F7"/>
+ <circle cx="270" cy="185" r="17" fill="#14B8C8"/>
+ <rect x="126" y="160" width="14" height="22" rx="3" fill="#2B2F36"/>
+ <rect x="188" y="160" width="14" height="22" rx="3" fill="#2B2F36"/>
+</g>
+<g fill="#FFF3B0"><rect x="54" y="52" width="16" height="14" rx="3"/><rect x="90" y="52" width="16" height="14" rx="3"/><rect x="72" y="69" width="16" height="14" rx="3"/><rect x="54" y="86" width="16" height="14" rx="3"/><rect x="90" y="86" width="16" height="14" rx="3"/></g>
+<g fill="#3A3F47"><rect x="72" y="52" width="16" height="14" rx="3"/><rect x="54" y="69" width="16" height="14" rx="3"/><rect x="90" y="69" width="16" height="14" rx="3"/><rect x="72" y="86" width="16" height="14" rx="3"/></g>
+<circle cx="164" cy="132" r="9" fill="none" stroke="#22C55E" stroke-width="4"/>
+<circle cx="270" cy="185" r="7" fill="#0E7490"/>
+<path d="M270 179V191M264 185H276" stroke="#E0F7FA" stroke-width="3" stroke-linecap="round"/>
+<path d="M126 104Q130 98 140 98" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+<path d="M42 42Q46 38 54 38" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+<path d="M216 170Q220 166 228 166" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
 </svg>`
 };
 

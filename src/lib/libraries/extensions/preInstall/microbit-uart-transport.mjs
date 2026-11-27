@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {tr, textOf, timeoutError, isTimeout} from './runtime-texts.mjs';
-// Line-based link to a micro:bit running the Unifiscratch firmware.
+// Line-based link to a micro:bit running the Unifyscratch firmware.
 // Bluetooth (Web Bluetooth, UART service) is the preferred path; USB (Web
 // Serial) speaks exactly the same text protocol. The firmware answers "?"
 // with its version and streams "D ..." sensor lines while it hears from us.
@@ -19,7 +19,7 @@ const cancelled = () => new Error(tr('Operation cancelled because the device was
 export class MicrobitUartTransport {
     constructor (label, {
         hello = '?', expect = 'CB', stop = 'S', timeout = 3000, onLine = null,
-        noReply = () => tr('The micro:bit does not answer: load the Unifiscratch firmware for Cutebot (see the guide).', 'La micro:bit no responde: carga el firmware de Unifiscratch para Cutebot (ver la guía).', 'La micro:bit no respon: carrega el firmware d’Unifiscratch per a Cutebot (mira la guia).'),
+        noReply = () => tr('The micro:bit does not answer: load the Unifyscratch firmware for Cutebot (see the guide).', 'La micro:bit no responde: carga el firmware de Unifyscratch para Cutebot (ver la guía).', 'La micro:bit no respon: carrega el firmware d’Unifyscratch per a Cutebot (mira la guia).'),
         notConnected = () => tr('Connect the Cutebot (Bluetooth or USB) before using the blocks.', 'Conecta el Cutebot (Bluetooth o USB) antes de usar los bloques.', 'Connecta el Cutebot (Bluetooth o USB) abans de fer servir els blocs.')
     } = {}) {
         this.label = label;
@@ -63,7 +63,7 @@ export class MicrobitUartTransport {
             try {
                 service = await server.getPrimaryService(UART_SERVICE);
             } catch (error) {
-                throw new Error(tr('The micro:bit does not offer the UART service: load the Unifiscratch firmware.', 'La micro:bit no ofrece el servicio UART: carga el firmware de Unifiscratch.', 'La micro:bit no ofereix el servei UART: carrega el firmware d’Unifiscratch.'));
+                throw new Error(tr('The micro:bit does not offer the UART service: load the Unifyscratch firmware.', 'La micro:bit no ofrece el servicio UART: carga el firmware de Unifyscratch.', 'La micro:bit no ofereix el servei UART: carrega el firmware d’Unifyscratch.'));
             }
             const chars = [await service.getCharacteristic(UART_CHAR_A), await service.getCharacteristic(UART_CHAR_B)];
             const props = c => c.properties || {};

@@ -504,7 +504,7 @@ export const blockClass = SpikePrime;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'LEGO Education / Pybricks / Unifiscratch',
+    collaborator: 'LEGO Education / Pybricks / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: t('description'),

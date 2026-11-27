@@ -480,7 +480,7 @@ class Blocks extends React.Component {
             this.props.updateToolboxState(toolboxXML);
         }
     }
-    // Connection and help buttons of Unifiscratch extensions (action-buttons.mjs):
+    // Connection and help buttons of Unifyscratch extensions (action-buttons.mjs):
     // a click runs the hidden block's function right away, with the click as the
     // user gesture that USB and Bluetooth device choosers need.
     registerActionButtons (categoryInfo) {

@@ -17,7 +17,7 @@ const importModules = [
     import('../stretch/index.js')
 ].map(promise => promise.catch(error => {
     // eslint-disable-next-line no-console
-    console.error('Unifiscratch: an extension module could not be loaded', error);
+    console.error('Unifyscratch: an extension module could not be loaded', error);
     return null;
 }));
 

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-// Cutebot (ELECFREAKS) on a micro:bit with the Unifiscratch firmware
+// Cutebot (ELECFREAKS) on a micro:bit with the Unifyscratch firmware
 // (static/extensions/cutebot). Bluetooth first, USB as an alternative.
 // The firmware is our own MakeCode program; it drives the robot's I2C
 // coprocessor and pins and stops the motors if the link goes quiet.
@@ -351,11 +351,11 @@ class Cutebot {
     checkFirmware () {
         if (!String(this.transport.version || '').startsWith('CB2')) {
             this.transport.lastError = `Cutebot: ${tr(
-                'old firmware. Load the Unifiscratch .hex again to use the accelerometer, gestures, logo, ' +
+                'old firmware. Load the Unifyscratch .hex again to use the accelerometer, gestures, logo, ' +
                     'temperature, light, compass and sound.',
-                'firmware antiguo. Vuelve a cargar el .hex de Unifiscratch para usar ' +
+                'firmware antiguo. Vuelve a cargar el .hex de Unifyscratch para usar ' +
                     'acelerómetro, gestos, logo, temperatura, luz, brújula y sonido.',
-                'firmware antic. Torna a carregar el .hex d’Unifiscratch per fer servir ' +
+                'firmware antic. Torna a carregar el .hex d’Unifyscratch per fer servir ' +
                     'l’acceleròmetre, els gestos, el logo, la temperatura, la llum, la brúixola i el so.')}`;
         }
     }
@@ -542,7 +542,7 @@ export const blockClass = Cutebot;
 export const entry = {
     name,
     extensionId: id,
-    collaborator: 'ELECFREAKS / Unifiscratch',
+    collaborator: 'ELECFREAKS / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
     description: msg('smartCutebot.description', 'Cutebot with micro:bit by Bluetooth or USB: motors, lights, servos, sensors, LED display and the micro:bit buttons, accelerometer and sensors.'),

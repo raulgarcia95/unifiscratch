@@ -426,11 +426,11 @@ export const translateOriginalInfo = (info, extensionId) => {
     return {...info, name: lookup(table, info.name, index), blocks, menus};
 };
 
-// Text of the "extension status" reporter that Unifiscratch adds to every original.
+// Text of the "extension status" reporter that Unifyscratch adds to every original.
 export const statusText = {
     id: 'unifiscratch.extensions.extensionStatus',
     default: 'extension status',
-    description: 'Unifiscratch: status reporter added to original extensions'
+    description: 'Unifyscratch: status reporter added to original extensions'
 };
 
 export const originalTexts = texts;

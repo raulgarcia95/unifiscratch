@@ -1,7 +1,7 @@
 {
-    "name": "unifiscratch-wappsto-bit",
+    "name": "unifyscratch-wappsto-bit",
     "version": "1.0.0",
-    "description": "Firmware de Unifiscratch para micro:bit con Wappsto:bit: órdenes por Bluetooth (UART) y USB, nube Wappsto por I2C",
+    "description": "Firmware de Unifyscratch para micro:bit con Wappsto:bit: órdenes por Bluetooth (UART) y USB, nube Wappsto por I2C",
     "license": "MIT",
     "dependencies": {
         "core": "*",

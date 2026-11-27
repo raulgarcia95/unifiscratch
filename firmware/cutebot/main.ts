@@ -1,4 +1,4 @@
-// Unifiscratch Cutebot firmware (MIT). Own implementation.
+// Unifyscratch Cutebot firmware (MIT). Own implementation.
 // Line protocol, identical over Bluetooth UART and USB serial (115200):
 //   ?                 -> replies "CB2 v" (v = micro:bit version, 1 or 2)
 //   K                 keepalive (host sends every 500 ms)
