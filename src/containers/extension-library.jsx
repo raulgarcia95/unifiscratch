@@ -324,7 +324,7 @@ const knownExtensionCardKey = extension => {
 
 // Card pictures for modules that ship without one (or with a blank one). The AI
 // pictures are the original authors' card images (champierre, AGPL-3.0;
-// Scratch Foundation, AGPL-3.0); the LEGO ones are drawn for Unifyscratch.
+// Scratch Foundation, AGPL-3.0); the LEGO ones are Unifyscratch's own pictures.
 const cardIconOverrides = {
     legoble: deviceIconURL('legoBle'),
     legoremote: deviceIconURL('legoRemote'),
