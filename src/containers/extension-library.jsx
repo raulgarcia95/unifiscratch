@@ -449,7 +449,8 @@ class ExtensionLibrary extends React.PureComponent {
             category: categoryForExtension(extension),
             name: localizeKnownExtensionCard(this.props.intl, extension, 'name', extension.name),
             description: localizeKnownExtensionCard(this.props.intl, extension, 'description', extension.description),
-            extraLinks: cardLinksFor(extension.extensionId, this.props.intl.locale)
+            // The card shows the same links as the extension's guide (one source).
+            extraLinks: cardLinksFor(extension.extensionId, this.props.intl.locale, extension.helpLink)
         }));
         const visibleCategories = ['robots', 'boards', 'ai', 'other']
             .filter(category => extensionLibraryThumbnailData.some(item => item.category === category));

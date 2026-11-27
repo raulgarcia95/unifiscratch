@@ -13,7 +13,7 @@ import {
     blockClass as Edison, encodeOrder, ORDER
 } from '../../src/lib/libraries/extensions/preInstall/edison-v3.mjs';
 import {
-    SETUP_GUIDE_EVENT, cardLinksFor, guideFor, guideIds, guideOpensOnAdd, pickText
+    SETUP_GUIDE_EVENT, cardLinksFor, guideFor, guideIds, guideLinksFor, guideOpensOnAdd, pickText
 } from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -337,10 +337,10 @@ const edisonFixture = options => {
 
 test('Edison card links to the bridge program and the help block opens the guide', async () => {
     const {access} = await import('node:fs/promises');
-    const [bridge, guideLink] = cardLinksFor('edisonV3', 'es');
+    const [guideLink, bridge] = cardLinksFor('edisonV3', 'es');
     await access(new URL(`../../${bridge.href}`, import.meta.url));
     assert.equal(bridge.download, 'unfyscratch-puente-edison-v3.py');
-    assert.equal(bridge.text, 'Programa puente para Edison (.py)');
+    assert.equal(bridge.text, 'Descargar programa puente');
     assert.equal(guideLink.guideId, 'edisonV3');
     const opened = [];
     const target = new EventTarget();
@@ -379,14 +379,19 @@ test('every extension that needs preparation has a complete guide in three langu
             section.steps.forEach(translated);
         });
         ['en', 'es', 'ca', 'es-419', 'fr'].forEach(locale => {
-            const links = cardLinksFor(id, locale);
+            const links = cardLinksFor(id, locale, 'https://example.org/help');
             assert.ok(links.length >= 2, id);
             links.forEach(link => assert.equal(typeof link.text, 'string'));
-            assert.equal(links.at(-1).guideId, id);
+            assert.equal(links[0].guideId, id);
+            // The card repeats exactly the links of the guide, with the same labels.
+            assert.deepEqual(links.slice(1), guideLinksFor(id, locale, 'https://example.org/help'));
         });
     });
     // Robots that work without preparation get no extra card links, and inherited keys are not guides.
     assert.deepEqual(cardLinksFor('dashRobot', 'es'), []);
+    assert.deepEqual(cardLinksFor('dashRobot', 'es', 'https://example.org/dash').map(link => link.text), ['Más información']);
+    // The sensor kit uses the micro:shield board, so its card opens that guide.
+    assert.equal(cardLinksFor('microbitSensorKit', 'es')[0].guideId, 'microShield');
     assert.equal(guideFor('constructor'), null);
     assert.equal(pickText(['a', 'b', 'c'], 'ca-ES'), 'c');
     assert.equal(pickText(['a', 'b', 'c'], 'fr'), 'a');
@@ -402,7 +407,7 @@ test('every extension that needs preparation has a complete guide in three langu
         assert.match(info.text, /Chrome o Edge/);
     });
     assert.equal(guideOpensOnAdd('ev3'), true);
-    assert.match(cardLinksFor('ev3', 'es')[0].text, /Scratch Link \(necesario\)/);
+    assert.equal(cardLinksFor('ev3', 'es')[1].text, 'Descargar Scratch Link');
     assert.equal(guideOpensOnAdd('edisonV3'), true);
     // Guides give plain instructions: no "not tested on real hardware" disclaimers.
     guideIds().forEach(id => {

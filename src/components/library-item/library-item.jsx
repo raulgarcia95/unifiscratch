@@ -13,28 +13,6 @@ import internetConnectionIconURL from './internet-connection.svg';
 
 /* eslint-disable react/prefer-stateless-function */
 class LibraryItemComponent extends React.PureComponent {
-    constructor (props) {
-        super(props);
-        this.state = {
-            copySuccess: false
-        };
-        this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this);
-    }
-    
-    handleCopyToClipboard (e) {
-        e.preventDefault();
-        navigator.clipboard.writeText(this.props.extensionURL)
-            .then(() => {
-                this.setState({copySuccess: true});
-                setTimeout(() => {
-                    this.setState({copySuccess: false});
-                }, 2000);
-            })
-            .catch(err => {
-                console.error('Failed to copy URL: ', err);
-            });
-    }
-    
     // Extra links must not also select (add) the extension from the card.
     handleExtraLink (link) {
         return event => {
@@ -97,16 +75,6 @@ class LibraryItemComponent extends React.PureComponent {
                     <span className={styles.libraryItemName}>{this.props.name}</span>
                     <br />
                     <span className={styles.featuredDescription}>{this.props.description}</span>
-                    {this.props.helpLink ? (
-                        <div>
-                            <span className={styles.featuredExtensionHelp}>
-                                <a
-                                    href={this.props.helpLink}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >{'👉 Help Link'}</a></span>
-                        </div>
-                    ) : null}
                     {(this.props.extraLinks || []).map(link => (
                         <div key={link.href || `${link.guideId}:${link.text}`}>
                             <span className={styles.featuredExtensionHelp}>
@@ -122,19 +90,6 @@ class LibraryItemComponent extends React.PureComponent {
                             </span>
                         </div>
                     ))}
-                    {this.props.extensionURL ? (
-                        <div>
-                            <span className={styles.featuredExtensionUrl}>{'Module: '}
-                                <a
-                                    href={this.props.extensionURL}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    onClick={this.handleCopyToClipboard}
-                                    title="Click to copy URL to clipboard"
-                                >{this.props.extensionURL} {this.state.copySuccess ? '✓ Copied!' : ''}</a>
-                            </span>
-                        </div>
-                    ) : null}
                 </div>
                 {this.props.bluetoothRequired || this.props.internetConnectionRequired || this.props.collaborator ? (
                     <div className={styles.featuredExtensionMetadata}>
@@ -235,7 +190,6 @@ LibraryItemComponent.propTypes = {
     ]),
     disabled: PropTypes.bool,
     extensionId: PropTypes.string,
-    extensionURL: PropTypes.string,
     extraLinks: PropTypes.arrayOf(PropTypes.shape({
         text: PropTypes.string,
         href: PropTypes.string,
@@ -243,7 +197,6 @@ LibraryItemComponent.propTypes = {
         guideId: PropTypes.string
     })),
     featured: PropTypes.bool,
-    helpLink: PropTypes.string,
     hidden: PropTypes.bool,
     iconURL: PropTypes.string,
     insetIconURL: PropTypes.string,

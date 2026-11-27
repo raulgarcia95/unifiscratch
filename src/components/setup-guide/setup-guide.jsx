@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 
-import {SETUP_GUIDE_EVENT, guideFor, pickText} from '../../lib/libraries/extensions/setup-guides.mjs';
+import {SETUP_GUIDE_EVENT, guideFor, guideLinksFor, pickText} from '../../lib/libraries/extensions/setup-guides.mjs';
+import extensionLibraryContent from '../../lib/libraries/extensions/index.jsx';
 import styles from './setup-guide.css';
 
 // Preparation window shared by every extension listed in setup-guides.mjs.
@@ -32,6 +33,12 @@ const renderText = text => {
     }
     if (last < text.length) parts.push(text.slice(last));
     return parts;
+};
+
+// The extension's help page, shown in the guide as on its library card.
+const helpLinkFor = id => {
+    const entry = extensionLibraryContent.find(item => item && item.extensionId === id);
+    return entry ? entry.helpLink : null;
 };
 
 const copyWithFallback = code => {
@@ -133,27 +140,20 @@ class SetupGuide extends React.PureComponent {
                 </button>
             );
         }
-        if (action.type === 'download') {
-            return (
-                <a
-                    className={styles.secondary}
-                    download={action.file}
-                    href={action.path}
-                    key={label}
-                >
-                    {label}
-                </a>
-            );
-        }
+        return null;
+    }
+
+    renderLink (link) {
         return (
             <a
                 className={styles.secondary}
-                href={action.href}
-                key={label}
+                download={link.download || null}
+                href={link.href}
+                key={link.text}
                 rel="noopener noreferrer"
-                target="_blank"
+                target={link.download ? null : '_blank'}
             >
-                {label}
+                {link.text}
             </a>
         );
     }
@@ -188,6 +188,8 @@ class SetupGuide extends React.PureComponent {
                     <p className={styles.intro}>{pickText(guide.intro, locale)}</p>
                     <div className={styles.actions}>
                         {guide.actions.map(action => this.renderAction(action, locale))}
+                        {guideLinksFor(this.state.id, locale, helpLinkFor(this.state.id))
+                            .map(link => this.renderLink(link))}
                     </div>
                     {this.state.copied === null ? null : (
                         <p className={this.state.copied ? styles.ok : styles.error}>

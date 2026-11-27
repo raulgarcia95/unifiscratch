@@ -48,6 +48,7 @@ const LAST_ERROR = ['If it does not connect, look at the «last connection error
 const connectBlock = (en, es, ca) => [`Press the button «${en}» and choose the device in the browser window.`, `Pulsa el botón «${es}» y elige el dispositivo en la ventana del navegador.`, `Prem el botó «${ca}» i tria el dispositiu a la finestra del navegador.`];
 
 const guideLink = ['How to prepare it', 'Cómo prepararlo', 'Com preparar-lo'];
+const BLUETOOTH_GUIDE_LINK = ['How to connect it (Bluetooth from Chrome or Edge, nothing to install)', 'Cómo conectarlo (Bluetooth desde Chrome o Edge, sin instalar nada)', 'Com connectar-lo (Bluetooth des de Chrome o Edge, sense instal·lar res)'];
 
 // ---------- Scratch Link: LEGO, EV3, BOOST, WeDo 2.0, Force and Acceleration ----------
 const SCRATCH_LINK_LABEL = ['Download Scratch Link', 'Descargar Scratch Link', 'Descarregar Scratch Link'];
@@ -55,7 +56,6 @@ const scratchLinkGuide = (name, turnOn) => ({
     name,
     intro: [`${name} connects through Scratch Link, a small free application that must be running on the computer.`, `${name} se conecta mediante Scratch Link, una pequeña aplicación gratuita que debe estar en marcha en el ordenador.`, `${name} es connecta amb Scratch Link, una petita aplicació gratuïta que ha d’estar en marxa a l’ordinador.`],
     actions: [{type: 'link', href: SCRATCH_LINK_URL, label: SCRATCH_LINK_LABEL}],
-    cardLinks: [{href: SCRATCH_LINK_URL, text: ['Scratch Link (required)', 'Scratch Link (necesario)', 'Scratch Link (necessari)']}],
     sections: [
         {title: FIRST_TIME,
             steps: [
@@ -77,9 +77,9 @@ const scratchLinkGuide = (name, turnOn) => ({
 const webBluetoothGuide = (name, turnOn) => ({
     name,
     openOnAdd: false,
+    linkText: BLUETOOTH_GUIDE_LINK,
     intro: [`${name} connects by Bluetooth directly from Chrome or Edge: there is nothing to install.`, `${name} se conecta por Bluetooth directamente desde Chrome o Edge: no hay que instalar nada.`, `${name} es connecta per Bluetooth directament des de Chrome o Edge: no cal instal·lar res.`],
     actions: [],
-    cardLinks: [{opensGuide: true, text: ['Bluetooth from Chrome or Edge (no installation)', 'Bluetooth desde Chrome o Edge (sin instalar nada)', 'Bluetooth des de Chrome o Edge (sense instal·lar res)']}],
     sections: [
         {title: ['1. Prepare it', '1. Prepararlo', '1. Preparar-lo'],
             steps: [
@@ -115,7 +115,6 @@ const makeblockGuide = (name, usb, bluetooth) => ({
     warning: [`This extension uses the Makeblock live mode by USB or Bluetooth, the same one mBlock uses. Close mBlock and mLink first so the robot is free.`, `Esta extensión usa el modo en vivo de Makeblock por USB o Bluetooth, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el robot quede libre.`, `Aquesta extensió fa servir el mode en directe de Makeblock per USB o Bluetooth, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el robot quedi lliure.`],
     intro: [`${name} needs up-to-date firmware from Makeblock. It connects by USB cable or by Bluetooth.`, `${name} necesita el firmware de Makeblock actualizado. Se conecta por cable USB o por Bluetooth.`, `${name} necessita el firmware de Makeblock actualitzat. Es connecta per cable USB o per Bluetooth.`],
     actions: [{type: 'link', href: MBLOCK_URL, label: ['Open mBlock', 'Abrir mBlock', 'Obrir mBlock']}],
-    cardLinks: [{href: MBLOCK_URL, text: ['mBlock (firmware update)', 'mBlock (actualizar firmware)', 'mBlock (actualitzar el firmware)']}],
     sections: [
         {title: FIRST_TIME,
             steps: [
@@ -142,7 +141,6 @@ const guides = {
             {type: 'download', path: BRIDGE_PATH, file: BRIDGE_FILE, label: ['Download bridge program', 'Descargar programa puente', 'Descarregar el programa pont']},
             {type: 'link', href: EDPY_URL, label: ['Open EdPy V3', 'Abrir EdPy V3', 'Obrir EdPy V3']}
         ],
-        cardLinks: [{href: BRIDGE_PATH, download: BRIDGE_FILE, text: ['Edison bridge program (.py)', 'Programa puente para Edison (.py)', 'Programa pont per a Edison (.py)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -165,7 +163,6 @@ const guides = {
         name: 'ED1',
         intro: ['The ED1 works with the MicroBlocks firmware it comes with. You do not need to install anything else.', 'La ED1 funciona con el firmware MicroBlocks que trae de fábrica. No hace falta instalar nada más.', 'L’ED1 funciona amb el firmware MicroBlocks que porta de fàbrica. No cal instal·lar res més.'],
         actions: [{type: 'link', href: MICROBLOCKS_URL, label: ['Open MicroBlocks', 'Abrir MicroBlocks', 'Obrir MicroBlocks']}],
-        cardLinks: [{href: MICROBLOCKS_URL, text: ['MicroBlocks (firmware update)', 'MicroBlocks (actualizar firmware)', 'MicroBlocks (actualitzar el firmware)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -185,7 +182,6 @@ const guides = {
         name: 'Keyestudio ESP32',
         intro: ['This board needs MicroPython firmware for ESP32. You only load it once.', 'Esta placa necesita el firmware MicroPython para ESP32. Solo hay que cargarlo una vez.', 'Aquesta placa necessita el firmware MicroPython per a ESP32. Només cal carregar-lo una vegada.'],
         actions: [...esp32Actions, {type: 'link', href: KEYESTUDIO_URL, label: ['Keyestudio guide', 'Guía de Keyestudio', 'Guia de Keyestudio']}],
-        cardLinks: [{href: ESP32_FIRMWARE_URL, text: ['MicroPython firmware for ESP32', 'Firmware MicroPython para ESP32', 'Firmware MicroPython per a ESP32']}],
         sections: [
             {title: FIRST_TIME, steps: esp32FirmwareSteps},
             {title: EVERY_TIME,
@@ -202,7 +198,6 @@ const guides = {
         warning: ['micro:shield needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'La micro:shield necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'La micro:shield necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
         intro: ['The program (.hex) lets Unifiscratch control the board and its motors, servos and sensors by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifiscratch controle la placa y sus motores, servos y sensores por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifiscratch controli la placa i els seus motors, servos i sensors per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
         actions: [{type: 'download', path: MICROSHIELD_HEX_PATH, file: MICROSHIELD_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
-        cardLinks: [{href: MICROSHIELD_HEX_PATH, download: MICROSHIELD_HEX_FILE, text: ['micro:shield program for micro:bit (.hex)', 'Programa de micro:shield para micro:bit (.hex)', 'Programa de micro:shield per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -228,7 +223,6 @@ const guides = {
             {type: 'download', path: WAPPSTO_HEX_PATH, file: WAPPSTO_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']},
             {type: 'link', href: WAPPSTO_SETUP_URL, label: ['Wappsto:bit setup', 'Configurar la Wappsto:bit', 'Configurar la Wappsto:bit']}
         ],
-        cardLinks: [{href: WAPPSTO_HEX_PATH, download: WAPPSTO_HEX_FILE, text: ['Wappsto:bit program for micro:bit (.hex)', 'Programa de Wappsto:bit para micro:bit (.hex)', 'Programa de Wappsto:bit per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -250,7 +244,6 @@ const guides = {
         warning: ['Cutebot needs the Unifiscratch program on its micro:bit. Loading it replaces the program the micro:bit had; you can load another one later.', 'El Cutebot necesita el programa de Unifiscratch en su micro:bit. Al cargarlo se sustituye el programa que tuviera la micro:bit; más adelante puedes cargar otro.', 'El Cutebot necessita el programa d’Unifiscratch a la seva micro:bit. En carregar-lo se substitueix el programa que tingués la micro:bit; més endavant en pots carregar un altre.'],
         intro: ['The program (.hex) lets Unifiscratch control the robot by Bluetooth or by USB. You only load it once.', 'El programa (.hex) permite que Unifiscratch controle el robot por Bluetooth o por USB. Solo hay que cargarlo una vez.', 'El programa (.hex) permet que Unifiscratch controli el robot per Bluetooth o per USB. Només cal carregar-lo una vegada.'],
         actions: [{type: 'download', path: CUTEBOT_HEX_PATH, file: CUTEBOT_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
-        cardLinks: [{href: CUTEBOT_HEX_PATH, download: CUTEBOT_HEX_FILE, text: ['Cutebot program for micro:bit (.hex)', 'Programa del Cutebot para micro:bit (.hex)', 'Programa del Cutebot per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -273,7 +266,6 @@ const guides = {
         warning: ['SPIKE Prime needs the free Pybricks firmware on the hub. Installing it replaces the LEGO firmware; Pybricks Code can put the LEGO firmware back at any time (Tools menu, «Restore official LEGO firmware»).', 'SPIKE Prime necesita el firmware gratuito Pybricks en el hub. Al instalarlo se sustituye el firmware de LEGO; Pybricks Code puede volver a poner el de LEGO cuando quieras (menú Herramientas, «Restore official LEGO firmware»).', 'SPIKE Prime necessita el firmware gratuït Pybricks al hub. En instal·lar-lo se substitueix el firmware de LEGO; Pybricks Code pot tornar a posar el de LEGO quan vulguis (menú Eines, «Restore official LEGO firmware»).'],
         intro: ['With Pybricks the hub connects to Unifiscratch by Bluetooth, with no cable and no extra program. You only install it once per hub.', 'Con Pybricks el hub se conecta a Unifiscratch por Bluetooth, sin cable ni programas extra. Solo hay que instalarlo una vez en cada hub.', 'Amb Pybricks el hub es connecta a Unifiscratch per Bluetooth, sense cable ni programes extra. Només cal instal·lar-lo una vegada a cada hub.'],
         actions: [{type: 'link', href: PYBRICKS_CODE_URL, label: ['Open Pybricks Code', 'Abrir Pybricks Code', 'Obrir Pybricks Code']}],
-        cardLinks: [{href: PYBRICKS_CODE_URL, text: ['Pybricks Code (install the firmware)', 'Pybricks Code (instalar el firmware)', 'Pybricks Code (instal·lar el firmware)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -294,9 +286,9 @@ const guides = {
     blueBot: {
         name: 'BlueBot',
         openOnAdd: false,
+        linkText: BLUETOOTH_GUIDE_LINK,
         intro: ['BlueBot connects by Bluetooth directly from Chrome or Edge: there is nothing to install on the robot or on the computer.', 'BlueBot se conecta por Bluetooth directamente desde Chrome o Edge: no hay que instalar nada ni en el robot ni en el ordenador.', 'BlueBot es connecta per Bluetooth directament des de Chrome o Edge: no cal instal·lar res ni al robot ni a l’ordinador.'],
         actions: [],
-        cardLinks: [{opensGuide: true, text: ['Bluetooth from Chrome or Edge (no installation)', 'Bluetooth desde Chrome o Edge (sin instalar nada)', 'Bluetooth des de Chrome o Edge (sense instal·lar res)']}],
         sections: [
             {title: ['1. Prepare it', '1. Prepararlo', '1. Preparar-lo'],
                 steps: [
@@ -323,7 +315,6 @@ const guides = {
         name: 'Arduino UNO',
         intro: ['The Arduino needs the StandardFirmata program, which comes with the Arduino IDE. You only load it once.', 'El Arduino necesita el programa StandardFirmata, que viene con el Arduino IDE. Solo hay que cargarlo una vez.', 'L’Arduino necessita el programa StandardFirmata, que ve amb l’Arduino IDE. Només cal carregar-lo una vegada.'],
         actions: [{type: 'link', href: ARDUINO_IDE_URL, label: ['Download Arduino IDE', 'Descargar Arduino IDE', 'Descarregar l’Arduino IDE']}],
-        cardLinks: [{href: ARDUINO_IDE_URL, text: ['Arduino IDE (StandardFirmata)', 'Arduino IDE (StandardFirmata)', 'Arduino IDE (StandardFirmata)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -343,7 +334,6 @@ const guides = {
         name: 'Microbit More',
         intro: ['The micro:bit needs the Microbit More program. You only load it once.', 'La micro:bit necesita el programa de Microbit More. Solo hay que cargarlo una vez.', 'La micro:bit necessita el programa de Microbit More. Només cal carregar-lo una vegada.'],
         actions: [{type: 'link', href: MICROBIT_MORE_HEX, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']}],
-        cardLinks: [{href: MICROBIT_MORE_HEX, text: ['micro:bit program (.hex)', 'Programa para micro:bit (.hex)', 'Programa per a micro:bit (.hex)']}],
         sections: [
             {title: FIRST_TIME,
                 steps: [
@@ -380,16 +370,44 @@ export const guideOpensOnAdd = id => {
     return !!guide && guide.openOnAdd !== false;
 };
 
-// Links for the library card: what the extension needs, plus the guide itself.
-export const cardLinksFor = (id, locale) => {
+// Extensions that use another extension's guide (same board and firmware).
+const guideAliases = {microbitSensorKit: 'microShield'};
+export const guideIdFor = id => {
+    const target = Object.prototype.hasOwnProperty.call(guideAliases, id) ? guideAliases[id] : id;
+    return guideFor(target) ? target : null;
+};
+
+const moreInfo = ['More information', 'Más información', 'Més informació'];
+
+/**
+ * Links shown both on the library card and in the guide, so they always match:
+ * the guide's own link and download buttons, plus the extension's help page.
+ * @param {string} id - guide id.
+ * @param {string} locale - editor language.
+ * @param {string} [helpLink] - the extension's help page, if any.
+ * @returns {Array.<{href: string, download: ?string, text: string}>} links with labels in that language.
+ */
+export const guideLinksFor = (id, locale, helpLink) => {
     const guide = guideFor(id);
-    if (!guide) return [];
+    const links = guide ? guide.actions
+        .filter(action => action.type === 'link' || action.type === 'download')
+        .map(action => ({
+            href: action.href || action.path,
+            download: action.type === 'download' ? action.file : null,
+            text: pickText(action.label, locale)
+        })) : [];
+    if (helpLink && !links.some(link => link.href === helpLink)) {
+        links.push({href: helpLink, download: null, text: pickText(moreInfo, locale)});
+    }
+    return links;
+};
+
+// Links for the library card: how to prepare it (opens the guide), then the
+// same links the guide shows.
+export const cardLinksFor = (id, locale, helpLink) => {
+    const guideId = guideIdFor(id);
     return [
-        ...guide.cardLinks.map(({opensGuide, ...link}) => ({
-            ...link,
-            ...(opensGuide ? {guideId: id} : {}),
-            text: pickText(link.text, locale)
-        })),
-        {guideId: id, text: pickText(guideLink, locale)}
+        ...(guideId ? [{guideId, text: pickText(guideFor(guideId).linkText || guideLink, locale)}] : []),
+        ...guideLinksFor(guideId, locale, helpLink)
     ];
 };
