@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import {sensorKitTexts} from './libraries/extensions/preInstall/microbit-sensor-kit-texts.mjs';
+import {spikePrimeTexts} from './libraries/extensions/preInstall/lego-spike-prime-texts.mjs';
 const UNIFISCRATCH_SITE_URL = 'https://sites.google.com/xtec.cat/unifiscratch/p%C3%A0gina-principal';
 const UNIFISCRATCH_CONTACT_EMAIL = 'rgarci95@xtec.cat';
 const UNIFISCRATCH_CONTACT_NAME = 'RAUL GARCIA ANTOLIN';
@@ -268,6 +269,9 @@ const newExtensionMessages = language => {
     });
     Object.keys(sensorKitTexts).forEach(key => {
         messages[`unifiscratch.extensions.sensorKit.${key}`] = sensorKitTexts[key][index];
+    });
+    Object.keys(spikePrimeTexts).forEach(key => {
+        messages[`unifiscratch.extensions.spikePrime.${key}`] = spikePrimeTexts[key][index];
     });
     Object.keys(setupGuideTexts).forEach(key => {
         messages[`unifiscratch.setupGuide.${key}`] = setupGuideTexts[key][index];

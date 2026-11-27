@@ -40,6 +40,7 @@ const ESP_FLASHER_URL = 'https://espressif.github.io/esptool-js/';
 const MICROBLOCKS_URL = 'https://microblocks.fun/run/microblocks.html';
 const ARDUINO_IDE_URL = 'https://www.arduino.cc/en/software';
 const MBLOCK_URL = 'https://mblock.cc/';
+const PYBRICKS_INSTALL_URL = 'https://install.pybricks.com/';
 const KEYESTUDIO_URL = 'https://docs.keyestudio.com/projects/KS0809/en/latest/docs/ESP32/Software_Tutorial.html';
 
 const FIRST_TIME = ['1. Prepare it (only the first time)', '1. Prepararlo (solo la primera vez)', '1. Preparar-lo (només la primera vegada)'];
@@ -244,6 +245,29 @@ const guides = {
                     ['Press the button «connect Cutebot by Bluetooth» and choose «BBC micro:bit» in the browser window. A tick appears on the display.', 'Pulsa el botón «conectar Cutebot por Bluetooth» y elige «BBC micro:bit» en la ventana del navegador. En la pantalla aparece un tic.', 'Prem el botó «connecta Cutebot per Bluetooth» i tria «BBC micro:bit» a la finestra del navegador. A la pantalla apareix un tic.'],
                     ['Without Bluetooth, connect the micro:bit with the USB cable and use «connect Cutebot by USB» instead.', 'Sin Bluetooth, conecta la micro:bit con el cable USB y usa «conectar Cutebot por USB».', 'Sense Bluetooth, connecta la micro:bit amb el cable USB i fes servir «connecta Cutebot per USB».'],
                     ['The red flag stops the robot. If the connection is lost, the motors stop by themselves.', 'La bandera roja detiene el robot. Si se pierde la conexión, los motores se paran solos.', 'La bandera vermella atura el robot. Si es perd la connexió, els motors s’aturen sols.']
+                ]}
+        ],
+        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    },
+    legoSpikePrime: {
+        name: 'LEGO SPIKE Prime',
+        warning: ['SPIKE Prime needs the free Pybricks firmware on the hub. Installing it replaces the LEGO firmware, and the LEGO SPIKE app can put the original back at any time.', 'SPIKE Prime necesita el firmware gratuito Pybricks en el hub. Al instalarlo se sustituye el firmware de LEGO; la app LEGO SPIKE puede volver a poner el original cuando quieras.', 'SPIKE Prime necessita el firmware gratuït Pybricks al hub. En instal·lar-lo se substitueix el firmware de LEGO; l’app LEGO SPIKE pot tornar a posar l’original quan vulguis.'],
+        intro: ['With Pybricks the hub connects to Unifiscratch by Bluetooth, with no cable and no extra program. You only install it once per hub.', 'Con Pybricks el hub se conecta a Unifiscratch por Bluetooth, sin cable ni programas extra. Solo hay que instalarlo una vez en cada hub.', 'Amb Pybricks el hub es connecta a Unifiscratch per Bluetooth, sense cable ni programes extra. Només cal instal·lar-lo una vegada a cada hub.'],
+        actions: [{type: 'link', href: PYBRICKS_INSTALL_URL, label: ['Open the Pybricks installer', 'Abrir el instalador de Pybricks', 'Obrir l’instal·lador de Pybricks']}],
+        cardLinks: [{href: PYBRICKS_INSTALL_URL, text: ['Pybricks installer for SPIKE Prime', 'Instalador de Pybricks para SPIKE Prime', 'Instal·lador de Pybricks per a SPIKE Prime']}],
+        sections: [
+            {title: FIRST_TIME,
+                steps: [
+                    ['Press «Open the Pybricks installer» (Chrome or Edge) and choose SPIKE Prime Hub.', 'Pulsa «Abrir el instalador de Pybricks» (Chrome o Edge) y elige SPIKE Prime Hub.', 'Prem «Obrir l’instal·lador de Pybricks» (Chrome o Edge) i tria SPIKE Prime Hub.'],
+                    ['Follow its steps: with the hub off, hold the Bluetooth button and plug in the USB cable until the light flashes in colours; the installer then writes the firmware.', 'Sigue sus pasos: con el hub apagado, mantén pulsado el botón Bluetooth y conecta el cable USB hasta que la luz parpadee en colores; entonces el instalador escribe el firmware.', 'Segueix-ne els passos: amb el hub apagat, mantén premut el botó Bluetooth i connecta el cable USB fins que la llum parpellegi en colors; aleshores l’instal·lador escriu el firmware.'],
+                    ['Repeat it on each hub of the class. To go back to the LEGO firmware, connect the hub to the LEGO SPIKE app and update it.', 'Repítelo en cada hub de la clase. Para volver al firmware de LEGO, conecta el hub a la app LEGO SPIKE y actualízalo.', 'Repeteix-ho a cada hub de la classe. Per tornar al firmware de LEGO, connecta el hub a l’app LEGO SPIKE i actualitza’l.']
+                ]},
+            {title: EVERY_TIME,
+                steps: [
+                    ['Switch the hub on with the centre button. Use Chrome or Edge with the computer’s Bluetooth turned on, and close Pybricks Code if it is open: only one application can be connected.', 'Enciende el hub con el botón central. Usa Chrome o Edge con el Bluetooth del ordenador activado y cierra Pybricks Code si está abierto: solo una aplicación puede estar conectada.', 'Encén el hub amb el botó central. Fes servir Chrome o Edge amb el Bluetooth de l’ordinador activat i tanca Pybricks Code si és obert: només una aplicació pot estar connectada.'],
+                    ['Press the button «connect SPIKE Prime by Bluetooth» and choose «Pybricks Hub» (or the name you gave it) in the browser window.', 'Pulsa el botón «conectar SPIKE Prime por Bluetooth» y elige «Pybricks Hub» (o el nombre que le hayas dado) en la ventana del navegador.', 'Prem el botó «connecta SPIKE Prime per Bluetooth» i tria «Pybricks Hub» (o el nom que li hagis posat) a la finestra del navegador.'],
+                    ['Plug motors and sensors into ports A to F and choose the same port in the blocks.', 'Conecta motores y sensores en los puertos A a F y elige el mismo puerto en los bloques.', 'Connecta motors i sensors als ports A a F i tria el mateix port als blocs.'],
+                    ['The red stop sign stops the motors. The Bluetooth button of the hub also stops them; the next block starts again by itself.', 'La señal roja de parar detiene los motores. El botón Bluetooth del hub también los para; el siguiente bloque vuelve a arrancar solo.', 'El senyal vermell d’aturar atura els motors. El botó Bluetooth del hub també els atura; el següent bloc torna a arrencar sol.']
                 ]}
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]

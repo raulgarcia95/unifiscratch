@@ -82,7 +82,8 @@ const robotExtensionIds = new Set([
     'bluebot',
     'dashrobot',
     'edisonv3',
-    'smartcutebot'
+    'smartcutebot',
+    'legospikeprime'
 ]);
 
 const boardExtensionIds = new Set([

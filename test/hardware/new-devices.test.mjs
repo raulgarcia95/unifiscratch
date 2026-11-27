@@ -358,7 +358,7 @@ test('every extension that needs preparation has a complete guide in three langu
         'edisonV3', 'ed1Board', 'keyestudioEsp32', 'microShield', 'wappstoBit', 'smartCutebot',
         'makeblockCodeyRocky', 'makeblockMbot2', 'xcxArduino', 'microbitMore', 'spikeessential', 'legoble',
         'poweredup', 'legoremote', 'controlplus', 'duplotrain', 'legomario', 'legoluigi', 'legopeach',
-        'ev3', 'boost', 'wedo2', 'gdxfor'
+        'ev3', 'boost', 'wedo2', 'gdxfor', 'legoSpikePrime'
     ];
     assert.deepEqual(guideIds().sort(), [...required].sort());
     const translated = text => assert.ok(

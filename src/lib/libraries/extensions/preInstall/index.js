@@ -10,6 +10,7 @@ const importModules = [
     import('./ed1-board.mjs'),
     import('./face-sensing.mjs'),
     import('./edison-v3.mjs'),
+    import('./lego-spike-prime.mjs'),
     import('../stretch/index.js')
 ];
 
