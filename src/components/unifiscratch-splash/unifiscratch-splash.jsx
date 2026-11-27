@@ -68,7 +68,10 @@ class UnifiscratchSplash extends React.PureComponent {
                             rel="noopener noreferrer"
                             target="_blank"
                         >
-                            {'Código fuente y estado de las extensiones (AGPL-3.0)'}
+                            <FormattedMessage
+                                defaultMessage="Source code and status of the extensions (AGPL-3.0)"
+                                id="unifiscratch.splash.source"
+                            />
                         </a>
                     </p>
                     <div>

@@ -2,6 +2,7 @@
 // Block texts of the "Sensores y actuadores" extension: [English, Spanish, Catalan].
 // Keys become unifiscratch.extensions.sensorKit.<key>.
 export const sensorKitTexts = {
+    name: ['Sensors and actuators', 'Sensores y actuadores', 'Sensors i actuadors'],
     description: ['Sensors and actuators of the XTEC micro:bit kits (primary, secondary basic and advanced) on the micro:shield: choose the port and use them.', 'Sensores y actuadores de los kits micro:bit del XTEC (primaria, secundaria básico y avanzado) sobre la micro:shield: elige el puerto y úsalos.', 'Sensors i actuadors dels kits micro:bit de l’XTEC (primària, secundària bàsic i avançat) sobre la micro:shield: tria el port i fes-los servir.'],
     showHelp: ['how to connect the micro:bit (help)', 'cómo conectar la micro:bit (ayuda)', 'com connectar la micro:bit (ajuda)'],
     connectBluetooth: ['connect micro:bit by Bluetooth', 'conectar micro:bit por Bluetooth', 'connecta la micro:bit per Bluetooth'],

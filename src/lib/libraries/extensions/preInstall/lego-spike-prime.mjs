@@ -11,6 +11,7 @@ import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide, pickText} from '../setup-guides.mjs';
 import {actionButton} from './action-buttons.mjs';
 import {spikePrimeTexts} from './lego-spike-prime-texts.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const id = 'legoSpikePrime';
 const name = 'LEGO SPIKE Prime';
@@ -47,7 +48,7 @@ export const SETUP = [
 export const port = value => {
     const text = String(value).trim()
         .toUpperCase();
-    if (!PORTS.includes(text)) throw new Error(`Puerto no válido: ${value}. Usa A, B, C, D, E o F.`);
+    if (!PORTS.includes(text)) throw new Error(tr(`Invalid port: ${value}. Use A, B, C, D, E or F.`, `Puerto no válido: ${value}. Usa A, B, C, D, E o F.`, `Port no vàlid: ${value}. Fes servir A, B, C, D, E o F.`));
     return text;
 };
 
@@ -83,7 +84,16 @@ export const rgbToHsv = ({r, g, b}) => {
 // "OSError [Errno 19] ENODEV" and similar: nothing, or another device, on the port.
 const friendly = (error, portName, device) => {
     if (/ENODEV|Errno 19|OSError 19/.test(error.message)) {
-        return new Error(`No hay ningún ${device} en el puerto ${portName} (o es otro tipo de dispositivo).`);
+        const names = {
+            motor: ['motor', 'motor', 'motor'],
+            colorSensor: ['color sensor', 'sensor de color', 'sensor de color'],
+            distanceSensor: ['distance sensor', 'sensor de distancia', 'sensor de distància'],
+            forceSensor: ['force sensor', 'sensor de fuerza', 'sensor de força']
+        }[device] || [device, device, device];
+        return new Error(tr(
+            `There is no ${names[0]} on port ${portName} (or it is another kind of device).`,
+            `No hay ningún ${names[1]} en el puerto ${portName} (o es otro tipo de dispositivo).`,
+            `No hi ha cap ${names[2]} al port ${portName} (o és un altre tipus de dispositiu).`));
     }
     return error;
 };
@@ -101,7 +111,7 @@ class SpikePrime {
         this.runtime = runtime;
         this.transport = new PybricksTransport(name, {
             setup: SETUP,
-            notConnected: 'Conecta el SPIKE Prime (Bluetooth) antes de usar los bloques.'
+            notConnected: () => tr('Connect the SPIKE Prime (Bluetooth) before using the blocks.', 'Conecta el SPIKE Prime (Bluetooth) antes de usar los bloques.', 'Connecta el SPIKE Prime (Bluetooth) abans de fer servir els blocs.')
         });
         bindSafetyEvents(runtime, this.transport);
     }
@@ -199,7 +209,7 @@ class SpikePrime {
                     opcode: 'showText',
                     blockType: 'command',
                     text: t('showText'),
-                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola'}}
+                    arguments: {TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}}
                 },
                 {
                     opcode: 'showNumber',
@@ -384,14 +394,14 @@ class SpikePrime {
     }
 
     async color (args) {
-        const value = await this.read(`_cn('${port(args.PORT)}')`, 'none', port(args.PORT), 'sensor de color');
+        const value = await this.read(`_cn('${port(args.PORT)}')`, 'none', port(args.PORT), 'colorSensor');
         const key = COLORS.includes(value) ? value : 'none';
         return pickText(spikePrimeTexts[key], locale());
     }
 
     async isColor (args) {
         const wanted = String(args.COLOR).toLowerCase();
-        const value = await this.read(`_cn('${port(args.PORT)}')`, '', port(args.PORT), 'sensor de color');
+        const value = await this.read(`_cn('${port(args.PORT)}')`, '', port(args.PORT), 'colorSensor');
         if (value === wanted) return true;
         // A colour typed or dropped in another language also counts.
         const key = COLORS.find(item => spikePrimeTexts[item].some(text => text.toLowerCase() === wanted));
@@ -399,26 +409,26 @@ class SpikePrime {
     }
 
     reflection (args) {
-        return this.read(`_g(ColorSensor,'${port(args.PORT)}').reflection()`, 0, port(args.PORT), 'sensor de color');
+        return this.read(`_g(ColorSensor,'${port(args.PORT)}').reflection()`, 0, port(args.PORT), 'colorSensor');
     }
 
     ambient (args) {
-        return this.read(`_g(ColorSensor,'${port(args.PORT)}').ambient()`, 0, port(args.PORT), 'sensor de color');
+        return this.read(`_g(ColorSensor,'${port(args.PORT)}').ambient()`, 0, port(args.PORT), 'colorSensor');
     }
 
     async distance (args) {
         // Millimetres on the hub; 2000 when nothing is in front.
-        const mm = await this.read(`_g(UltrasonicSensor,'${port(args.PORT)}').distance()`, 200 * 10, port(args.PORT), 'sensor de distancia');
+        const mm = await this.read(`_g(UltrasonicSensor,'${port(args.PORT)}').distance()`, 200 * 10, port(args.PORT), 'distanceSensor');
         return Math.round(Number(mm)) / 10;
     }
 
     async force (args) {
-        const value = await this.read(`_g(ForceSensor,'${port(args.PORT)}').force()`, 0, port(args.PORT), 'sensor de fuerza');
+        const value = await this.read(`_g(ForceSensor,'${port(args.PORT)}').force()`, 0, port(args.PORT), 'forceSensor');
         return Math.round(Number(value) * 10) / 10;
     }
 
     async forcePressed (args) {
-        return await this.read(`_g(ForceSensor,'${port(args.PORT)}').pressed()`, false, port(args.PORT), 'sensor de fuerza') === true;
+        return await this.read(`_g(ForceSensor,'${port(args.PORT)}').pressed()`, false, port(args.PORT), 'forceSensor') === true;
     }
 
     async buttonPressed (args) {

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {bindSafetyEvents} from './micropython-transport.mjs';
 import {
     MakeblockSerialTransport,
@@ -9,6 +10,7 @@ import {
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const EXTENSION_ID = 'makeblockMbot2';
 const iconURL = deviceIconURL('mbot2');
@@ -93,7 +95,7 @@ const blockClass = class MakeblockMbot2 {
                     blockType: 'command',
                     text: msg('mbot2.showText', 'show text [TEXT] size [SIZE]'),
                     arguments: {
-                        TEXT: {type: 'string', defaultValue: 'Hola'},
+                        TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')},
                         SIZE: {type: 'number', defaultValue: 24}
                     }
                 },
@@ -178,10 +180,10 @@ const blockClass = class MakeblockMbot2 {
                 sounds: {
                     acceptReporters: true,
                     items: [
-                        {text: 'hello', value: 'hello'},
-                        {text: 'hi', value: 'hi'},
-                        {text: 'yeah', value: 'yeah'},
-                        {text: 'switch', value: 'switch'}
+                        {text: msg('mbot2.sound.hello', 'hello'), value: 'hello'},
+                        {text: msg('mbot2.sound.hi', 'hi'), value: 'hi'},
+                        {text: msg('mbot2.sound.yeah', 'yeah'), value: 'yeah'},
+                        {text: msg('mbot2.sound.switch', 'switch'), value: 'switch'}
                     ]
                 }
             }
@@ -213,7 +215,7 @@ const blockClass = class MakeblockMbot2 {
     }
 
     runPython () {
-        throw new Error('La ejecución libre de Python está desactivada para este dispositivo.');
+        throw new Error(tr('Running free Python code is disabled for this device.', 'La ejecución libre de Python está desactivada para este dispositivo.', 'L’execució lliure de Python està desactivada per a aquest dispositiu.'));
     }
 
     // Starts the motors, waits on the computer, then stops unless a newer motion took over.
@@ -234,7 +236,7 @@ const blockClass = class MakeblockMbot2 {
     move (args) {
         const factors = Object.prototype.hasOwnProperty.call(DIRECTIONS, args.DIRECTION) &&
             DIRECTIONS[args.DIRECTION];
-        if (!factors) throw new Error('Dirección no válida.');
+        if (!factors) throw new Error(tr('Invalid direction.', 'Dirección no válida.', 'Direcció no vàlida.'));
         const power = clamp(args.POWER, 0, 100);
         return this.timedDrive(power * factors[0], power * factors[1], args.SECONDS);
     }
@@ -281,7 +283,7 @@ const blockClass = class MakeblockMbot2 {
 
     async buttonPressed (args) {
         const button = String(args.BUTTON).toLowerCase();
-        if (!BUTTONS.includes(button)) throw new Error('Botón no válido.');
+        if (!BUTTONS.includes(button)) throw new Error(tr('Invalid button.', 'Botón no válido.', 'Botó no vàlid.'));
         return (await this.transport.run(`cyberpi.controller.is_press(${pyArgs(button)})`)) === true;
     }
 

@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+import {tr, textOf} from './runtime-texts.mjs';
 // Link to a LEGO hub running the Pybricks firmware, over Web Bluetooth.
 //
 // Written for Unifiscratch from the public description of the Pybricks BLE
@@ -21,7 +23,7 @@ export const STATUS_USER_PROGRAM_RUNNING = 6;
 const FEATURE_REPL = 1;
 const DEFAULT_MAX_WRITE = 20;
 
-const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
+const cancelled = () => new Error(tr('Operation cancelled because the device was stopped.', 'Operación cancelada por la parada del dispositivo.', 'Operació cancel·lada per l’aturada del dispositiu.'));
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Python string literal: ASCII only, so the REPL never sees a split UTF-8 character.
@@ -39,7 +41,7 @@ export const parseValue = text => {
 };
 
 export class PybricksTransport {
-    constructor (label, {setup = [], timeout = 3000, notConnected = 'Conecta el hub antes de usar los bloques.'} = {}) {
+    constructor (label, {setup = [], timeout = 3000, notConnected = () => tr('Connect the hub before using the blocks.', 'Conecta el hub antes de usar los bloques.', 'Connecta el hub abans de fer servir els blocs.')} = {}) {
         this.label = label;
         this.setup = setup; // Python lines that prepare the REPL, run in order.
         this.timeout = timeout;
@@ -59,7 +61,7 @@ export class PybricksTransport {
         this.stdout = '';
         this.lineWaiters = new Set();
         this.lastError = '';
-        this.onBleDisconnected = () => this.lost('Se ha perdido la conexión Bluetooth con el hub.');
+        this.onBleDisconnected = () => this.lost(tr('The Bluetooth connection with the hub was lost.', 'Se ha perdido la conexión Bluetooth con el hub.', 'S’ha perdut la connexió Bluetooth amb el hub.'));
     }
 
     isConnected () {
@@ -69,9 +71,9 @@ export class PybricksTransport {
     async connect () {
         if (this.isConnected()) return;
         if (typeof navigator === 'undefined' || !navigator.bluetooth) {
-            throw new Error('Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+            throw new Error(tr('Web Bluetooth is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Bluetooth no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
         }
-        if (this.connecting) throw new Error('Conexión ocupada.');
+        if (this.connecting) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         this.connecting = true;
         this.epoch++;
         try {
@@ -86,7 +88,7 @@ export class PybricksTransport {
             try {
                 service = await server.getPrimaryService(PYBRICKS_SERVICE);
             } catch (error) {
-                throw new Error('El hub no tiene el firmware Pybricks (ver la guía).');
+                throw new Error(tr('The hub does not have the Pybricks firmware (see the guide).', 'El hub no tiene el firmware Pybricks (ver la guía).', 'El hub no té el firmware Pybricks (mira la guia).'));
             }
             this.char = await service.getCharacteristic(PYBRICKS_COMMAND_EVENT);
             await this.readCapabilities(service);
@@ -116,7 +118,7 @@ export class PybricksTransport {
         this.maxWrite = Math.max(DEFAULT_MAX_WRITE, view.getUint16(0, true));
         const features = view.getUint32(2, true);
         if (!(features & FEATURE_REPL)) {
-            throw new Error('Este firmware Pybricks no incluye la consola (REPL) que usa Unifiscratch.');
+            throw new Error(tr('This Pybricks firmware does not include the console (REPL) that Unifiscratch uses.', 'Este firmware Pybricks no incluye la consola (REPL) que usa Unifiscratch.', 'Aquest firmware Pybricks no inclou la consola (REPL) que fa servir Unifiscratch.'));
         }
     }
 
@@ -132,7 +134,7 @@ export class PybricksTransport {
             if (wasRunning && !running && this.replReady) {
                 // The stop button, a power-off request or a fatal error ended the REPL.
                 this.replReady = false;
-                this.rejectPending(new Error('El programa del hub se ha detenido; el siguiente bloque lo reinicia.'));
+                this.rejectPending(new Error(tr('The hub program has stopped; the next block restarts it.', 'El programa del hub se ha detenido; el siguiente bloque lo reinicia.', 'El programa del hub s’ha aturat; el bloc següent el reinicia.')));
             }
             return;
         }
@@ -164,7 +166,7 @@ export class PybricksTransport {
         this.pending.delete(Number(match[2]));
         clearTimeout(entry.timer);
         if (match[1] === 'V') entry.resolve(parseValue(match[3]));
-        else entry.reject(new Error(`Error en el hub: ${match[3]}`));
+        else entry.reject(new Error(`${tr('Error on the hub', 'Error en el hub', 'Error al hub')}: ${match[3]}`));
     }
 
     waitFor (test, ms) {
@@ -177,7 +179,7 @@ export class PybricksTransport {
             };
             const timer = setTimeout(() => {
                 this.lineWaiters.delete(check);
-                reject(new Error('El hub no respondió a tiempo.'));
+                reject(new Error(tr('The hub did not answer in time.', 'El hub no respondió a tiempo.', 'El hub no ha respost a temps.')));
             }, ms);
             this.lineWaiters.add(check);
         });
@@ -204,7 +206,7 @@ export class PybricksTransport {
     // Serialised GATT writes, always with response (the profile requires it).
     writeCommand (bytes) {
         const operation = this.gattQueue.then(() => {
-            if (!this.char) throw new Error(this.notConnected);
+            if (!this.char) throw new Error(textOf(this.notConnected));
             const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
             if (this.char.writeValueWithResponse) return this.char.writeValueWithResponse(data);
             return this.char.writeValue(data);
@@ -242,7 +244,7 @@ export class PybricksTransport {
                 await sleep(400);
             }
         }
-        if (!started) throw new Error('El hub está ocupado y no abre la consola de Pybricks.');
+        if (!started) throw new Error(tr('The hub is busy and does not open the Pybricks console.', 'El hub está ocupado y no abre la consola de Pybricks.', 'El hub està ocupat i no obre la consola de Pybricks.'));
         await prompt;
         for (const line of this.setup) {
             await this.exchange(line, 5000, true);
@@ -259,7 +261,7 @@ export class PybricksTransport {
         const answer = new Promise((resolve, reject) => {
             const timer = setTimeout(() => {
                 this.pending.delete(id);
-                reject(new Error('El hub no respondió a tiempo: ¿tiene el firmware Pybricks?'));
+                reject(new Error(tr('The hub did not answer in time: does it have the Pybricks firmware?', 'El hub no respondió a tiempo: ¿tiene el firmware Pybricks?', 'El hub no ha respost a temps: té el firmware Pybricks?')));
             }, timeout);
             this.pending.set(id, {resolve, reject, timer});
         });
@@ -275,7 +277,7 @@ export class PybricksTransport {
 
     // Runs `code` on the hub after the previous lines, restarting the REPL if needed.
     run (code, timeout = this.timeout) {
-        if (!this.isConnected()) return Promise.reject(new Error(this.notConnected));
+        if (!this.isConnected()) return Promise.reject(new Error(textOf(this.notConnected)));
         const epoch = this.epoch;
         const operation = this.queue.then(async () => {
             if (epoch !== this.epoch) throw cancelled();
@@ -349,7 +351,7 @@ export class PybricksTransport {
         this.ready = false;
         this.replReady = false;
         this.running = null;
-        this.rejectPending(new Error(this.notConnected));
+        this.rejectPending(new Error(textOf(this.notConnected)));
         const device = this.device;
         this.device = null;
         this.char = null;

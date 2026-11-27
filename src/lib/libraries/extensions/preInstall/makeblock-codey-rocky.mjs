@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {bindSafetyEvents} from './micropython-transport.mjs';
 import {
     MakeblockSerialTransport,
@@ -9,6 +10,7 @@ import {
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const EXTENSION_ID = 'makeblockCodeyRocky';
 const iconURL = deviceIconURL('codeyRocky');
@@ -90,7 +92,7 @@ const blockClass = class MakeblockCodeyRocky {
                     blockType: 'command',
                     text: msg('codey.showText', 'show text [TEXT]'),
                     arguments: {
-                        TEXT: {type: 'string', defaultValue: 'Hola'}
+                        TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}
                     }
                 },
                 {
@@ -187,7 +189,7 @@ const blockClass = class MakeblockCodeyRocky {
     }
 
     runPython () {
-        throw new Error('La ejecución libre de Python está desactivada para este dispositivo.');
+        throw new Error(tr('Running free Python code is disabled for this device.', 'La ejecución libre de Python está desactivada para este dispositivo.', 'L’execució lliure de Python està desactivada per a aquest dispositiu.'));
     }
 
     // Starts Rocky, waits on the computer, then stops unless a newer motion took over.
@@ -207,7 +209,7 @@ const blockClass = class MakeblockCodeyRocky {
 
     move (args) {
         const method = Object.prototype.hasOwnProperty.call(MOVES, args.DIRECTION) && MOVES[args.DIRECTION];
-        if (!method) throw new Error('Dirección no válida.');
+        if (!method) throw new Error(tr('Invalid direction.', 'Dirección no válida.', 'Direcció no vàlida.'));
         const power = clamp(args.POWER, -100, 100);
         return this.timedMotion(`rocky.${method}(${pyArgs(power)})`, args.SECONDS);
     }
@@ -245,7 +247,7 @@ const blockClass = class MakeblockCodeyRocky {
 
     async buttonPressed (args) {
         const button = BUTTONS[String(args.BUTTON).toLowerCase()];
-        if (!button) throw new Error('Botón no válido.');
+        if (!button) throw new Error(tr('Invalid button.', 'Botón no válido.', 'Botó no vàlid.'));
         return (await this.transport.run(`codey.${button}.is_pressed()`)) === true;
     }
 

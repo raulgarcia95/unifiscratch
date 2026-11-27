@@ -1,10 +1,12 @@
+/* eslint-disable max-len */
+import {tr} from './runtime-texts.mjs';
 // Raw REPL: a command completes only after stdout, stderr and the prompt arrive.
 // Opening a serial port is not evidence that the selected firmware is compatible.
-const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
+const cancelled = () => new Error(tr('Operation cancelled because the device was stopped.', 'Operación cancelada por la parada del dispositivo.', 'Operació cancel·lada per l’aturada del dispositiu.'));
 
 export const boundedNumber = (value, min, max) => {
     const number = Number(value);
-    if (!Number.isFinite(number)) throw new Error('El valor debe ser un número finito.');
+    if (!Number.isFinite(number)) throw new Error(tr('The value must be a finite number.', 'El valor debe ser un número finito.', 'El valor ha de ser un nombre finit.'));
     return Math.min(max, Math.max(min, number));
 };
 
@@ -37,9 +39,9 @@ export class MicroPythonTransport {
 
     async connect () {
         if (this.isConnected()) return;
-        if (this.connecting || this.stopping || this.closing) throw new Error('Conexión ocupada.');
+        if (this.connecting || this.stopping || this.closing) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         if (typeof navigator === 'undefined' || !navigator.serial) {
-            throw new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+            throw new Error(tr('Web Serial is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Serial no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
         }
         this.connecting = true;
         const epoch = this.epoch;
@@ -50,7 +52,7 @@ export class MicroPythonTransport {
             await selected.open({baudRate: this.baudRate});
             this.port = selected;
             if (epoch !== this.epoch) throw cancelled();
-            if (!selected.readable || !selected.writable) throw new Error('Puerto USB no disponible.');
+            if (!selected.readable || !selected.writable) throw new Error(tr('USB port not available.', 'Puerto USB no disponible.', 'Port USB no disponible.'));
             this.reader = selected.readable.getReader();
             this.readTask = this.readLoop(this.reader);
             await this.enterRaw();
@@ -75,10 +77,10 @@ export class MicroPythonTransport {
                 const {value, done} = await reader.read();
                 if (done) break;
                 this.buffer += decoder.decode(value, {stream: true});
-                if (this.buffer.length > 65536) throw new Error('Respuesta del dispositivo demasiado larga.');
+                if (this.buffer.length > 65536) throw new Error(tr('Answer from the device is too long.', 'Respuesta del dispositivo demasiado larga.', 'Resposta del dispositiu massa llarga.'));
                 if (this.waiter) this.waiter.check();
             }
-            if (!this.closing) throw new Error('El dispositivo USB se ha desconectado.');
+            if (!this.closing) throw new Error(tr('The USB device has been disconnected.', 'El dispositivo USB se ha desconectado.', 'El dispositiu USB s’ha desconnectat.'));
         } catch (error) {
             if (!this.closing) {
                 this.ready = false;
@@ -107,7 +109,7 @@ export class MicroPythonTransport {
                 if (error) reject(error);
                 else resolve(result);
             };
-            timer = setTimeout(() => finish(new Error('El firmware no respondió a tiempo.')), timeout);
+            timer = setTimeout(() => finish(new Error(tr('The firmware did not answer in time.', 'El firmware no respondió a tiempo.', 'El firmware no ha respost a temps.'))), timeout);
             this.waiter = {
                 reject: error => finish(error),
                 check: () => {
@@ -123,7 +125,7 @@ export class MicroPythonTransport {
     }
 
     async write (text) {
-        if (!this.port || !this.port.writable) throw new Error('Conecta el dispositivo primero.');
+        if (!this.port || !this.port.writable) throw new Error(tr('Connect the device first.', 'Conecta el dispositivo primero.', 'Connecta el dispositiu primer.'));
         const writer = this.port.writable.getWriter();
         let timer;
         try {
@@ -132,7 +134,7 @@ export class MicroPythonTransport {
                 new Promise((resolve, reject) => {
                     timer = setTimeout(() => {
                         writer.abort().catch(() => {});
-                        reject(new Error('La escritura USB no respondió a tiempo.'));
+                        reject(new Error(tr('Writing to USB did not finish in time.', 'La escritura USB no respondió a tiempo.', 'L’escriptura USB no ha respost a temps.')));
                     }, this.timeout);
                 })
             ]);
@@ -156,17 +158,17 @@ export class MicroPythonTransport {
         if (epoch !== this.epoch) throw cancelled();
         const response = await this.waitFor('\x04>');
         if (!response.startsWith('OK') || !response.includes('\x04')) {
-            throw new Error('Respuesta raw REPL no válida.');
+            throw new Error(tr('Invalid raw REPL answer.', 'Respuesta raw REPL no válida.', 'Resposta raw REPL no vàlida.'));
         }
         const separator = response.indexOf('\x04');
         const stderr = response.slice(separator + 1).trim();
-        if (stderr) throw new Error(`Error del firmware: ${stderr}`);
+        if (stderr) throw new Error(`${tr('Firmware error', 'Error del firmware', 'Error del firmware')}: ${stderr}`);
         return response.slice(2, separator);
     }
 
     runPython (source) {
         if (!this.isConnected() || this.stopping || this.closing) {
-            return Promise.reject(new Error('Conecta explícitamente el dispositivo antes de ejecutar bloques.'));
+            return Promise.reject(new Error(tr('Connect the device with its connect button before running blocks.', 'Conecta explícitamente el dispositivo antes de ejecutar bloques.', 'Connecta explícitament el dispositiu abans d’executar blocs.')));
         }
         const epoch = this.epoch;
         const operation = this.queue.then(async () => {

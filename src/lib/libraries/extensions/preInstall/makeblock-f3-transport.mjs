@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+import {tr, timeoutError, isTimeout} from './runtime-texts.mjs';
 // Makeblock "live mode" transport for CyberPi (mBot2) and Codey Rocky over Web Serial
 // (USB cable) or Web Bluetooth (the robot's own BLE radio).
 //
@@ -28,13 +30,13 @@ export const TYPE_SCRIPT = 0x28;
 export const MODE_LIVE = 0x01;
 export const MODE_UPLOAD = 0x00;
 
-const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
+const cancelled = () => new Error(tr('Operation cancelled because the device was stopped.', 'Operación cancelada por la parada del dispositivo.', 'Operació cancel·lada per l’aturada del dispositiu.'));
 
 const sum = bytes => bytes.reduce((total, byte) => (total + byte) & 0xFF, 0);
 
 export const encodeFrame = payload => {
     const body = Array.from(payload);
-    if (body.length > MAX_PAYLOAD) throw new Error('Orden demasiado larga para el robot.');
+    if (body.length > MAX_PAYLOAD) throw new Error(tr('Command too long for the robot.', 'Orden demasiado larga para el robot.', 'Ordre massa llarga per al robot.'));
     const lenLo = body.length & 0xFF;
     const lenHi = (body.length >> 8) & 0xFF;
     return Uint8Array.from([HEAD, (HEAD + lenLo + lenHi) & 0xFF, lenLo, lenHi, ...body, sum(body), TAIL]);
@@ -119,7 +121,7 @@ export const parseReturnValue = text => {
 
 export const pyArgs = (...values) => values.map(value => {
     if (typeof value === 'number') {
-        if (!Number.isFinite(value)) throw new Error('El valor debe ser un número finito.');
+        if (!Number.isFinite(value)) throw new Error(tr('The value must be a finite number.', 'El valor debe ser un número finito.', 'El valor ha de ser un nombre finit.'));
         return String(value);
     }
     if (typeof value === 'boolean') return value ? 'True' : 'False';
@@ -139,7 +141,7 @@ const pickCharacteristics = async service => {
     const all = await service.getCharacteristics();
     const tx = all.find(c => c.properties && (c.properties.writeWithoutResponse || c.properties.write));
     const rx = all.find(c => c.properties && (c.properties.notify || c.properties.indicate));
-    if (!tx || !rx) throw new Error('El robot no ofrece el servicio Bluetooth de Makeblock.');
+    if (!tx || !rx) throw new Error(tr('The robot does not offer the Makeblock Bluetooth service.', 'El robot no ofrece el servicio Bluetooth de Makeblock.', 'El robot no ofereix el servei Bluetooth de Makeblock.'));
     return {tx, rx};
 };
 
@@ -154,7 +156,7 @@ export class BluetoothSerialPort {
 
     async open () {
         const device = this.device;
-        if (!device.gatt) throw new Error('Este dispositivo Bluetooth no admite conexión.');
+        if (!device.gatt) throw new Error(tr('This Bluetooth device does not accept connections.', 'Este dispositivo Bluetooth no admite conexión.', 'Aquest dispositiu Bluetooth no admet connexió.'));
         const server = await device.gatt.connect();
         let service = null;
         for (const uuid of BLE_SERVICES) {
@@ -167,7 +169,7 @@ export class BluetoothSerialPort {
         }
         if (!service) {
             device.gatt.disconnect();
-            throw new Error('El robot no ofrece el servicio Bluetooth de Makeblock.');
+            throw new Error(tr('The robot does not offer the Makeblock Bluetooth service.', 'El robot no ofrece el servicio Bluetooth de Makeblock.', 'El robot no ofereix el servei Bluetooth de Makeblock.'));
         }
         const {tx, rx} = await pickCharacteristics(service);
         this.tx = tx;
@@ -228,7 +230,7 @@ export class BluetoothSerialPort {
 const requestPort = async kind => {
     if (kind === 'bluetooth') {
         if (typeof navigator === 'undefined' || !navigator.bluetooth) {
-            throw new Error('Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS y activa el Bluetooth.');
+            throw new Error(tr('Web Bluetooth is not available. Use Chrome or Edge on HTTPS and turn on Bluetooth.', 'Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS y activa el Bluetooth.', 'Web Bluetooth no està disponible. Fes servir Chrome o Edge en HTTPS i activa el Bluetooth.'));
         }
         const device = await navigator.bluetooth.requestDevice({
             filters: [
@@ -240,7 +242,7 @@ const requestPort = async kind => {
         return new BluetoothSerialPort(device);
     }
     if (typeof navigator === 'undefined' || !navigator.serial) {
-        throw new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+        throw new Error(tr('Web Serial is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Serial no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
     }
     return navigator.serial.requestPort();
 };
@@ -286,7 +288,7 @@ export class MakeblockF3Transport {
     // kind: 'usb' (Web Serial, default) or 'bluetooth' (Web Bluetooth).
     async connect (kind = 'usb') {
         if (this.isConnected()) return;
-        if (this.connecting || this.closing) throw new Error('Conexión ocupada.');
+        if (this.connecting || this.closing) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         this.connecting = true;
         const epoch = this.epoch;
         const bluetooth = kind === 'bluetooth';
@@ -297,7 +299,7 @@ export class MakeblockF3Transport {
             this.port = selected;
             await selected.open({baudRate: this.baudRate});
             if (!selected.readable || !selected.writable) {
-                throw new Error(bluetooth ? 'Conexión Bluetooth no disponible.' : 'Puerto USB no disponible.');
+                throw new Error(bluetooth ? tr('Bluetooth connection not available.', 'Conexión Bluetooth no disponible.', 'Connexió Bluetooth no disponible.') : tr('USB port not available.', 'Puerto USB no disponible.', 'Port USB no disponible.'));
             }
             this.parser = new FrameParser();
             this.reader = selected.readable.getReader();
@@ -310,12 +312,20 @@ export class MakeblockF3Transport {
             this.lastError = '';
         } catch (error) {
             let reason = error.message;
-            if (reason === 'El robot no respondió a tiempo.') {
+            if (isTimeout(error)) {
                 reason = bluetooth ?
+                    tr('The robot does not answer by Bluetooth. Check that it is on and close, and that mBlock ' +
+                        'is not connected to it.',
                     'El robot no responde por Bluetooth. Comprueba que está encendido y cerca, y que mBlock ' +
-                    'no está conectado a él.' :
+                        'no está conectado a él.',
+                    'El robot no respon per Bluetooth. Comprova que està encès i a prop, i que mBlock ' +
+                        'no hi està connectat.') :
+                    tr('The robot does not answer. Check that it is on, that the USB cable carries data ' +
+                        'and that mBlock or another tab is not using the port.',
                     'El robot no responde. Comprueba que está encendido, que el cable USB transmite datos ' +
-                    'y que mBlock u otra pestaña no está usando el puerto.';
+                        'y que mBlock u otra pestaña no está usando el puerto.',
+                    'El robot no respon. Comprova que està encès, que el cable USB transmet dades ' +
+                        'i que mBlock o una altra pestanya no està fent servir el port.');
             }
             this.lastError = `${this.label}: ${reason}`;
             await this.closePort();
@@ -327,14 +337,14 @@ export class MakeblockF3Transport {
 
     async waitForFirmware (epoch) {
         const deadline = Date.now() + this.connectTimeout;
-        let lastError = new Error('El robot no respondió a tiempo.');
+        let lastError = timeoutError(tr('The robot did not answer in time.', 'El robot no respondió a tiempo.', 'El robot no ha respost a temps.'));
         while (Date.now() < deadline) {
             if (epoch !== this.epoch) throw cancelled();
             try {
                 await this.send(this.probe || '1', {timeout: this.probeInterval});
                 return;
             } catch (error) {
-                if (error.message !== 'El robot no respondió a tiempo.') throw error;
+                if (!isTimeout(error)) throw error;
                 lastError = error;
             }
         }
@@ -350,8 +360,8 @@ export class MakeblockF3Transport {
             }
             if (!this.closing) {
                 throw new Error(this.kind === 'bluetooth' ?
-                    'El robot se ha desconectado del Bluetooth.' :
-                    'El dispositivo USB se ha desconectado.');
+                    tr('The robot has disconnected from Bluetooth.', 'El robot se ha desconectado del Bluetooth.', 'El robot s’ha desconnectat del Bluetooth.') :
+                    tr('The USB device has been disconnected.', 'El dispositivo USB se ha desconectado.', 'El dispositiu USB s’ha desconnectat.'));
             }
         } catch (error) {
             if (!this.closing) {
@@ -373,7 +383,7 @@ export class MakeblockF3Transport {
 
     write (bytes) {
         const operation = this.writes.then(async () => {
-            if (!this.port || !this.port.writable) throw new Error('Conecta el dispositivo primero.');
+            if (!this.port || !this.port.writable) throw new Error(tr('Connect the device first.', 'Conecta el dispositivo primero.', 'Connecta el dispositiu primer.'));
             const writer = this.port.writable.getWriter();
             let timer;
             try {
@@ -382,7 +392,7 @@ export class MakeblockF3Transport {
                     new Promise((resolve, reject) => {
                         timer = setTimeout(() => {
                             writer.abort().catch(() => {});
-                            reject(new Error('El envío al robot no respondió a tiempo.'));
+                            reject(new Error(tr('Sending to the robot did not finish in time.', 'El envío al robot no respondió a tiempo.', 'L’enviament al robot no ha respost a temps.')));
                         }, Math.max(this.timeout, 1000));
                     })
                 ]);
@@ -411,7 +421,7 @@ export class MakeblockF3Transport {
                 else resolve(text);
             };
             this.pending.set(idx, {resolve: text => finish(null, text), reject: error => finish(error)});
-            timer = setTimeout(() => finish(new Error('El robot no respondió a tiempo.')), timeout);
+            timer = setTimeout(() => finish(timeoutError(tr('The robot did not answer in time.', 'El robot no respondió a tiempo.', 'El robot no ha respost a temps.'))), timeout);
         });
         try {
             await this.write(scriptFrame(script, idx, true));
@@ -425,7 +435,7 @@ export class MakeblockF3Transport {
     // Runs one block's script in order with the other blocks and returns its value.
     run (script, {timeout = this.timeout} = {}) {
         if (!this.isConnected()) {
-            return Promise.reject(new Error('Conecta explícitamente el dispositivo antes de ejecutar bloques.'));
+            return Promise.reject(new Error(tr('Connect the device with its connect button before running blocks.', 'Conecta explícitamente el dispositivo antes de ejecutar bloques.', 'Connecta explícitament el dispositiu abans d’executar blocs.')));
         }
         const epoch = this.epoch;
         const operation = this.queue.then(async () => {

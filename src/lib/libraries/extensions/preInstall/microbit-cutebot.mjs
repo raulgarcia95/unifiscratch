@@ -9,6 +9,7 @@ import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const id = 'smartCutebot';
 const name = 'Cutebot';
@@ -251,7 +252,7 @@ class Cutebot {
                     opcode: 'showText',
                     blockType: 'command',
                     text: t('showText', 'display text [TEXT]'),
-                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola'}}
+                    arguments: {TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}}
                 },
                 {
                     opcode: 'plotLed',
@@ -349,8 +350,13 @@ class Cutebot {
     // Firmware CB1 drives the robot but has no micro:bit sensor values.
     checkFirmware () {
         if (!String(this.transport.version || '').startsWith('CB2')) {
-            this.transport.lastError = 'Cutebot: firmware antiguo. Vuelve a cargar el .hex de Unifiscratch para usar ' +
-                'acelerómetro, gestos, logo, temperatura, luz, brújula y sonido.';
+            this.transport.lastError = `Cutebot: ${tr(
+                'old firmware. Load the Unifiscratch .hex again to use the accelerometer, gestures, logo, ' +
+                    'temperature, light, compass and sound.',
+                'firmware antiguo. Vuelve a cargar el .hex de Unifiscratch para usar ' +
+                    'acelerómetro, gestos, logo, temperatura, luz, brújula y sonido.',
+                'firmware antic. Torna a carregar el .hex d’Unifiscratch per fer servir ' +
+                    'l’acceleròmetre, els gestos, el logo, la temperatura, la llum, la brúixola i el so.')}`;
         }
     }
 

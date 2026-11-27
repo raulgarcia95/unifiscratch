@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+import {tr, textOf, timeoutError, isTimeout} from './runtime-texts.mjs';
 // MicroBlocks serial protocol for Unifiscratch (Web Serial).
 //
 // Boards that ship with the MicroBlocks firmware (Citilab ED1 and others)
@@ -54,20 +56,20 @@ const MAX_TO_BOARD = 1000;
 export const CHUNK_COMMAND = 1;
 export const CHUNK_REPORTER = 2;
 
-// Errors reported by taskErrorMsg (subset of the VM error table, in Spanish).
+// Errors reported by taskErrorMsg (subset of the VM error table): [English, Spanish, Catalan].
 const TASK_ERRORS = {
-    1: 'error sin especificar',
-    2: 'memoria agotada',
-    3: 'hace falta un número entero',
-    4: 'hace falta una lista',
-    5: 'hace falta un booleano',
-    9: 'índice fuera de rango',
-    10: 'faltan argumentos',
-    12: 'primitiva desconocida',
-    13: 'hace falta una variable',
-    14: 'la operación no es compatible con esta placa',
-    22: 'pila desbordada',
-    26: 'hace falta un texto'
+    1: ['unspecified error', 'error sin especificar', 'error sense especificar'],
+    2: ['out of memory', 'memoria agotada', 'memòria esgotada'],
+    3: ['an integer is needed', 'hace falta un número entero', 'cal un nombre enter'],
+    4: ['a list is needed', 'hace falta una lista', 'cal una llista'],
+    5: ['a boolean is needed', 'hace falta un booleano', 'cal un booleà'],
+    9: ['index out of range', 'índice fuera de rango', 'índex fora de rang'],
+    10: ['missing arguments', 'faltan argumentos', 'falten arguments'],
+    12: ['unknown primitive', 'primitiva desconocida', 'primitiva desconeguda'],
+    13: ['a variable is needed', 'hace falta una variable', 'cal una variable'],
+    14: ['the operation is not supported by this board', 'la operación no es compatible con esta placa', 'l’operació no és compatible amb aquesta placa'],
+    22: ['stack overflow', 'pila desbordada', 'pila desbordada'],
+    26: ['a text is needed', 'hace falta un texto', 'cal un text']
 };
 
 export const shortMessage = (type, id = 0) => Uint8Array.from([0xFA, type & 0xFF, id & 0xFF]);
@@ -75,7 +77,7 @@ export const shortMessage = (type, id = 0) => Uint8Array.from([0xFA, type & 0xFF
 export const longMessage = (type, id, body) => {
     const bytes = Array.from(body);
     const size = bytes.length + 1; // terminator byte
-    if (size > MAX_TO_BOARD) throw new Error('Mensaje demasiado largo para la placa.');
+    if (size > MAX_TO_BOARD) throw new Error(tr('Message too long for the board.', 'Mensaje demasiado largo para la placa.', 'Missatge massa llarg per a la placa.'));
     return Uint8Array.from([0xFB, type & 0xFF, id & 0xFF, size & 0xFF, (size >> 8) & 0xFF, ...bytes, 0xFE]);
 };
 
@@ -168,7 +170,7 @@ export const decodeValue = data => {
 export const encodeValue = value => {
     if (typeof value === 'boolean') return [3, value ? 1 : 0];
     if (typeof value === 'number') {
-        if (!Number.isInteger(value)) throw new Error('La placa solo admite números enteros.');
+        if (!Number.isInteger(value)) throw new Error(tr('The board only accepts integers.', 'La placa solo admite números enteros.', 'La placa només admet nombres enters.'));
         const n = value | 0;
         return [1, n & 0xFF, (n >> 8) & 0xFF, (n >> 16) & 0xFF, (n >>> 24) & 0xFF];
     }
@@ -253,8 +255,8 @@ export class ChunkBuilder {
     }
 
     op (name, arg = 0) {
-        if (!(name in OPCODES)) throw new Error(`Instrucción desconocida: ${name}`);
-        if (arg < -128 || arg > 127) throw new Error('Argumento de instrucción fuera de rango.');
+        if (!(name in OPCODES)) throw new Error(tr(`Unknown instruction: ${name}`, `Instrucción desconocida: ${name}`, `Instrucció desconeguda: ${name}`));
+        if (arg < -128 || arg > 127) throw new Error(tr('Instruction argument out of range.', 'Argumento de instrucción fuera de rango.', 'Argument d’instrucció fora de rang.'));
         this.words.push({op: name, arg});
         return this;
     }
@@ -299,7 +301,7 @@ export class ChunkBuilder {
 
     // Calls a named primitive such as [sensors:touchRead]; arguments must be pushed first.
     prim (set, name, argCount, isCommand) {
-        if (!(set in PRIM_SETS)) throw new Error(`Conjunto de primitivas desconocido: ${set}`);
+        if (!(set in PRIM_SETS)) throw new Error(tr(`Unknown primitive set: ${set}`, `Conjunto de primitivas desconocido: ${set}`, `Conjunt de primitives desconegut: ${set}`));
         this.words.push({
             op: isCommand ? 'commandPrimitive' : 'reporterPrimitive',
             literal: name,
@@ -383,7 +385,7 @@ export class ChunkBuilder {
                 if (word.op === 'pushLiteral') {
                     out.push(code, 0, offset & 0xFF, (offset >> 8) & 0xFF);
                 } else {
-                    if (offset > 1023) throw new Error('Programa demasiado largo.');
+                    if (offset > 1023) throw new Error(tr('Program too long.', 'Programa demasiado largo.', 'Programa massa llarg.'));
                     const second = (word.primSet << 10) | offset;
                     out.push(code, word.argCount & 0xFF, second & 0xFF, (second >> 8) & 0xFF);
                 }
@@ -407,8 +409,8 @@ export class ChunkBuilder {
 
 // ---------- transport ----------
 
-const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
-const NO_ANSWER = 'La placa no respondió a tiempo.';
+const cancelled = () => new Error(tr('Operation cancelled because the device was stopped.', 'Operación cancelada por la parada del dispositivo.', 'Operació cancel·lada per l’aturada del dispositiu.'));
+const noAnswer = () => timeoutError(tr('The board did not answer in time.', 'La placa no respondió a tiempo.', 'La placa no ha respost a temps.'));
 
 export const parseVersion = text => {
     const match = /v?(\d+)\s+(.*)$/.exec(String(text).trim());
@@ -458,9 +460,9 @@ export class MicroBlocksTransport {
 
     async connect () {
         if (this.isConnected()) return;
-        if (this.connecting || this.closing) throw new Error('Conexión ocupada.');
+        if (this.connecting || this.closing) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         if (typeof navigator === 'undefined' || !navigator.serial) {
-            throw new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+            throw new Error(tr('Web Serial is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Serial no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
         }
         this.connecting = true;
         const epoch = this.epoch;
@@ -469,7 +471,7 @@ export class MicroBlocksTransport {
             if (epoch !== this.epoch) throw cancelled();
             await selected.open({baudRate: this.baudRate, bufferSize: 4096});
             this.port = selected;
-            if (!selected.readable || !selected.writable) throw new Error('Puerto USB no disponible.');
+            if (!selected.readable || !selected.writable) throw new Error(tr('USB port not available.', 'Puerto USB no disponible.', 'Port USB no disponible.'));
             this.parser = new MessageParser();
             this.reader = selected.readable.getReader();
             this.readTask = this.readLoop(this.reader);
@@ -481,10 +483,16 @@ export class MicroBlocksTransport {
             this.lastError = '';
         } catch (error) {
             this.ready = false;
-            this.lastError = `${this.label}: ${error.message === NO_ANSWER ?
+            this.lastError = `${this.label}: ${isTimeout(error) ?
+                tr('the board does not answer. Check that it is on, that the USB cable carries data, ' +
+                    'that it has the MicroBlocks firmware and that no other tab (for example MicroBlocks) ' +
+                    'is using the port.',
                 'la placa no responde. Comprueba que está encendida, que el cable USB transmite datos, ' +
-                'que tiene el firmware de MicroBlocks y que ninguna otra pestaña (por ejemplo MicroBlocks) ' +
-                'está usando el puerto.' :
+                    'que tiene el firmware de MicroBlocks y que ninguna otra pestaña (por ejemplo MicroBlocks) ' +
+                    'está usando el puerto.',
+                'la placa no respon. Comprova que està encesa, que el cable USB transmet dades, ' +
+                    'que té el firmware de MicroBlocks i que cap altra pestanya (per exemple MicroBlocks) ' +
+                    'no està fent servir el port.') :
                 error.message}`;
             await this.closePort();
             throw new Error(this.lastError);
@@ -504,19 +512,28 @@ export class MicroBlocksTransport {
                 await this.request(shortMessage(MSG.ping), m => m.type === MSG.ping, 400);
                 answered = true;
             } catch (error) {
-                if (error.message !== NO_ANSWER) throw error;
+                if (!isTimeout(error)) throw error;
             }
         }
-        if (!answered) throw new Error(NO_ANSWER);
+        if (!answered) throw noAnswer();
         const reply = await this.request(shortMessage(MSG.getVersion), m => m.type === MSG.version);
         const info = parseVersion(decodeValue(reply.data));
         this.boardInfo = info;
         if (info.version < 300) {
-            throw new Error(`el firmware de MicroBlocks es antiguo (v${info.version}). ` +
-                'Actualízalo desde microblocks.fun: conecta la placa y usa «actualizar firmware».');
+            throw new Error(tr(
+                `the MicroBlocks firmware is old (v${info.version}). ` +
+                    'Update it from microblocks.fun: connect the board and use «update firmware».',
+                `el firmware de MicroBlocks es antiguo (v${info.version}). ` +
+                    'Actualízalo desde microblocks.fun: conecta la placa y usa «actualizar firmware».',
+                `el firmware de MicroBlocks és antic (v${info.version}). ` +
+                    'Actualitza’l des de microblocks.fun: connecta la placa i fes servir «actualitzar firmware».'));
         }
         if (this.boardMatch && !this.boardMatch.test(info.board)) {
-            throw new Error(`la placa conectada es «${info.board}», no ${this.boardHint || this.label}.`);
+            const expected = textOf(this.boardHint) || this.label;
+            throw new Error(tr(
+                `the connected board is «${info.board}», not ${expected}.`,
+                `la placa conectada es «${info.board}», no ${expected}.`,
+                `la placa connectada és «${info.board}», no ${expected}.`));
         }
         await this.write(shortMessage(MSG.stopAll));
     }
@@ -534,12 +551,12 @@ export class MicroBlocksTransport {
                     m => m.type === MSG.chunkCRC && m.id === chunk.id, 300);
                 current = int32(reply.data, 0) >>> 0;
             } catch (error) {
-                if (error.message !== NO_ANSWER) throw error;
+                if (!isTimeout(error)) throw error;
             }
             if (current === wanted) continue;
             const reply = await this.request(longMessage(MSG.chunkCode16, chunk.id, [chunk.type, ...body]),
                 m => m.type === MSG.chunkCRC && m.id === chunk.id, 3000);
-            if ((int32(reply.data, 0) >>> 0) !== wanted) throw new Error('la placa guardó mal el programa auxiliar.');
+            if ((int32(reply.data, 0) >>> 0) !== wanted) throw new Error(tr('the board did not store the helper program correctly.', 'la placa guardó mal el programa auxiliar.', 'la placa ha desat malament el programa auxiliar.'));
         }
     }
 
@@ -549,7 +566,7 @@ export class MicroBlocksTransport {
         this.keepAliveTimer = setInterval(() => {
             if (!this.isConnected()) return;
             if (Date.now() - this.lastSeen > (this.keepAlive * 3) + 1000) {
-                this.lastError = `${this.label}: la placa ha dejado de responder.`;
+                this.lastError = `${this.label}: ${tr('the board stopped answering.', 'la placa ha dejado de responder.', 'la placa ha deixat de respondre.')}`;
                 this.closePort().catch(() => {});
                 return;
             }
@@ -565,7 +582,7 @@ export class MicroBlocksTransport {
                 this.lastSeen = Date.now();
                 for (const message of this.parser.push(value)) this.handleMessage(message);
             }
-            if (!this.closing) throw new Error('El dispositivo USB se ha desconectado.');
+            if (!this.closing) throw new Error(tr('The USB device has been disconnected.', 'El dispositivo USB se ha desconectado.', 'El dispositiu USB s’ha desconnectat.'));
         } catch (error) {
             if (!this.closing) {
                 this.lastError = `${this.label}: ${error.message}`;
@@ -591,7 +608,7 @@ export class MicroBlocksTransport {
             new Promise((resolve, reject) => {
                 timer = setTimeout(() => {
                     writer.abort().catch(() => {});
-                    reject(new Error('La escritura USB no respondió a tiempo.'));
+                    reject(new Error(tr('Writing to USB did not finish in time.', 'La escritura USB no respondió a tiempo.', 'L’escriptura USB no ha respost a temps.')));
                 }, 2000);
             })
         ]).finally(() => clearTimeout(timer));
@@ -599,7 +616,7 @@ export class MicroBlocksTransport {
 
     write (bytes) {
         const operation = this.writes.then(async () => {
-            if (!this.port || !this.port.writable) throw new Error('Conecta el dispositivo primero.');
+            if (!this.port || !this.port.writable) throw new Error(tr('Connect the device first.', 'Conecta el dispositivo primero.', 'Connecta el dispositiu primer.'));
             const writer = this.port.writable.getWriter();
             try {
                 // Many boards have a 64-byte receive buffer: send in small slices.
@@ -631,7 +648,7 @@ export class MicroBlocksTransport {
                 resolve: message => finish(null, message),
                 reject: error => finish(error)
             };
-            waiter.timer = setTimeout(() => finish(new Error(NO_ANSWER)), timeout);
+            waiter.timer = setTimeout(() => finish(noAnswer()), timeout);
             this.waiters.add(waiter);
         });
         return {promise, cancel: error => waiter.reject(error)};
@@ -652,10 +669,10 @@ export class MicroBlocksTransport {
     // (motors, sound, sensors) run at the same time on the board.
     run (name, globals = {}, {timeout = this.timeout} = {}) {
         if (!this.isConnected()) {
-            return Promise.reject(new Error('Conecta explícitamente el dispositivo antes de ejecutar bloques.'));
+            return Promise.reject(new Error(tr('Connect the device with its connect button before running blocks.', 'Conecta explícitamente el dispositivo antes de ejecutar bloques.', 'Connecta explícitament el dispositiu abans d’executar blocs.')));
         }
         const chunk = this.chunks[name];
-        if (!chunk) return Promise.reject(new Error(`Programa auxiliar desconocido: ${name}`));
+        if (!chunk) return Promise.reject(new Error(tr(`Unknown helper program: ${name}`, `Programa auxiliar desconocido: ${name}`, `Programa auxiliar desconegut: ${name}`)));
         const epoch = this.epoch;
         const previous = this.locks.get(chunk.id) || Promise.resolve();
         const operation = previous.then(async () => {
@@ -693,7 +710,8 @@ export class MicroBlocksTransport {
         if (epoch !== this.epoch) throw cancelled();
         if (message.type === MSG.taskError) {
             const code = message.data[0];
-            throw new Error(`la placa dio un error: ${TASK_ERRORS[code] || `código ${code}`}.`);
+            const detail = TASK_ERRORS[code] ? tr(...TASK_ERRORS[code]) : tr(`code ${code}`, `código ${code}`, `codi ${code}`);
+            throw new Error(tr(`the board reported an error: ${detail}.`, `la placa dio un error: ${detail}.`, `la placa ha donat un error: ${detail}.`));
         }
         return message.type === MSG.taskReturnedValue ? decodeValue(message.data) : '';
     }
@@ -751,7 +769,7 @@ export class MicroBlocksTransport {
         this.ready = false;
         clearInterval(this.keepAliveTimer);
         this.cancelAll();
-        for (const waiter of [...this.waiters]) waiter.reject(new Error('El dispositivo se ha desconectado.'));
+        for (const waiter of [...this.waiters]) waiter.reject(new Error(tr('The device has been disconnected.', 'El dispositivo se ha desconectado.', 'El dispositiu s’ha desconnectat.')));
         const port = this.port;
         const reader = this.reader;
         this.port = null;

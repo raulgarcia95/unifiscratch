@@ -18,6 +18,7 @@ import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr} from './runtime-texts.mjs';
 
 export const EDISON_VENDOR_ID = 0x16d0;
 export const EDISON_PRODUCT_ID = 0x1207;
@@ -33,24 +34,29 @@ const USB = {
 const STATE_PROGRAM_COMPLETE = 3;
 export const BRIDGE_ID = 3001;
 export const BRIDGE_FILE = 'unfyscratch-puente-edison-v3.py';
-const BRIDGE_HELP = `Carga en el Edison el programa puente ${BRIDGE_FILE} con https://www.edpyapp.com/v3/ ` +
-    '(botón de programar) y vuelve a conectar. Pulsa el botón «cómo conectar Edison» para ver los pasos.';
+const bridgeHelp = () => tr(
+    `Load the bridge program ${BRIDGE_FILE} on Edison with https://www.edpyapp.com/v3/ ` +
+        '(program button) and connect again. Press the «how to connect Edison» button to see the steps.',
+    `Carga en el Edison el programa puente ${BRIDGE_FILE} con https://www.edpyapp.com/v3/ ` +
+        '(botón de programar) y vuelve a conectar. Pulsa el botón «cómo conectar Edison» para ver los pasos.',
+    `Carrega a l’Edison el programa pont ${BRIDGE_FILE} amb https://www.edpyapp.com/v3/ ` +
+        '(botó de programar) i torna a connectar. Prem el botó «com connectar Edison» per veure els passos.');
 
 export const ORDER = {forward: 1, backward: 2, spinRight: 3, spinLeft: 4, leds: 5, beep: 6, sensor: 7, ping: 9};
 export const SENSOR = {obstacle: 1, line: 2, leftLight: 3, rightLight: 4, keypad: 5, clap: 6};
 const MAX_CM = 30;
 
 export const encodeOrder = (id, command, value) => {
-    if (!Number.isInteger(id) || id < 1 || id > 7) throw new Error('Identificador de orden no válido.');
-    if (!Number.isInteger(command) || command < 0 || command > 15) throw new Error('Orden no válida.');
-    if (!Number.isInteger(value) || value < 0 || value > 255) throw new Error('Valor fuera de rango (0-255).');
+    if (!Number.isInteger(id) || id < 1 || id > 7) throw new Error(tr('Invalid command identifier.', 'Identificador de orden no válido.', 'Identificador d’ordre no vàlid.'));
+    if (!Number.isInteger(command) || command < 0 || command > 15) throw new Error(tr('Invalid command.', 'Orden no válida.', 'Ordre no vàlida.'));
+    if (!Number.isInteger(value) || value < 0 || value > 255) throw new Error(tr('Value out of range (0-255).', 'Valor fuera de rango (0-255).', 'Valor fora de rang (0-255).'));
     return (id * 4096) + (command * 256) + value;
 };
 
 const command = (code, b2 = 0, b3 = 0, b4 = 0, b5 = 0) => new Uint8Array([HEADER, code, b2, b3, b4, b5, 0, 0]);
 export const dataOutPacket = value => command(USB.dataOut, value & 0xff, (value >> 8) & 0xff, (value >> 16) & 0xff, (value >> 24) & 0xff);
 
-const cancelled = () => new Error('Orden cancelada por la parada de Edison.');
+const cancelled = () => new Error(tr('Command cancelled because Edison was stopped.', 'Orden cancelada por la parada de Edison.', 'Ordre cancel·lada per l’aturada de l’Edison.'));
 
 export class EdisonLink {
     constructor (label = 'Edison V3', {timeout = 2000} = {}) {
@@ -72,9 +78,9 @@ export class EdisonLink {
 
     async connect () {
         if (this.isConnected()) return;
-        if (this.connecting) throw new Error('Conexión ocupada.');
+        if (this.connecting) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         if (typeof navigator === 'undefined' || !navigator.usb) {
-            throw new Error('WebUSB no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+            throw new Error(tr('WebUSB is not available. Use Chrome or Edge on HTTPS or localhost.', 'WebUSB no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'WebUSB no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
         }
         this.connecting = true;
         try {
@@ -90,7 +96,7 @@ export class EdisonLink {
             this.readLoop(device);
             const version = await this.request(command(USB.firmwareVersion));
             if (version.getUint8(2) === 0) {
-                throw new Error('Edison está en modo de actualización de firmware. Actualízalo con la app oficial.');
+                throw new Error(tr('Edison is in firmware update mode. Update it with the official app.', 'Edison está en modo de actualización de firmware. Actualízalo con la app oficial.', 'L’Edison està en mode d’actualització de firmware. Actualitza’l amb l’app oficial.'));
             }
             await this.restartBridge();
             this.ready = true;
@@ -98,9 +104,9 @@ export class EdisonLink {
             try {
                 answer = await this.order(ORDER.ping, 0, 3000);
             } catch (error) {
-                throw new Error(`El robot no responde. ${BRIDGE_HELP}`);
+                throw new Error(`${tr('The robot does not answer.', 'El robot no responde.', 'El robot no respon.')} ${bridgeHelp()}`);
             }
-            if (answer !== BRIDGE_ID) throw new Error(`Programa del robot desconocido. ${BRIDGE_HELP}`);
+            if (answer !== BRIDGE_ID) throw new Error(`${tr('Unknown program on the robot.', 'Programa del robot desconocido.', 'Programa del robot desconegut.')} ${bridgeHelp()}`);
             this.lastError = '';
         } catch (error) {
             this.lastError = `${this.label}: ${error.message}`;
@@ -126,7 +132,7 @@ export class EdisonLink {
                 if (result.status === 'ok' && result.data) this.handle(result.data);
             }
         } catch (error) {
-            if (this.device === device) this.lost('Edison se ha desconectado del USB.');
+            if (this.device === device) this.lost(tr('Edison has disconnected from USB.', 'Edison se ha desconectado del USB.', 'L’Edison s’ha desconnectat de l’USB.'));
         }
     }
 
@@ -144,7 +150,7 @@ export class EdisonLink {
             if (data.getUint8(2) === STATE_PROGRAM_COMPLETE && this.ready && !ownStop) {
                 this.ready = false;
                 this.epoch++;
-                this.lastError = 'El programa puente del Edison se ha detenido (botón cuadrado). Vuelve a conectar.';
+                this.lastError = tr('The Edison bridge program has stopped (square button). Connect again.', 'El programa puente del Edison se ha detenido (botón cuadrado). Vuelve a conectar.', 'El programa pont de l’Edison s’ha aturat (botó quadrat). Torna a connectar.');
                 if (this.ackWaiter) this.ackWaiter(null);
             }
             return;
@@ -155,7 +161,7 @@ export class EdisonLink {
 
     // One USB command and its 8-byte reply.
     request (packet) {
-        if (!this.device || !this.device.opened) return Promise.reject(new Error('Conecta el Edison primero.'));
+        if (!this.device || !this.device.opened) return Promise.reject(new Error(tr('Connect Edison first.', 'Conecta el Edison primero.', 'Connecta l’Edison primer.')));
         return new Promise((resolve, reject) => {
             const waiter = {
                 code: packet[1],
@@ -170,7 +176,7 @@ export class EdisonLink {
             };
             const timer = setTimeout(() => {
                 this.replyWaiters.splice(this.replyWaiters.indexOf(waiter), 1);
-                reject(new Error('Edison no respondió a tiempo.'));
+                reject(new Error(tr('Edison did not answer in time.', 'Edison no respondió a tiempo.', 'L’Edison no ha respost a temps.')));
             }, this.timeout);
             this.replyWaiters.push(waiter);
             this.device.transferOut(1, packet).catch(error => {
@@ -184,7 +190,7 @@ export class EdisonLink {
     order (code, value = 0, timeout = 15000) {
         // Orders issued after a stop queue behind it, with the new epoch.
         if (!this.isConnected()) {
-            return Promise.reject(new Error('Conecta explícitamente el Edison antes de ejecutar bloques.'));
+            return Promise.reject(new Error(tr('Connect Edison with its connect button before running blocks.', 'Conecta explícitamente el Edison antes de ejecutar bloques.', 'Connecta explícitament l’Edison abans d’executar blocs.')));
         }
         const epoch = this.epoch;
         const operation = this.queue.then(async () => {
@@ -194,7 +200,7 @@ export class EdisonLink {
             const answer = new Promise((resolve, reject) => {
                 const timer = setTimeout(() => {
                     this.ackWaiter = null;
-                    reject(new Error('Edison no confirmó la orden.'));
+                    reject(new Error(tr('Edison did not confirm the command.', 'Edison no confirmó la orden.', 'L’Edison no ha confirmat l’ordre.')));
                 }, timeout);
                 this.ackWaiter = reply => {
                     if (reply === null) {
@@ -264,7 +270,7 @@ export class EdisonLink {
         this.epoch++;
         const device = this.device;
         this.device = null;
-        this.replyWaiters.splice(0).forEach(waiter => waiter.reject(new Error('Edison desconectado.')));
+        this.replyWaiters.splice(0).forEach(waiter => waiter.reject(new Error(tr('Edison disconnected.', 'Edison desconectado.', 'Edison desconnectat.'))));
         if (device && device.opened) await device.close().catch(() => {});
     }
 }
@@ -401,7 +407,7 @@ const blockClass = class EdisonV3 {
 
     move (args) {
         const code = own({forward: ORDER.forward, backward: ORDER.backward}, args.DIRECTION);
-        if (!code) throw new Error('Dirección no válida.');
+        if (!code) throw new Error(tr('Invalid direction.', 'Dirección no válida.', 'Direcció no vàlida.'));
         const cm = Math.round(Math.abs(boundedNumber(args.DISTANCE, -MAX_CM, MAX_CM)));
         if (cm === 0) return Promise.resolve();
         return this.link.order(code, cm);
@@ -409,7 +415,7 @@ const blockClass = class EdisonV3 {
 
     turn (args) {
         const code = own({right: ORDER.spinRight, left: ORDER.spinLeft}, args.SIDE);
-        if (!code) throw new Error('Sentido de giro no válido.');
+        if (!code) throw new Error(tr('Invalid turning direction.', 'Sentido de giro no válido.', 'Sentit de gir no vàlid.'));
         // The bridge doubles the value: 0-180 covers 0-360 degrees.
         const half = Math.round(Math.abs(boundedNumber(args.DEGREES, -360, 360)) / 2);
         if (half === 0) return Promise.resolve();
@@ -423,7 +429,7 @@ const blockClass = class EdisonV3 {
     setLeds (args) {
         const left = own({on: 1, off: 0}, args.LEFT);
         const right = own({on: 1, off: 0}, args.RIGHT);
-        if (left === null || right === null) throw new Error('Valor de LED no válido.');
+        if (left === null || right === null) throw new Error(tr('Invalid LED value.', 'Valor de LED no válido.', 'Valor de LED no vàlid.'));
         return this.link.order(ORDER.leds, left + (right * 2));
     }
 
@@ -437,7 +443,7 @@ const blockClass = class EdisonV3 {
 
     obstacle (args) {
         const expected = own({any: null, left: 1, right: 2, ahead: 3}, args.WHERE);
-        if (expected === null && args.WHERE !== 'any') throw new Error('Opción no válida.');
+        if (expected === null && args.WHERE !== 'any') throw new Error(tr('Invalid option.', 'Opción no válida.', 'Opció no vàlida.'));
         return this.sensor(SENSOR.obstacle).then(result => (args.WHERE === 'any' ? result > 0 : result === expected));
     }
 
@@ -447,13 +453,13 @@ const blockClass = class EdisonV3 {
 
     lightLevel (args) {
         const which = own({left: SENSOR.leftLight, right: SENSOR.rightLight}, args.SIDE);
-        if (!which) throw new Error('Sensor no válido.');
+        if (!which) throw new Error(tr('Invalid sensor.', 'Sensor no válido.', 'Sensor no vàlid.'));
         return this.sensor(which);
     }
 
     buttonPressed (args) {
         const expected = own({triangle: 1, round: 2}, args.BUTTON);
-        if (!expected) throw new Error('Botón no válido.');
+        if (!expected) throw new Error(tr('Invalid button.', 'Botón no válido.', 'Botó no vàlid.'));
         return this.sensor(SENSOR.keypad).then(result => result === expected);
     }
 

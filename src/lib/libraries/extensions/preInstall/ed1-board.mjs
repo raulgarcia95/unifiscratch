@@ -21,6 +21,7 @@ import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const MAX_SECONDS = 5;
 const MAX_STEPS = 2400;
@@ -147,7 +148,7 @@ export const singleMotorPhases = (motor, direction) => {
 };
 
 export const decodeSensors = list => {
-    if (!Array.isArray(list) || list.length < SENSOR_ORDER.length) throw new Error('Respuesta de la ED1 no válida.');
+    if (!Array.isArray(list) || list.length < SENSOR_ORDER.length) throw new Error(tr('Invalid answer from the ED1.', 'Respuesta de la ED1 no válida.', 'Resposta de l’ED1 no vàlida.'));
     const values = {};
     SENSOR_ORDER.forEach((key, index) => {
         values[key] = Number(list[index]) || 0;
@@ -164,7 +165,7 @@ const blockClass = class Ed1Board {
     constructor (runtime) {
         this.transport = new MicroBlocksTransport(name, {
             boardMatch: /ED1/i,
-            boardHint: 'una Citilab ED1',
+            boardHint: () => tr('a Citilab ED1', 'una Citilab ED1', 'una Citilab ED1'),
             chunks: buildChunks(),
             onReady: transport => transport.run('init'),
             stop: transport => transport.run('stop')
@@ -230,7 +231,7 @@ const blockClass = class Ed1Board {
                     opcode: 'showText',
                     blockType: 'command',
                     text: t('showText', 'show [TEXT] on screen'),
-                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola!'}}
+                    arguments: {TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}}
                 },
                 {opcode: 'clearScreen', blockType: 'command', text: t('clearScreen', 'clear screen')},
                 '---',
@@ -310,7 +311,7 @@ const blockClass = class Ed1Board {
     }
 
     robotMove (args) {
-        if (args.DIRECTION !== 'forward' && args.DIRECTION !== 'backward') throw new Error('Dirección no válida.');
+        if (args.DIRECTION !== 'forward' && args.DIRECTION !== 'backward') throw new Error(tr('Invalid direction.', 'Dirección no válida.', 'Direcció no vàlida.'));
         const mm = Math.abs(boundedNumber(args.DISTANCE, -1000, 1000));
         const phases = args.DIRECTION === 'forward' ?
             bothMotorPhases('clockwise', 'counterclockwise') :
@@ -319,7 +320,7 @@ const blockClass = class Ed1Board {
     }
 
     robotTurn (args) {
-        if (args.SIDE !== 'left' && args.SIDE !== 'right') throw new Error('Sentido de giro no válido.');
+        if (args.SIDE !== 'left' && args.SIDE !== 'right') throw new Error(tr('Invalid turning direction.', 'Sentido de giro no válido.', 'Sentit de gir no vàlid.'));
         const degrees = Math.abs(boundedNumber(args.DEGREES, -360, 360));
         const rotation = args.SIDE === 'right' ? 'counterclockwise' : 'clockwise';
         return this.steps(bothMotorPhases(rotation, rotation), degrees * STEPS_PER_DEGREE);
@@ -327,8 +328,8 @@ const blockClass = class Ed1Board {
 
     motorSteps (args) {
         const motor = Number(args.MOTOR);
-        if (motor !== 1 && motor !== 2) throw new Error('Motor no válido. Usa 1 o 2.');
-        if (args.ROTATION !== 'clockwise' && args.ROTATION !== 'counterclockwise') throw new Error('Sentido no válido.');
+        if (motor !== 1 && motor !== 2) throw new Error(tr('Invalid motor. Use 1 or 2.', 'Motor no válido. Usa 1 o 2.', 'Motor no vàlid. Fes servir 1 o 2.'));
+        if (args.ROTATION !== 'clockwise' && args.ROTATION !== 'counterclockwise') throw new Error(tr('Invalid direction.', 'Sentido no válido.', 'Sentit no vàlid.'));
         return this.steps(singleMotorPhases(motor, args.ROTATION), Math.abs(boundedNumber(args.STEPS, -MAX_STEPS, MAX_STEPS)));
     }
 
@@ -364,7 +365,7 @@ const blockClass = class Ed1Board {
     }
 
     buttonTouched (args) {
-        if (!Object.prototype.hasOwnProperty.call(BUTTONS, args.BUTTON)) throw new Error('Botón no válido.');
+        if (!Object.prototype.hasOwnProperty.call(BUTTONS, args.BUTTON)) throw new Error(tr('Invalid button.', 'Botón no válido.', 'Botó no vàlid.'));
         return this.readSensors().then(values => values[args.BUTTON] < TOUCH_THRESHOLD);
     }
 
@@ -375,7 +376,7 @@ const blockClass = class Ed1Board {
 
     tilt (args) {
         const axis = String(args.AXIS).toLowerCase();
-        if (!['x', 'y', 'z'].includes(axis)) throw new Error('Eje no válido.');
+        if (!['x', 'y', 'z'].includes(axis)) throw new Error(tr('Invalid axis.', 'Eje no válido.', 'Eix no vàlid.'));
         return this.readSensors().then(values => values[`tilt${axis.toUpperCase()}`]);
     }
 
@@ -384,7 +385,7 @@ const blockClass = class Ed1Board {
     }
 
     runPython () {
-        throw new Error('La ejecución libre de Python está desactivada para este dispositivo.');
+        throw new Error(tr('Running free Python code is disabled for this device.', 'La ejecución libre de Python está desactivada para este dispositivo.', 'L’execució lliure de Python està desactivada per a aquest dispositiu.'));
     }
 };
 blockClass.EXTENSION_ID = id;

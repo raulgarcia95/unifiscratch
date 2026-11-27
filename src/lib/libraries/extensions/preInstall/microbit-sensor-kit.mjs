@@ -13,14 +13,15 @@ import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {sensorKitTexts} from './microbit-sensor-kit-texts.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr, textOf, defaultText} from './runtime-texts.mjs';
 
 const id = 'microbitSensorKit';
-const name = 'Sensores y actuadores';
 const t = key => ({
     id: `unifiscratch.extensions.sensorKit.${key}`,
     default: sensorKitTexts[key][0],
     description: `Unifiscratch hardware extension text: sensorKit.${key}`
 });
+const name = t('name');
 const icon = {
     title: 'KIT',
     body: 'MICRO:BIT',
@@ -48,7 +49,8 @@ export const pinNumber = (value, allowed = PINS) => {
     const pin = String(value).trim()
         .replace(/^P/i, '');
     if (!allowed.includes(pin)) {
-        throw new Error(`Pin no permitido: ${value}. Usa ${allowed.map(p => `P${p}`).join(', ')}.`);
+        const list = allowed.map(p => `P${p}`).join(', ');
+        throw new Error(tr(`Pin not allowed: ${value}. Use ${list}.`, `Pin no permitido: ${value}. Usa ${list}.`, `Pin no permès: ${value}. Fes servir ${list}.`));
     }
     return Number(pin);
 };
@@ -187,7 +189,7 @@ class MicrobitSensorKit {
                     blockType: 'command',
                     text: t('oledText'),
                     arguments: {
-                        TEXT: {type: 'string', defaultValue: 'Hola!'},
+                        TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')},
                         ROW: {type: 'number', defaultValue: 0},
                         COL: {type: 'number', defaultValue: 0}
                     }
@@ -274,7 +276,7 @@ class MicrobitSensorKit {
     // Asks the firmware for one value: "X id OP args" -> "X id values".
     // Readings of the same thing within 60 ms share one request.
     query (op) {
-        if (!this.transport.isConnected()) return Promise.reject(new Error(this.transport.notConnected));
+        if (!this.transport.isConnected()) return Promise.reject(new Error(textOf(this.transport.notConnected)));
         const cached = this.cache.get(op);
         if (cached && Date.now() - cached.time < CACHE_MS) return cached.reply;
         const tag = this.nextId;
@@ -282,7 +284,10 @@ class MicrobitSensorKit {
         const reply = this.transport.request(`X ${tag} ${op}`, line => line.startsWith(`X ${tag} `))
             .then(line => {
                 const values = line.split(/\s+/).slice(2);
-                if (values[0] === 'E') throw new Error(`El sensor no responde (${op.split(' ')[0]}): revisa el cable y el puerto.`);
+                if (values[0] === 'E') {
+                    const what = op.split(' ')[0];
+                    throw new Error(tr(`The sensor does not answer (${what}): check the cable and the port.`, `El sensor no responde (${what}): revisa el cable y el puerto.`, `El sensor no respon (${what}): revisa el cable i el port.`));
+                }
                 return values.map(Number);
             });
         this.cache.set(op, {time: Date.now(), reply});
@@ -501,14 +506,14 @@ class MicrobitSensorKit {
     servo (args) {
         const servo = Number(String(args.SERVO).trim()
             .replace(/^S/i, ''));
-        if (!Number.isInteger(servo) || servo < 0 || servo > 7) throw new Error(`Servo no válido: ${args.SERVO}. Usa S0 a S7.`);
+        if (!Number.isInteger(servo) || servo < 0 || servo > 7) throw new Error(tr(`Invalid servo: ${args.SERVO}. Use S0 to S7.`, `Servo no válido: ${args.SERVO}. Usa S0 a S7.`, `Servo no vàlid: ${args.SERVO}. Fes servir S0 a S7.`));
         return this.send(`V ${servo} ${integer(args.ANGLE, 0, 180)}`);
     }
 
     motor (args) {
         const motor = Number(String(args.MOTOR).trim()
             .replace(/^M/i, ''));
-        if (!Number.isInteger(motor) || motor < 1 || motor > 4) throw new Error(`Motor no válido: ${args.MOTOR}. Usa M1 a M4.`);
+        if (!Number.isInteger(motor) || motor < 1 || motor > 4) throw new Error(tr(`Invalid motor: ${args.MOTOR}. Use M1 to M4.`, `Motor no válido: ${args.MOTOR}. Usa M1 a M4.`, `Motor no vàlid: ${args.MOTOR}. Fes servir M1 a M4.`));
         // Continuous: the firmware stops it if it hears nothing for 1.5 s.
         return this.send(`M ${motor} ${integer(args.SPEED, -100, 100)} 0`);
     }

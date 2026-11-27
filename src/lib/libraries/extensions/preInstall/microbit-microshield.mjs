@@ -10,6 +10,7 @@ import {colorToRgb, msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 // Kept from the earlier MicroPython profile so saved projects still load.
 const id = 'microShield';
@@ -75,7 +76,8 @@ const pinNumber = (value, allowed = PINS) => {
     const pin = String(value).trim()
         .replace(/^P/i, '');
     if (!allowed.includes(pin)) {
-        throw new Error(`Pin no permitido: ${value}. Usa ${allowed.join(', ')}.`);
+        const list = allowed.join(', ');
+        throw new Error(tr(`Pin not allowed: ${value}. Use ${list}.`, `Pin no permitido: ${value}. Usa ${list}.`, `Pin no permès: ${value}. Fes servir ${list}.`));
     }
     return Number(pin);
 };
@@ -243,7 +245,7 @@ class MicroShield {
                     opcode: 'showText',
                     blockType: 'command',
                     text: t('showText', 'display text [TEXT]'),
-                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola'}}
+                    arguments: {TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}}
                 },
                 {opcode: 'clearDisplay', blockType: 'command', text: t('clearDisplay', 'clear display')},
                 {
@@ -314,14 +316,14 @@ class MicroShield {
     servoNumber (value) {
         const servo = Number(String(value).trim()
             .replace(/^S/i, ''));
-        if (!Number.isInteger(servo) || servo < 0 || servo > 7) throw new Error(`Servo no válido: ${value}. Usa S0 a S7.`);
+        if (!Number.isInteger(servo) || servo < 0 || servo > 7) throw new Error(tr(`Invalid servo: ${value}. Use S0 to S7.`, `Servo no válido: ${value}. Usa S0 a S7.`, `Servo no vàlid: ${value}. Fes servir S0 a S7.`));
         return servo;
     }
 
     motorNumber (value) {
         const motor = Number(String(value).trim()
             .replace(/^M/i, ''));
-        if (!Number.isInteger(motor) || motor < 1 || motor > 4) throw new Error(`Motor no válido: ${value}. Usa M1 a M4.`);
+        if (!Number.isInteger(motor) || motor < 1 || motor > 4) throw new Error(tr(`Invalid motor: ${value}. Use M1 to M4.`, `Motor no válido: ${value}. Usa M1 a M4.`, `Motor no vàlid: ${value}. Fes servir M1 a M4.`));
         return motor;
     }
 

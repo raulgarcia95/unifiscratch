@@ -4,6 +4,7 @@ import ImageClassifier from './vendor/ic2scratch';
 import Handpose from './vendor/handpose2scratch';
 import Facemesh from './vendor/facemesh2scratch';
 import {entries as localEntries} from '../preInstall/unifiscratch-extra-hardware.mjs';
+import {translateOriginalInfo, statusText} from '../original-texts.mjs';
 
 const originals = {tm2scratch: TM,
     tmpose2scratch: TMPose,
@@ -14,12 +15,12 @@ const originals = {tm2scratch: TM,
 export const entries = Object.entries(originals).map(([id, Original]) => {
     class Extension extends Original {
         getInfo () {
-            const info = super.getInfo();
+            const info = translateOriginalInfo(super.getInfo(), id);
             return {...info,
                 blocks: [...info.blocks, {
                     opcode: 'unifiStatus',
                     blockType: 'reporter',
-                    text: 'estado de extensión',
+                    text: statusText,
                     disableMonitor: true
                 }]};
         }

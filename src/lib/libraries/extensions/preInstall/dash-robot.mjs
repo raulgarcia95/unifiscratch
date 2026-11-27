@@ -15,6 +15,7 @@ import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg, colorToRgb} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr} from './runtime-texts.mjs';
 
 export const DASH_SERVICE = 'af237777-879d-6186-1f49-deca0e85d9c1';
 export const DASH_COMMAND = 'af230002-879d-6186-1f49-deca0e85d9c1';
@@ -73,7 +74,7 @@ const toSigned = (value, bits) => (value >= 1 << (bits - 1) ? value - (1 << bits
 // Payload of the "move" command (after the command byte). Same layout as
 // morseapi _get_move_byte_array and dash_robot move/turn.
 export const movePayload = ({distanceMm = 0, degrees = 0, seconds}) => {
-    if (distanceMm && degrees) throw new Error('Dash no puede avanzar y girar en la misma orden.');
+    if (distanceMm && degrees) throw new Error(tr('Dash cannot move and turn in the same command.', 'Dash no puede avanzar y girar en la misma orden.', 'El Dash no pot avançar i girar en la mateixa ordre.'));
     const time = Math.round(seconds * 1000);
     const centiradians = Math.trunc(degrees * Math.PI / 180 * 100);
     const sixth = ((distanceMm >> 8) & 0x3f) | ((centiradians & 0x0300) >> 2);
@@ -111,7 +112,7 @@ export const decodeDotSensors = value => ({
     micLevel: value[7]
 });
 
-const cancelled = () => new Error('Orden cancelada por la parada de Dash.');
+const cancelled = () => new Error(tr('Command cancelled because Dash was stopped.', 'Orden cancelada por la parada de Dash.', 'Ordre cancel·lada per l’aturada del Dash.'));
 
 export class DashLink {
     constructor (label = 'Dash') {
@@ -125,7 +126,7 @@ export class DashLink {
         this.sensors = {};
         this.isDash = false;
         this.waits = new Set();
-        this.onDisconnected = () => this.lost('Dash se ha desconectado por Bluetooth.');
+        this.onDisconnected = () => this.lost(tr('Dash has disconnected from Bluetooth.', 'Dash se ha desconectado por Bluetooth.', 'El Dash s’ha desconnectat del Bluetooth.'));
     }
 
     isConnected () {
@@ -134,9 +135,9 @@ export class DashLink {
 
     async connect () {
         if (this.isConnected()) return;
-        if (this.connecting) throw new Error('Conexión ocupada.');
+        if (this.connecting) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         if (typeof navigator === 'undefined' || !navigator.bluetooth) {
-            throw new Error('Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+            throw new Error(tr('Web Bluetooth is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Bluetooth no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.'));
         }
         this.connecting = true;
         try {
@@ -198,11 +199,11 @@ export class DashLink {
     // Serialised GATT write: Web Bluetooth rejects overlapping operations.
     write (bytes, epoch = this.epoch) {
         if (!this.isConnected()) {
-            return Promise.reject(new Error('Conecta explícitamente Dash antes de ejecutar bloques.'));
+            return Promise.reject(new Error(tr('Connect Dash with its connect button before running blocks.', 'Conecta explícitamente Dash antes de ejecutar bloques.', 'Connecta explícitament el Dash abans d’executar blocs.')));
         }
         const operation = this.queue.then(() => {
             if (epoch !== this.epoch) throw cancelled();
-            if (!this.command) throw new Error('Dash no está conectado.');
+            if (!this.command) throw new Error(tr('Dash is not connected.', 'Dash no está conectado.', 'El Dash no està connectat.'));
             const data = new Uint8Array(bytes);
             return this.command.writeValueWithResponse ?
                 this.command.writeValueWithResponse(data) : this.command.writeValue(data);
@@ -435,13 +436,13 @@ const blockClass = class DashRobot {
 
     requireDash () {
         if (this.link.isConnected() && !this.link.isDash) {
-            throw new Error('El robot conectado no tiene ruedas (parece un Dot, no un Dash).');
+            throw new Error(tr('The connected robot has no wheels (it looks like a Dot, not a Dash).', 'El robot conectado no tiene ruedas (parece un Dot, no un Dash).', 'El robot connectat no té rodes (sembla un Dot, no un Dash).'));
         }
     }
 
     move (args) {
         this.requireDash();
-        if (args.DIRECTION !== 'forward' && args.DIRECTION !== 'backward') throw new Error('Dirección no válida.');
+        if (args.DIRECTION !== 'forward' && args.DIRECTION !== 'backward') throw new Error(tr('Invalid direction.', 'Dirección no válida.', 'Direcció no vàlida.'));
         const speed = own(SPEEDS, args.SPEED) || SPEEDS.normal;
         // Never more than five seconds of movement per block.
         const maxMm = speed * MAX_SECONDS;
@@ -454,7 +455,7 @@ const blockClass = class DashRobot {
 
     turn (args) {
         this.requireDash();
-        if (args.SIDE !== 'left' && args.SIDE !== 'right') throw new Error('Sentido de giro no válido.');
+        if (args.SIDE !== 'left' && args.SIDE !== 'right') throw new Error(tr('Invalid turning direction.', 'Sentido de giro no válido.', 'Sentit de gir no vàlid.'));
         const degrees = Math.round(Math.abs(boundedNumber(args.DEGREES, -360, 360)));
         if (degrees === 0) return Promise.resolve();
         const seconds = Math.min(MAX_SECONDS, Math.max(0.3, degrees / TURN_SPEED));
@@ -484,13 +485,13 @@ const blockClass = class DashRobot {
             rightEar: [CMD.rightEarColor],
             top: [CMD.headColor]
         }, args.PART);
-        if (!targets) throw new Error('Luz no válida.');
+        if (!targets) throw new Error(tr('Invalid light.', 'Luz no válida.', 'Llum no vàlida.'));
         return targets.reduce((done, command) => done.then(() => this.link.run([command, r, g, b])), Promise.resolve());
     }
 
     setEye (args) {
         const patterns = {all: 0x1fff, alternate: 0x1555, top: 0x0001, off: 0};
-        if (!Object.prototype.hasOwnProperty.call(patterns, args.PATTERN)) throw new Error('Patrón no válido.');
+        if (!Object.prototype.hasOwnProperty.call(patterns, args.PATTERN)) throw new Error(tr('Invalid pattern.', 'Patrón no válido.', 'Patró no vàlid.'));
         const mask = patterns[args.PATTERN];
         const brightness = Math.round(boundedNumber(args.BRIGHTNESS, 0, 100) * 2.55);
         return this.link.run([CMD.eye, (mask >> 8) & 0xff, mask & 0xff])
@@ -499,7 +500,7 @@ const blockClass = class DashRobot {
 
     playSound (args) {
         const sound = own(SOUNDS, args.SOUND);
-        if (!sound) throw new Error('Sonido no válido.');
+        if (!sound) throw new Error(tr('Invalid sound.', 'Sonido no válido.', 'So no vàlid.'));
         return this.link.run([CMD.say, ...hexBytes(sound)]);
     }
 

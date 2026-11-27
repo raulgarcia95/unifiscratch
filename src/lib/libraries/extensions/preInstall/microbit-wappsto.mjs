@@ -9,6 +9,7 @@ import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {tr, defaultText} from './runtime-texts.mjs';
 
 const id = 'wappstoBit';
 const name = 'Wappsto:bit';
@@ -69,16 +70,20 @@ const line = (value, max = MAX_TEXT) => String(value).replace(/[\r\n]+/g, ' ')
 const checkedId = (value, ids, kind) => {
     const text = String(Math.round(Number(value)));
     if (!ids.includes(text)) {
-        throw new Error(`${kind} de Wappsto: usa un número de ${ids[0]} a ${ids[ids.length - 1]}.`);
+        const [first, last] = [ids[0], ids[ids.length - 1]];
+        throw new Error(tr(
+            `Wappsto ${kind[0]}: use a number from ${first} to ${last}.`,
+            `${kind[1]} de Wappsto: usa un número de ${first} a ${last}.`,
+            `${kind[2]} de Wappsto: fes servir un número de ${first} a ${last}.`));
     }
     return Number(text);
 };
-const numberId = value => checkedId(value, NUMBER_IDS, 'Valor numérico');
-const textId = value => checkedId(value, TEXT_IDS, 'Valor de texto');
-const anyId = value => checkedId(value, NUMBER_IDS.concat(TEXT_IDS), 'Valor');
+const numberId = value => checkedId(value, NUMBER_IDS, ['number value', 'Valor numérico', 'Valor numèric']);
+const textId = value => checkedId(value, TEXT_IDS, ['text value', 'Valor de texto', 'Valor de text']);
+const anyId = value => checkedId(value, NUMBER_IDS.concat(TEXT_IDS), ['value', 'Valor', 'Valor']);
 const pin = value => {
     const number = Number(value);
-    if (![0, 1, 2].includes(number)) throw new Error('Pin no permitido. Usa 0, 1 o 2.');
+    if (![0, 1, 2].includes(number)) throw new Error(tr('Pin not allowed. Use 0, 1 or 2.', 'Pin no permitido. Usa 0, 1 o 2.', 'Pin no permès. Fes servir 0, 1 o 2.'));
     return number;
 };
 
@@ -94,8 +99,8 @@ class WappstoBit {
         this.lastSent = {};
         this.transport = new MicrobitUartTransport(name, {
             expect: 'WB',
-            notConnected: 'Conecta la micro:bit de la Wappsto:bit (Bluetooth o USB) antes de usar los bloques.',
-            noReply: 'La micro:bit no responde: carga el programa de Unifiscratch para Wappsto:bit (ver la guía).',
+            notConnected: () => tr('Connect the Wappsto:bit micro:bit (Bluetooth or USB) before using the blocks.', 'Conecta la micro:bit de la Wappsto:bit (Bluetooth o USB) antes de usar los bloques.', 'Connecta la micro:bit de la Wappsto:bit (Bluetooth o USB) abans de fer servir els blocs.'),
+            noReply: () => tr('The micro:bit does not answer: load the Unifiscratch program for Wappsto:bit (see the guide).', 'La micro:bit no responde: carga el programa de Unifiscratch para Wappsto:bit (ver la guía).', 'La micro:bit no respon: carrega el programa d’Unifiscratch per a Wappsto:bit (mira la guia).'),
             onLine: text => this.onLine(text)
         });
         if (runtime) bindSafetyEvents(runtime, this.transport);
@@ -146,7 +151,7 @@ class WappstoBit {
                     text: t('setupNumber', 'set up Wappsto number value [ID] name [NAME] as [TYPE]'),
                     arguments: {
                         ID: {type: 'string', menu: 'numberIds', defaultValue: '1'},
-                        NAME: {type: 'string', defaultValue: 'Temperatura'},
+                        NAME: {type: 'string', defaultValue: defaultText('temperature', 'Temperature')},
                         TYPE: {type: 'string', menu: 'templates', defaultValue: 'temperature'}
                     }
                 },
@@ -156,7 +161,7 @@ class WappstoBit {
                     text: t('setupText', 'set up Wappsto text value [ID] name [NAME]'),
                     arguments: {
                         ID: {type: 'string', menu: 'textIds', defaultValue: '16'},
-                        NAME: {type: 'string', defaultValue: 'Mensaje'}
+                        NAME: {type: 'string', defaultValue: defaultText('message', 'Message')}
                     }
                 },
                 {
@@ -174,7 +179,7 @@ class WappstoBit {
                     blockType: 'command',
                     text: t('sendText', 'send text [VALUE] to Wappsto value [ID] [WHEN]'),
                     arguments: {
-                        VALUE: {type: 'string', defaultValue: 'Hola'},
+                        VALUE: {type: 'string', defaultValue: defaultText('hello', 'Hello!')},
                         ID: {type: 'string', menu: 'textIds', defaultValue: '16'},
                         WHEN: {type: 'string', menu: 'when', defaultValue: 'change'}
                     }
@@ -226,7 +231,7 @@ class WappstoBit {
                     opcode: 'showText',
                     blockType: 'command',
                     text: t('showText', 'display text [TEXT]'),
-                    arguments: {TEXT: {type: 'string', defaultValue: 'Hola'}}
+                    arguments: {TEXT: {type: 'string', defaultValue: defaultText('hello', 'Hello!')}}
                 },
                 {opcode: 'clearDisplay', blockType: 'command', text: t('clearDisplay', 'clear display')},
                 {
@@ -361,12 +366,12 @@ class WappstoBit {
     setupNumber (args) {
         const valueId = numberId(args.ID);
         const template = Math.max(0, TEMPLATES.indexOf(String(args.TYPE)));
-        return this.transport.send(`V ${valueId} ${template} ${line(args.NAME) || `Valor ${valueId}`}`);
+        return this.transport.send(`V ${valueId} ${template} ${line(args.NAME) || `${tr('Value', 'Valor', 'Valor')} ${valueId}`}`);
     }
 
     setupText (args) {
         const valueId = textId(args.ID);
-        return this.transport.send(`G ${valueId} ${line(args.NAME) || `Texto ${valueId}`}`);
+        return this.transport.send(`G ${valueId} ${line(args.NAME) || `${tr('Text', 'Texto', 'Text')} ${valueId}`}`);
     }
 
     sendValue (command, valueId, text, when) {
@@ -378,7 +383,7 @@ class WappstoBit {
     sendNumber (args) {
         const valueId = numberId(args.ID);
         const value = Number(args.VALUE);
-        if (!Number.isFinite(value)) throw new Error('El valor debe ser un número finito.');
+        if (!Number.isFinite(value)) throw new Error(tr('The value must be a finite number.', 'El valor debe ser un número finito.', 'El valor ha de ser un nombre finit.'));
         // Wappsto works with plain decimals; avoid exponents and long tails.
         const text = String(Number(value.toFixed(6)));
         return this.sendValue('U', valueId, text, args.WHEN);

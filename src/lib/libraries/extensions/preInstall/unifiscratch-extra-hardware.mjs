@@ -3,6 +3,7 @@ import {MicroPythonTransport, bindSafetyEvents, boundedMotion, boundedNumber} fr
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
 import {openSetupGuide} from '../setup-guides.mjs';
+import {tr, textOf} from './runtime-texts.mjs';
 
 const clamp = boundedNumber;
 const msg = (id, defaultText) => ({
@@ -150,7 +151,8 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
         checkedPin (value) {
             const pin = Number(value);
             if (!Number.isInteger(pin) || !this.pins.includes(pin)) {
-                throw new Error(`Pin no permitido. Usa: ${this.pins.join(', ')}.`);
+                const list = this.pins.join(', ');
+                throw new Error(tr(`Pin not allowed. Use: ${list}.`, `Pin no permitido. Usa: ${list}.`, `Pin no permès. Fes servir: ${list}.`));
             }
             return pin;
         }
@@ -255,7 +257,7 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
         }
 
         runPython () {
-            throw new Error('La ejecución libre de Python está desactivada para este dispositivo.');
+            throw new Error(tr('Running free Python code is disabled for this device.', 'La ejecución libre de Python está desactivada para este dispositivo.', 'L’execució lliure de Python està desactivada per a aquest dispositiu.'));
         }
 
     };
@@ -309,7 +311,7 @@ const createInfoExtension = ({
         }
 
         showInfo () {
-            throw new Error(message);
+            throw new Error(textOf(message));
         }
     };
     blockClass.EXTENSION_ID = id;
@@ -363,8 +365,13 @@ const entries = [
         description: msg('blueBot.description',
             'Experimental access: BlueBot depends on a proprietary Bluetooth protocol.'),
         helpLink: 'https://www.tts-group.co.uk/blue-bot-bluetooth-programmable-floor-robot/1015268.html',
-        message: 'BlueBot usa Bluetooth, pero no he encontrado un protocolo Scratch 3 abierto y estable ' +
-            'para enviar movimientos desde navegador. La extension queda visible como punto de integracion.'
+        message: () => tr(
+            'BlueBot uses Bluetooth, but there is no open and stable protocol to send it movements from the ' +
+                'browser. The extension stays visible as an integration point.',
+            'BlueBot usa Bluetooth, pero no hay un protocolo abierto y estable para enviarle movimientos desde ' +
+                'el navegador. La extensión queda visible como punto de integración.',
+            'BlueBot fa servir Bluetooth, però no hi ha un protocol obert i estable per enviar-li moviments des ' +
+                'del navegador. L’extensió queda visible com a punt d’integració.')
     }),
     createInfoExtension({
         id: 'tm2scratch',
@@ -374,7 +381,10 @@ const entries = [
         description: msg('tm2scratch.description',
             'This AI feature is available in another editor, but not as a compatible standalone module.'),
         helpLink: 'https://teachablemachine.withgoogle.com/',
-        message: 'Teachable Machine no se publica aqui como modulo .mjs independiente compatible.',
+        message: () => tr(
+            'Teachable Machine is not available here as a compatible standalone module.',
+            'Teachable Machine no está disponible aquí como módulo independiente compatible.',
+            'Teachable Machine no està disponible aquí com a mòdul independent compatible.'),
         category: 'ai',
         tags: ['ai', 'image']
     }),
@@ -386,19 +396,25 @@ const entries = [
         description: msg('tmpose2scratch.description',
             'This pose AI feature is available in another editor, but not as a compatible standalone module.'),
         helpLink: 'https://teachablemachine.withgoogle.com/',
-        message: 'Teachable Machine Pose no se publica aqui como modulo .mjs independiente compatible.',
+        message: () => tr(
+            'Teachable Machine Pose is not available here as a compatible standalone module.',
+            'Teachable Machine Pose no está disponible aquí como módulo independiente compatible.',
+            'Teachable Machine Pose no està disponible aquí com a mòdul independent compatible.'),
         category: 'ai',
         tags: ['ai', 'image']
     }),
     createInfoExtension({
         id: 'ic2scratch',
-        name: 'Image Classifier',
+        name: msg('ic2scratch.name', 'Image Classifier'),
         collaborator: 'Unifiscratch',
         icon: {title: 'IMG', body: 'CLASS', kind: 'classifier', color1: '#dc2626', color2: '#facc15', color3: '#7f1d1d'},
         description: msg('ic2scratch.description',
             'This image classifier is available in another editor, but not as a compatible standalone module.'),
         helpLink: 'https://ml5js.org/',
-        message: 'Image Classifier no se publica aqui como modulo .mjs independiente compatible.',
+        message: () => tr(
+            'Image Classifier is not available here as a compatible standalone module.',
+            'Image Classifier no está disponible aquí como módulo independiente compatible.',
+            'Image Classifier no està disponible aquí com a mòdul independent compatible.'),
         category: 'ai',
         tags: ['ai', 'image']
     }),
@@ -410,7 +426,10 @@ const entries = [
         description: msg('handpose2scratch.description',
             'This hand pose feature is available in another editor, but not as a compatible standalone module.'),
         helpLink: 'https://champierre.github.io/handpose2scratch/',
-        message: 'HandPose2Scratch no se publica aqui como modulo .mjs independiente compatible.',
+        message: () => tr(
+            'HandPose2Scratch is not available here as a compatible standalone module.',
+            'HandPose2Scratch no está disponible aquí como módulo independiente compatible.',
+            'HandPose2Scratch no està disponible aquí com a mòdul independent compatible.'),
         category: 'ai',
         tags: ['ai', 'image']
     }),
@@ -422,7 +441,10 @@ const entries = [
         description: msg('facemesh2scratch.description',
             'This face mesh feature is available in another editor, but not as a compatible standalone module.'),
         helpLink: 'https://ml5js.org/',
-        message: 'FaceMesh2Scratch no se publica aqui como modulo .mjs independiente compatible.',
+        message: () => tr(
+            'FaceMesh2Scratch is not available here as a compatible standalone module.',
+            'FaceMesh2Scratch no está disponible aquí como módulo independiente compatible.',
+            'FaceMesh2Scratch no està disponible aquí com a mòdul independent compatible.'),
         category: 'ai',
         tags: ['ai', 'image']
     })

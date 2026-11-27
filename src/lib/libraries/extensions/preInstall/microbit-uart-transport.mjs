@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+import {tr, textOf, timeoutError, isTimeout} from './runtime-texts.mjs';
 // Line-based link to a micro:bit running the Unifiscratch firmware.
 // Bluetooth (Web Bluetooth, UART service) is the preferred path; USB (Web
 // Serial) speaks exactly the same text protocol. The firmware answers "?"
@@ -12,13 +14,13 @@ export const MICROBIT_USB_VENDOR = 0x0d28;
 const BLE_CHUNK = 20;
 const KEEPALIVE_MS = 500;
 
-const cancelled = () => new Error('Operación cancelada por la parada del dispositivo.');
+const cancelled = () => new Error(tr('Operation cancelled because the device was stopped.', 'Operación cancelada por la parada del dispositivo.', 'Operació cancel·lada per l’aturada del dispositiu.'));
 
 export class MicrobitUartTransport {
     constructor (label, {
         hello = '?', expect = 'CB', stop = 'S', timeout = 3000, onLine = null,
-        noReply = 'La micro:bit no responde: carga el firmware de Unifiscratch para Cutebot (ver la guía).',
-        notConnected = 'Conecta el Cutebot (Bluetooth o USB) antes de usar los bloques.'
+        noReply = () => tr('The micro:bit does not answer: load the Unifiscratch firmware for Cutebot (see the guide).', 'La micro:bit no responde: carga el firmware de Unifiscratch para Cutebot (ver la guía).', 'La micro:bit no respon: carrega el firmware d’Unifiscratch per a Cutebot (mira la guia).'),
+        notConnected = () => tr('Connect the Cutebot (Bluetooth or USB) before using the blocks.', 'Conecta el Cutebot (Bluetooth o USB) antes de usar los bloques.', 'Connecta el Cutebot (Bluetooth o USB) abans de fer servir els blocs.')
     } = {}) {
         this.label = label;
         this.noReply = noReply;
@@ -36,7 +38,7 @@ export class MicrobitUartTransport {
         this.waiters = new Set();
         this.lastError = '';
         this.version = '';
-        this.onBleDisconnected = () => this.lost('Se ha perdido la conexión Bluetooth con la micro:bit.');
+        this.onBleDisconnected = () => this.lost(tr('The Bluetooth connection with the micro:bit was lost.', 'Se ha perdido la conexión Bluetooth con la micro:bit.', 'S’ha perdut la connexió Bluetooth amb la micro:bit.'));
     }
 
     isConnected () {
@@ -47,7 +49,7 @@ export class MicrobitUartTransport {
 
     connectBluetooth () {
         if (typeof navigator === 'undefined' || !navigator.bluetooth) {
-            return Promise.reject(new Error('Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.'));
+            return Promise.reject(new Error(tr('Web Bluetooth is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Bluetooth no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.')));
         }
         return this.open('ble', async () => {
             const device = await navigator.bluetooth.requestDevice({
@@ -61,7 +63,7 @@ export class MicrobitUartTransport {
             try {
                 service = await server.getPrimaryService(UART_SERVICE);
             } catch (error) {
-                throw new Error('La micro:bit no ofrece el servicio UART: carga el firmware de Unifiscratch.');
+                throw new Error(tr('The micro:bit does not offer the UART service: load the Unifiscratch firmware.', 'La micro:bit no ofrece el servicio UART: carga el firmware de Unifiscratch.', 'La micro:bit no ofereix el servei UART: carrega el firmware d’Unifiscratch.'));
             }
             const chars = [await service.getCharacteristic(UART_CHAR_A), await service.getCharacteristic(UART_CHAR_B)];
             const props = c => c.properties || {};
@@ -78,13 +80,13 @@ export class MicrobitUartTransport {
 
     connectUsb () {
         if (typeof navigator === 'undefined' || !navigator.serial) {
-            return Promise.reject(new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.'));
+            return Promise.reject(new Error(tr('Web Serial is not available. Use Chrome or Edge on HTTPS or localhost.', 'Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.', 'Web Serial no està disponible. Fes servir Chrome o Edge en HTTPS o localhost.')));
         }
         return this.open('usb', async () => {
             const port = await navigator.serial.requestPort({filters: [{usbVendorId: MICROBIT_USB_VENDOR}]});
             await port.open({baudRate: 115200});
             this.port = port;
-            if (!port.readable || !port.writable) throw new Error('Puerto USB no disponible.');
+            if (!port.readable || !port.writable) throw new Error(tr('USB port not available.', 'Puerto USB no disponible.', 'Port USB no disponible.'));
             this.reader = port.readable.getReader();
             this.readTask = this.readLoop(this.reader);
         });
@@ -95,7 +97,7 @@ export class MicrobitUartTransport {
             if (this.kind === kind) return;
             await this.disconnect();
         }
-        if (this.connecting) throw new Error('Conexión ocupada.');
+        if (this.connecting) throw new Error(tr('Connection busy.', 'Conexión ocupada.', 'Connexió ocupada.'));
         this.connecting = true;
         this.epoch++;
         this.kind = kind;
@@ -112,7 +114,7 @@ export class MicrobitUartTransport {
             if (this.keepalive.unref) this.keepalive.unref();
             this.lastError = '';
         } catch (error) {
-            const message = /no respondió/.test(error.message) ? this.noReply : error.message;
+            const message = isTimeout(error) ? textOf(this.noReply) : error.message;
             this.lastError = `${this.label}: ${message}`;
             await this.close();
             throw new Error(this.lastError);
@@ -129,7 +131,7 @@ export class MicrobitUartTransport {
                 if (done) break;
                 this.receive(decoder.decode(value, {stream: true}));
             }
-            if (this.reader === reader) this.lost('El cable USB de la micro:bit se ha desconectado.');
+            if (this.reader === reader) this.lost(tr('The micro:bit USB cable has been disconnected.', 'El cable USB de la micro:bit se ha desconectado.', 'El cable USB de la micro:bit s’ha desconnectat.'));
         } catch (error) {
             if (this.reader === reader) this.lost(`USB: ${error.message}`);
         } finally {
@@ -165,7 +167,7 @@ export class MicrobitUartTransport {
                 if (match(reply)) finish(null, reply);
             };
             waiter.reject = error => finish(error);
-            waiter.timer = setTimeout(() => finish(new Error('El firmware no respondió a tiempo.')), this.timeout);
+            waiter.timer = setTimeout(() => finish(timeoutError(tr('The firmware did not answer in time.', 'El firmware no respondió a tiempo.', 'El firmware no ha respost a temps.'))), this.timeout);
             this.waiters.add(waiter);
             this.sendNow(line).catch(error => finish(error));
         });
@@ -173,7 +175,7 @@ export class MicrobitUartTransport {
 
     send (line) {
         if (!this.isConnected()) {
-            return Promise.reject(new Error(this.notConnected));
+            return Promise.reject(new Error(textOf(this.notConnected)));
         }
         return this.sendNow(line);
     }
@@ -188,7 +190,7 @@ export class MicrobitUartTransport {
 
     async writeBytes (data) {
         if (this.kind === 'ble') {
-            if (!this.tx) throw new Error('La micro:bit no está conectada.');
+            if (!this.tx) throw new Error(tr('The micro:bit is not connected.', 'La micro:bit no está conectada.', 'La micro:bit no està connectada.'));
             for (let i = 0; i < data.length; i += BLE_CHUNK) {
                 const chunk = data.slice(i, i + BLE_CHUNK);
                 const props = this.tx.properties || {};
@@ -202,7 +204,7 @@ export class MicrobitUartTransport {
             }
             return;
         }
-        if (!this.port || !this.port.writable) throw new Error('La micro:bit no está conectada.');
+        if (!this.port || !this.port.writable) throw new Error(tr('The micro:bit is not connected.', 'La micro:bit no está conectada.', 'La micro:bit no està connectada.'));
         const writer = this.port.writable.getWriter();
         try {
             await writer.write(data);

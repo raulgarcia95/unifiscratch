@@ -13,6 +13,7 @@
 // keypoints are in stage pixels and already follow the mirror setting.
 import {boundedNumber} from './micropython-transport.mjs';
 import {makeIcon, msg} from './unifiscratch-extra-hardware.mjs';
+import {tr} from './runtime-texts.mjs';
 
 const STAGE_WIDTH = 480;
 const STAGE_HEIGHT = 360;
@@ -111,9 +112,9 @@ export const faceSize = mesh => {
 };
 
 const id = 'faceSensing';
-const name = 'Face Sensing';
 const icon = {title: 'FACE', body: 'SENSING', kind: 'face', color1: '#7c3aed', color2: '#facc15', color3: '#4c1d95'};
 const t = (key, text) => msg(`${id}.${key}`, text);
+const name = t('name', 'Face Sensing');
 
 const blockClass = class FaceSensing {
     constructor (runtime) {
@@ -214,12 +215,12 @@ const blockClass = class FaceSensing {
         this.failed = false;
         const video = this.video;
         if (!video) {
-            this.lastError = 'Cámara no disponible en este entorno.';
+            this.lastError = tr('Camera not available here.', 'Cámara no disponible en este entorno.', 'Càmera no disponible en aquest entorn.');
             return Promise.resolve();
         }
         if (typeof video.mirror !== 'boolean') video.mirror = true;
         this.running = true;
-        this.lastError = 'Cargando el modelo de caras...';
+        this.lastError = tr('Loading the face model...', 'Cargando el modelo de caras...', 'Carregant el model de cares...');
         this.starting = Promise.all([loadLandmarker(), video.enableVideo()])
             .then(([model]) => {
                 this.model = model;
