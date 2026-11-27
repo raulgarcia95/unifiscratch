@@ -107,8 +107,9 @@
 }
 
 .credits-list a {
-    color: $looks-secondary;
+    color: $text-primary;
     font-weight: 700;
+    text-decoration: underline;
 }
 
 .credits-note {
