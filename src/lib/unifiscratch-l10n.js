@@ -424,7 +424,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.arduinoUno.description': 'USB control for Arduino UNO with StandardFirmata loaded on the board.',
         'unifiscratch.extensions.keyestudioEsp32.description': 'USB control for Keyestudio ESP32 with MicroPython firmware.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit on Wappsto:bit by Bluetooth or USB: send and receive Wappsto cloud data, sensors, LED display and pins.',
-        'unifiscratch.extensions.edisonV3.description': 'Experimental access: Edison V3 uses EdScratch/EdPy and program download.',
         ...newExtensionMessages('en')
     },
     es: {
@@ -498,7 +497,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.arduinoUno.description': 'Control USB para Arduino UNO con StandardFirmata cargado en la placa.',
         'unifiscratch.extensions.keyestudioEsp32.description': 'Control USB para Keyestudio ESP32 con firmware MicroPython.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit en Wappsto:bit por Bluetooth o USB: envía y recibe datos de la nube Wappsto, sensores, pantalla LED y pines.',
-        'unifiscratch.extensions.edisonV3.description': 'Acceso experimental: Edison V3 usa EdScratch/EdPy y descarga de programa.',
         ...newExtensionMessages('es')
     },
     ca: {
@@ -572,7 +570,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.arduinoUno.description': 'Control USB per a Arduino UNO amb StandardFirmata carregat a la placa.',
         'unifiscratch.extensions.keyestudioEsp32.description': 'Control USB per a Keyestudio ESP32 amb firmware MicroPython.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit a Wappsto:bit per Bluetooth o USB: envia i rep dades del núvol Wappsto, sensors, pantalla LED i pins.',
-        'unifiscratch.extensions.edisonV3.description': 'Accés experimental: Edison V3 fa servir EdScratch/EdPy i descàrrega de programa.',
         ...newExtensionMessages('ca')
     }
 };

@@ -345,5 +345,5 @@ export const entry = {
     disabled: false,
     bluetoothRequired: true,
     category: 'robots',
-    helpLink: 'https://www.tts-group.co.uk/blue-bot-bluetooth-programmable-floor-robot/1015268.html'
+    helpLink: 'https://www.tts-group.co.uk/programmable-robots/blue-bot/'
 };

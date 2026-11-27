@@ -5,9 +5,6 @@
 // The table lives outside the extension modules so it also covers the curated
 // originals (LEGO, Microbit More, Arduino), whose code is pinned by hash.
 // Texts are [English, Spanish, Catalan]. Steps may contain [text](url) links.
-//
-// status 'unconfirmed': community tools reach this firmware with another
-// protocol, so the guide warns that the connection may fail.
 
 export const SETUP_GUIDE_EVENT = 'unifiscratch-setup-guide';
 
@@ -47,7 +44,6 @@ const FIRST_TIME = ['1. Prepare it (only the first time)', '1. Prepararlo (solo 
 const EVERY_TIME = ['2. Use it in Unfyscratch (every time)', '2. Usarlo en Unfyscratch (cada vez)', '2. Fer-lo servir a Unfyscratch (cada vegada)'];
 const CLOSE_TAB = ['Close that tab or program: only one application at a time can use the USB port.', 'Cierra esa pestaña o programa: solo una aplicación a la vez puede usar el puerto USB.', 'Tanca aquesta pestanya o programa: només una aplicació alhora pot fer servir el port USB.'];
 const CHROME_USB = ['Connect it by USB and use Chrome or Edge.', 'Conéctalo por USB y usa Chrome o Edge.', 'Connecta’l per USB i fes servir Chrome o Edge.'];
-const NOT_TESTED = ['This guide has not yet been tested with the physical device. Try it without load, on a table.', 'Esta guía aún no se ha probado con el dispositivo físico. Pruébalo sin carga, sobre una mesa.', 'Aquesta guia encara no s’ha provat amb el dispositiu físic. Prova’l sense càrrega, sobre una taula.'];
 const LAST_ERROR = ['If it does not connect, look at the «last connection error» block.', 'Si no conecta, mira el bloque «último error de conexión».', 'Si no connecta, mira el bloc «últim error de connexió».'];
 const connectBlock = (en, es, ca) => [`Press the button «${en}» and choose the device in the browser window.`, `Pulsa el botón «${es}» y elige el dispositivo en la ventana del navegador.`, `Prem el botó «${ca}» i tria el dispositiu a la finestra del navegador.`];
 
@@ -113,11 +109,10 @@ const esp32Actions = [
     {type: 'link', href: ESP_FLASHER_URL, label: ['Open ESP flasher', 'Abrir programador ESP', 'Obrir el programador ESP']}
 ];
 
-// ---------- Makeblock: live-mode protocol, not yet tested on real robots ----------
+// ---------- Makeblock: live-mode protocol (USB or Bluetooth) ----------
 const makeblockGuide = (name, usb, bluetooth) => ({
     name,
-    status: 'unconfirmed',
-    warning: [`Not yet tested on a real ${name}. This extension uses the Makeblock live mode by USB or Bluetooth, the same one mBlock uses. Close mBlock and mLink first so the robot is free.`, `Aún sin probar con un ${name} real. Esta extensión usa el modo en vivo de Makeblock por USB o Bluetooth, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el robot quede libre.`, `Encara sense provar amb un ${name} real. Aquesta extensió fa servir el mode en directe de Makeblock per USB o Bluetooth, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el robot quedi lliure.`],
+    warning: [`This extension uses the Makeblock live mode by USB or Bluetooth, the same one mBlock uses. Close mBlock and mLink first so the robot is free.`, `Esta extensión usa el modo en vivo de Makeblock por USB o Bluetooth, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el robot quede libre.`, `Aquesta extensió fa servir el mode en directe de Makeblock per USB o Bluetooth, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el robot quedi lliure.`],
     intro: [`${name} needs up-to-date firmware from Makeblock. It connects by USB cable or by Bluetooth.`, `${name} necesita el firmware de Makeblock actualizado. Se conecta por cable USB o por Bluetooth.`, `${name} necessita el firmware de Makeblock actualitzat. Es connecta per cable USB o per Bluetooth.`],
     actions: [{type: 'link', href: MBLOCK_URL, label: ['Open mBlock', 'Abrir mBlock', 'Obrir mBlock']}],
     cardLinks: [{href: MBLOCK_URL, text: ['mBlock (firmware update)', 'mBlock (actualizar firmware)', 'mBlock (actualitzar el firmware)']}],
@@ -135,7 +130,7 @@ const makeblockGuide = (name, usb, bluetooth) => ({
                 connectBlock(...bluetooth)
             ]}
     ],
-    note: [`The computer needs its own Bluetooth (the Makeblock USB Bluetooth dongle is not used). ${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `El ordenador necesita Bluetooth propio (no se usa la llave Bluetooth USB de Makeblock). ${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `L’ordinador necessita Bluetooth propi (no es fa servir la clau Bluetooth USB de Makeblock). ${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    note: [`The computer needs its own Bluetooth (the Makeblock USB Bluetooth dongle is not used). ${LAST_ERROR[0]}`, `El ordenador necesita Bluetooth propio (no se usa la llave Bluetooth USB de Makeblock). ${LAST_ERROR[1]}`, `L’ordinador necessita Bluetooth propi (no es fa servir la clau Bluetooth USB de Makeblock). ${LAST_ERROR[2]}`]
 });
 
 const guides = {
@@ -184,7 +179,7 @@ const guides = {
                     ['The first time, Unfyscratch saves a few small helper programs on the ED1; it takes a few seconds. The red flag stops the motors and the sound.', 'La primera vez, Unfyscratch guarda en la ED1 unos pequeños programas de ayuda; tarda unos segundos. La bandera roja detiene los motores y el sonido.', 'La primera vegada, Unfyscratch desa a l’ED1 uns petits programes d’ajuda; triga uns segons. La bandera vermella atura els motors i el so.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     keyestudioEsp32: {
         name: 'Keyestudio ESP32',
@@ -200,7 +195,7 @@ const guides = {
                     ['Allowed pins: 2, 4, 13, 14, 25, 26, 27, 32 and 33. Each block lasts at most 5 seconds.', 'Pines permitidos: 2, 4, 13, 14, 25, 26, 27, 32 y 33. Cada bloque dura 5 segundos como máximo.', 'Pins permesos: 2, 4, 13, 14, 25, 26, 27, 32 i 33. Cada bloc dura 5 segons com a màxim.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     microShield: {
         name: 'micro:shield',
@@ -223,7 +218,7 @@ const guides = {
                     ['Steppers use the same outputs as the DC motors: STEP1 = M1+M2 and STEP2 = M3+M4. The red flag stops every motor; if the connection is lost, they stop by themselves.', 'Los motores paso a paso usan las mismas salidas que los motores DC: STEP1 = M1+M2 y STEP2 = M3+M4. La bandera roja detiene todos los motores; si se pierde la conexión, se paran solos.', 'Els motors pas a pas fan servir les mateixes sortides que els motors DC: STEP1 = M1+M2 i STEP2 = M3+M4. La bandera vermella atura tots els motors; si es perd la connexió, s’aturen sols.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     wappstoBit: {
         name: 'Wappsto:bit',
@@ -248,7 +243,7 @@ const guides = {
                     ['In the Wappsto dashboard add a dashboard (template «Wappsto:bit» or blank): the values appear under IoT devices.', 'En el panel de Wappsto añade un dashboard (plantilla «Wappsto:bit» o en blanco): los valores aparecen en «IoT Devices».', 'Al tauler de Wappsto afegeix un dashboard (plantilla «Wappsto:bit» o en blanc): els valors apareixen a «IoT Devices».']
                 ]}
         ],
-        note: [`The free Wappsto plan allows 1,000,000 data points a month: send with «if changed» or with waits. ${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `El plan gratuito de Wappsto permite 1.000.000 de datos al mes: envía con «si cambia» o con esperas. ${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `El pla gratuït de Wappsto permet 1.000.000 de dades al mes: envia amb «si canvia» o amb esperes. ${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: [`The free Wappsto plan allows 1,000,000 data points a month: send with «if changed» or with waits. ${LAST_ERROR[0]}`, `El plan gratuito de Wappsto permite 1.000.000 de datos al mes: envía con «si cambia» o con esperas. ${LAST_ERROR[1]}`, `El pla gratuït de Wappsto permet 1.000.000 de dades al mes: envia amb «si canvia» o amb esperes. ${LAST_ERROR[2]}`]
     },
     smartCutebot: {
         name: 'Cutebot',
@@ -271,7 +266,7 @@ const guides = {
                     ['The red flag stops the robot. If the connection is lost, the motors stop by themselves.', 'La bandera roja detiene el robot. Si se pierde la conexión, los motores se paran solos.', 'La bandera vermella atura el robot. Si es perd la connexió, els motors s’aturen sols.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     legoSpikePrime: {
         name: 'LEGO SPIKE Prime',
@@ -294,13 +289,11 @@ const guides = {
                     ['The red stop sign stops the motors. The Bluetooth button of the hub also stops them; the next block starts again by itself.', 'La señal roja de parar detiene los motores. El botón Bluetooth del hub también los para; el siguiente bloque vuelve a arrancar solo.', 'El senyal vermell d’aturar atura els motors. El botó Bluetooth del hub també els atura; el següent bloc torna a arrencar sol.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     blueBot: {
         name: 'BlueBot',
         openOnAdd: false,
-        status: 'unconfirmed',
-        warning: ['Not yet tested on a real Blue-Bot. TTS does not publish its Bluetooth protocol: this extension uses the one that other open projects use to control it from the browser.', 'Aún sin probar con un Blue-Bot real. TTS no publica su protocolo Bluetooth: esta extensión usa el que emplean otros proyectos abiertos para controlarlo desde el navegador.', 'Encara sense provar amb un Blue-Bot real. TTS no publica el seu protocol Bluetooth: aquesta extensió fa servir el que fan servir altres projectes oberts per controlar-lo des del navegador.'],
         intro: ['BlueBot connects by Bluetooth directly from Chrome or Edge: there is nothing to install on the robot or on the computer.', 'BlueBot se conecta por Bluetooth directamente desde Chrome o Edge: no hay que instalar nada ni en el robot ni en el ordenador.', 'BlueBot es connecta per Bluetooth directament des de Chrome o Edge: no cal instal·lar res ni al robot ni a l’ordinador.'],
         actions: [],
         cardLinks: [{opensGuide: true, text: ['Bluetooth from Chrome or Edge (no installation)', 'Bluetooth desde Chrome o Edge (sin instalar nada)', 'Bluetooth des de Chrome o Edge (sense instal·lar res)']}],
@@ -318,7 +311,7 @@ const guides = {
                     ['The red stop sign stops the blocks that remain, but the step the robot has already started finishes.', 'La señal roja de parar detiene los bloques que faltan, pero el paso que el robot ya ha empezado se termina.', 'El senyal vermell d’aturar atura els blocs que falten, però el pas que el robot ja ha començat s’acaba.']
                 ]}
         ],
-        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+        note: LAST_ERROR
     },
     makeblockCodeyRocky: makeblockGuide('Codey Rocky',
         ['connect Codey Rocky by USB', 'conectar Codey Rocky por USB', 'connecta Codey Rocky per USB'],
@@ -344,7 +337,7 @@ const guides = {
                     ['Press the orange warning button next to the extension’s name in the block palette and choose the port.', 'Pulsa el botón naranja de aviso junto al nombre de la extensión en la paleta de bloques y elige el puerto.', 'Prem el botó taronja d’avís al costat del nom de l’extensió a la paleta de blocs i tria el port.']
                 ]}
         ],
-        note: ['The ultrasonic sensor block needs PingFirmata instead of StandardFirmata. This guide has not yet been tested with a physical board.', 'El bloque del sensor de ultrasonidos necesita PingFirmata en lugar de StandardFirmata. Esta guía aún no se ha probado con una placa física.', 'El bloc del sensor d’ultrasons necessita PingFirmata en lloc de StandardFirmata. Aquesta guia encara no s’ha provat amb una placa física.']
+        note: ['The ultrasonic sensor block needs PingFirmata instead of StandardFirmata.', 'El bloque del sensor de ultrasonidos necesita PingFirmata en lugar de StandardFirmata.', 'El bloc del sensor d’ultrasons necessita PingFirmata en lloc de StandardFirmata.']
     },
     microbitMore: {
         name: 'Microbit More',

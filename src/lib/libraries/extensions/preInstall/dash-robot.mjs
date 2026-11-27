@@ -541,7 +541,7 @@ const entry = {
     disabled: false,
     bluetoothRequired: true,
     category: 'robots',
-    helpLink: 'https://github.com/IlyaSukhanov/morseapi'
+    helpLink: 'https://www.makewonder.com/dash'
 };
 
 export {entry, blockClass};

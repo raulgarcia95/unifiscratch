@@ -404,9 +404,11 @@ test('every extension that needs preparation has a complete guide in three langu
     assert.equal(guideOpensOnAdd('ev3'), true);
     assert.match(cardLinksFor('ev3', 'es')[0].text, /Scratch Link \(necesario\)/);
     assert.equal(guideOpensOnAdd('edisonV3'), true);
-    // Makeblock robots stay unconfirmed until tested on real hardware.
-    assert.equal(guideFor('makeblockMbot2').status, 'unconfirmed');
-    assert.equal(guideFor('makeblockCodeyRocky').status, 'unconfirmed');
+    // Guides give plain instructions: no "not tested on real hardware" disclaimers.
+    guideIds().forEach(id => {
+        const text = JSON.stringify(guideFor(id));
+        assert.doesNotMatch(text, /not (yet )?(been )?tested|sin probar|no se ha probado|sense provar|no s’ha provat|unconfirmed/i, id);
+    });
 });
 
 test('Edison order numbers fit EdPy integers', () => {

@@ -1,3 +1,5 @@
+// Each module is imported on its own: one that fails to load (for example a
+// network error while fetching its chunk) must not hide the others.
 const importModules = [
     import('./makeblock-codey-rocky.mjs'),
     import('./makeblock-mbot2.mjs'),
@@ -13,7 +15,11 @@ const importModules = [
     import('./lego-spike-prime.mjs'),
     import('./bluebot.mjs'),
     import('../stretch/index.js')
-];
+].map(promise => promise.catch(error => {
+    // eslint-disable-next-line no-console
+    console.error('Unifiscratch: an extension module could not be loaded', error);
+    return null;
+}));
 
 /**
  * Install extensions from local module files.

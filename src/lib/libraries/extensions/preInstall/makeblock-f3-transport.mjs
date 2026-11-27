@@ -132,7 +132,6 @@ export const pyArgs = (...values) => values.map(value => {
 // Makeblock boards expose a serial-like GATT service (0xFFE1): one characteristic
 // to write and one that notifies. The characteristics are picked by their
 // properties, so a board that numbers them differently still works.
-// Not yet tested on a real mBot2 or Codey Rocky.
 export const BLE_SERVICES = [0xFFE1, 0xFFE0];
 export const BLE_NAME_PREFIXES = ['Makeblock', 'CyberPi', 'Codey', 'mBot'];
 const BLE_CHUNK = 20;

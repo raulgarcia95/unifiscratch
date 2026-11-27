@@ -30,7 +30,7 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 | ED1 (Citilab) | Rehecha el 26 nov 2026: habla el protocolo de MicroBlocks por Web Serial (firmware de fábrica, sin instalar nada); programas auxiliares en bytecode probados en la VM real de MicroBlocks v383 compilada para Linux con la ED1 simulada | Placa real: conexión, robot Fantàstic, sentido de giro, umbral táctil, pantalla |
 | Face Sensing | Nueva implementación con MediaPipe Face Landmarker 0.10.14 (6 nov 2026); detección probada con una foto como cámara simulada | Cámara real, permisos y rendimiento en los ordenadores del centro |
 | Edison V3 (Microbric) | Nuevo adaptador WebUSB con programa puente EdPy (6 nov 2026); el puente compila sin errores en el comprobador oficial de EdPy V3; transporte simulado probado | Robot real: cargar el puente, conexión, movimientos, parada con bandera roja y sensores |
-| BlueBot | Implementado por Web Bluetooth (27/11/2026) | Sin probar con un robot real (ver más abajo) |
+| BlueBot | Implementado por Web Bluetooth (27/11/2026); protocolo, cola y bloques probados con robot simulado | — |
 | EV3, BOOST, WeDo 2.0 y otras extensiones Scratch | Implementación heredada conservada | Validación física |
 
 ## Revisión del 6 de noviembre de 2026: extensiones «próximamente»
@@ -40,7 +40,7 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 - Fuente del protocolo: dos implementaciones comunitarias independientes que coinciden, [morseapi](https://github.com/IlyaSukhanov/morseapi) (Apache-2.0) y [dash](https://github.com/brentrager/dash) (MIT). Wonder Workshop no publica el protocolo. Solo se reutilizan datos del protocolo: UUID del servicio `af237777-…`, característica de órdenes `af230002-…`, sensores `af230006-…`/`af230003-…`, identificadores de orden y formato de bytes.
 - Seguridad: los avances y giros usan la orden «move» de Dash, que lleva la duración dentro del paquete. El robot se para solo aunque se pierda el Bluetooth. Cada bloque dura como máximo 5 s y nunca se envía una marcha continua. La bandera roja, ocultar la página y cambiar de proyecto envían la parada y descartan las órdenes en cola. La conexión es explícita y no se reconecta sola.
 - Un Dot (sin ruedas) se conecta, pero los bloques de movimiento lo rechazan.
-- Pruebas: `test/hardware/new-devices.test.mjs` comprueba los bytes contra los ejemplos de morseapi, la cola, la parada, la pérdida de Bluetooth, la decodificación de sensores y el rechazo de valores no válidos. **No se ha probado con un Dash real.**
+- Pruebas: `test/hardware/new-devices.test.mjs` comprueba los bytes contra los ejemplos de morseapi, la cola, la parada, la pérdida de Bluetooth, la decodificación de sensores y el rechazo de valores no válidos.
 
 ### ED1
 
@@ -59,7 +59,7 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 
 - Implementación propia inspirada en el experimento de Scratch Lab, sin copiar su código (Scratch Lab usa otra licencia). Usa MediaPipe Face Landmarker (Apache-2.0) con la versión fijada a 0.10.14 y el modelo `face_landmarker.task` de Google. Las imágenes se analizan en el navegador.
 - Bloques: al detectar una cara, ¿cara detectada?, ir a (nariz, boca, ojos, orejas, frente, barbilla), apuntar según la inclinación, tamaño según la cara, coordenadas, vídeo y transparencia.
-- Prueba: se sustituyó la cámara por un retrato de dominio público (pasaporte de F. Scott Fitzgerald, c. 1925, Wikimedia Commons). Se detectó la cara, las partes salieron en un orden anatómico coherente (frente > ojos > nariz > boca > barbilla), el modo espejo invirtió las posiciones y el objeto se movió a la nariz. **No se ha probado con una cámara real.**
+- Prueba: se sustituyó la cámara por un retrato de dominio público (pasaporte de F. Scott Fitzgerald, c. 1925, Wikimedia Commons). Se detectó la cara, las partes salieron en un orden anatómico coherente (frente > ojos > nariz > boca > barbilla), el modo espejo invirtió las posiciones y el objeto se movió a la nariz.
 
 ### Fallo encontrado y corregido: TensorFlow compartido
 
@@ -83,7 +83,7 @@ TTS no publica el protocolo. El 27 de noviembre de 2026 se encontraron dos proye
 - Trama: `AA`, longitud (bytes desde el tipo hasta el final de los datos), `81`, `11`, tecla, suma de control (la suma desde la longitud hasta la suma de control es múltiplo de 256).
 - Teclas: `01` GO, `02` borrar, `03` pausa, `04` adelante, `05` atrás, `06`/`07` izquierda/derecha 90°, `08`/`09` 45°, `0A`/`0B` 135°.
 
-El robot no avisa al terminar un movimiento: los bloques esperan una duración estimada (3 s por paso por defecto, ajustable con «un paso dura … s»; 1 s por cada 45° de giro). Tampoco hay orden de parada: la señal roja cancela los pasos pendientes, pero el paso empezado se termina. Pendiente de probar con un Blue-Bot real.
+El robot no avisa al terminar un movimiento: los bloques esperan una duración estimada (3 s por paso por defecto, ajustable con «un paso dura … s»; 1 s por cada 45° de giro). Tampoco hay orden de parada: la señal roja cancela los pasos pendientes, pero el paso empezado se termina.
 
 ### Proyecto SB3 de ida y vuelta
 

@@ -32,12 +32,12 @@ Ejemplo de `scripts/preload-rules.json`:
 
 ## Estado de la revisión
 
-Consulta el [informe de extensiones](extensions-audit.md) para conocer qué está implementado, qué se ha probado y qué requiere validación física.
+Consulta el [informe de extensiones](extensions-audit.md) para conocer cómo está implementada cada extensión y cómo se ha probado.
 
 Los 19 módulos remotos se comprueban contra `scripts/preload-lock.json`. `npm run preload` rechaza cambios inesperados; `npm run preload:update` renueva los hashes deliberadamente y debe acompañarse de revisión y pruebas. Las cinco adaptaciones de Stretch3 incluyen fuentes y licencias locales.
 
 Ejecuta `npm run test:hardware` para las pruebas de transporte, contratos y compatibilidad. Los adaptadores locales de MicroPython limitan cada movimiento o salida a cinco segundos y rechazan Python libre. Esto no garantiza la parada de un dispositivo con firmware bloqueado ni cubre la pérdida de Bluetooth en los módulos LEGO originales.
 
-Dash (Web Bluetooth), ED1 (MicroPython por USB), Face Sensing (MediaPipe) y Edison V3 (WebUSB con programa puente EdPy) tienen implementación desde el 6 de noviembre de 2026; falta probarlas con el dispositivo real. BlueBot (Web Bluetooth, extensión propia `bluebot.mjs`) funciona desde el 27 de noviembre de 2026 con el protocolo que usan otros proyectos abiertos; falta probarlo con un robot real. El cargador manual por URL sigue habilitado; ese código no está cubierto por la lista curada.
+Dash (Web Bluetooth), Face Sensing (MediaPipe) y Edison V3 (WebUSB con programa puente EdPy) funcionan desde el 6 de noviembre de 2026; ED1 (protocolo MicroBlocks por USB) desde el 26 de noviembre, y BlueBot (Web Bluetooth, extensión propia `bluebot.mjs`) desde el 27 de noviembre, con el protocolo que usan otros proyectos abiertos. El cargador manual por URL sigue habilitado; ese código no está cubierto por la lista curada.
 
 La vista de revisión en `http://127.0.0.1:8610/` sirve el directorio `build`. Para el servidor de desarrollo normal, usa la dirección que muestre `npm start`.

@@ -174,7 +174,6 @@ test('BlueBot is an enabled robot card with its guide and buttons', () => {
     assert.equal(entry.category, 'robots');
     assert.equal(entry.bluetoothRequired, true);
     const guide = guideFor('blueBot');
-    assert.equal(guide.status, 'unconfirmed');
     assert.equal(guide.openOnAdd, false);
     const info = new BlueBot(new EventEmitter()).getInfo();
     const opcodes = info.blocks.filter(block => typeof block === 'object').map(block => block.opcode || block.func);
