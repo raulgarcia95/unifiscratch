@@ -35,7 +35,7 @@ Se usan sin modificar, descargadas de su web oficial y fijadas por huella SHA-25
 | Imagen de la tarjeta Face Sensing | Scratch Foundation (scratch-gui) | AGPL-3.0 | [`ai-images/faceSensing.png`](src/lib/libraries/extensions/ai-images) |
 | ChatGPT2Scratch | ichiroc, champierre | MIT | [champierre/chatgpt2scratch](https://github.com/champierre/chatgpt2scratch) |
 | IA generativa (xcx-gai) | Koji Yokokawa | AGPL-3.0 | [yokobond/xcx-gai](https://github.com/yokobond/xcx-gai) |
-| MediaPipe Hand, MediaPipe Image Embed, KNN, Arduino | Koji Yokokawa | Ver su repositorio | [yokobond](https://github.com/yokobond) (`xcx-mp-hand`, `xcx-mp-image-embed`, `xcx-tf-knn`, `xcx-arduino`); Mano e Imagen cargan una versión fija de MediaPipe (ver [`scripts/extension-compat-loader.cjs`](scripts/extension-compat-loader.cjs)) |
+| MediaPipe Hand, MediaPipe Image Embed, KNN, Arduino | Koji Yokokawa | Sus repositorios no declaran licencia (comprobado el 27-11-2026: sin fichero LICENSE, sin campo `license` en `package.json` ni cabeceras). Se usan tal como las publica el autor para Xcratch; si el autor lo pide, se retirarán | [yokobond](https://github.com/yokobond) (`xcx-mp-hand`, `xcx-mp-image-embed`, `xcx-tf-knn`, `xcx-arduino`); Mano e Imagen cargan una versión fija de MediaPipe (ver [`scripts/extension-compat-loader.cjs`](scripts/extension-compat-loader.cjs)) |
 
 ## Bibliotecas y modelos de IA
 
