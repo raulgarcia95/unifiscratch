@@ -27,6 +27,9 @@ const localize = (intl, value) => {
 
 // Dash, ED1 and Face Sensing blocks: [English, Spanish, Catalan].
 const newExtensionTexts = {
+    'connection.useChromeBluetooth': ['Use Chrome or Edge and turn on the computer’s Bluetooth. Scratch Link is not needed.', 'Usa Chrome o Edge y activa el Bluetooth del ordenador. No hace falta Scratch Link.', 'Fes servir Chrome o Edge i activa el Bluetooth de l’ordinador. No cal Scratch Link.'],
+    'connection.pickInBrowser': ['Switch on the device, keep it close and choose it in the browser window.', 'Enciende el dispositivo, tenlo cerca y elígelo en la ventana del navegador.', 'Encén el dispositiu, tingues-lo a prop i tria’l a la finestra del navegador.'],
+    'connection.noWebBluetooth': ['This browser cannot use Bluetooth: open Unfyscratch in Chrome or Edge, or install and open Scratch Link.', 'Este navegador no puede usar el Bluetooth: abre Unfyscratch en Chrome o Edge, o instala y abre Scratch Link.', 'Aquest navegador no pot fer servir el Bluetooth: obre Unfyscratch a Chrome o Edge, o instal·la i obre Scratch Link.'],
     'connectionError': ['last connection error', 'último error de conexión', 'últim error de connexió'],
     'showHelp': ['how to connect (help)', 'cómo conectar (ayuda)', 'com connectar (ajuda)'],
     'mbot2.showHelp': ['how to connect mBot2 (help)', 'cómo conectar mBot2 (ayuda)', 'com connectar mBot2 (ajuda)'],

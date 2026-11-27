@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -23,15 +24,29 @@ const UnavailableStep = props => (
                     <div className={styles.helpStepImage}>
                         <img
                             className={styles.scratchLinkIcon}
-                            src={scratchLinkIcon}
+                            src={props.connection === 'web-bluetooth' ? bluetoothIcon : scratchLinkIcon}
                         />
                     </div>
                     <div className={styles.helpStepText}>
-                        <FormattedMessage
-                            defaultMessage="Make sure you have Scratch Link installed and running"
-                            description="Message for getting Scratch Link installed"
-                            id="gui.connection.unavailable.installscratchlink"
-                        />
+                        {props.connection === 'web-bluetooth' ? (
+                            <FormattedMessage
+                                defaultMessage="Use Chrome or Edge and turn on the computer’s Bluetooth. Scratch Link is not needed."
+                                description="Unifiscratch text: unavailable step, browser Bluetooth"
+                                id="unifiscratch.extensions.connection.useChromeBluetooth"
+                            />
+                        ) : props.connection === 'no-web-bluetooth' ? (
+                            <FormattedMessage
+                                defaultMessage="This browser cannot use Bluetooth: open Unfyscratch in Chrome or Edge, or install and open Scratch Link."
+                                description="Unifiscratch text: unavailable step, browser without Web Bluetooth"
+                                id="unifiscratch.extensions.connection.noWebBluetooth"
+                            />
+                        ) : (
+                            <FormattedMessage
+                                defaultMessage="Make sure you have Scratch Link installed and running"
+                                description="Message for getting Scratch Link installed"
+                                id="gui.connection.unavailable.installscratchlink"
+                            />
+                        )}
                     </div>
                 </div>
                 <div className={styles.scratchLinkHelpStep}>
@@ -45,11 +60,19 @@ const UnavailableStep = props => (
                         />
                     </div>
                     <div className={styles.helpStepText}>
-                        <FormattedMessage
-                            defaultMessage="Check that Bluetooth is enabled"
-                            description="Message for making sure Bluetooth is enabled"
-                            id="gui.connection.unavailable.enablebluetooth"
-                        />
+                        {props.connection === 'web-bluetooth' ? (
+                            <FormattedMessage
+                                defaultMessage="Switch on the device, keep it close and choose it in the browser window."
+                                description="Unifiscratch text: unavailable step, pick the device"
+                                id="unifiscratch.extensions.connection.pickInBrowser"
+                            />
+                        ) : (
+                            <FormattedMessage
+                                defaultMessage="Check that Bluetooth is enabled"
+                                description="Message for making sure Bluetooth is enabled"
+                                id="gui.connection.unavailable.enablebluetooth"
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -95,6 +118,8 @@ const UnavailableStep = props => (
 );
 
 UnavailableStep.propTypes = {
+    // 'web-bluetooth', 'no-web-bluetooth' or 'scratch-link' (see connectionKindFor)
+    connection: PropTypes.string,
     onHelp: PropTypes.func,
     onScanning: PropTypes.func
 };

@@ -9,6 +9,8 @@ import {connect} from 'react-redux';
 
 import {closeConnectionModal} from '../reducers/modals';
 import {isMicroBitUpdateSupported, selectAndUpdateMicroBit} from '../lib/microbit-update';
+import {connectionKindFor} from '../lib/web-bluetooth-link.mjs';
+import {guideFor, openSetupGuide} from '../lib/libraries/extensions/setup-guides.mjs';
 
 class ConnectionModal extends React.Component {
     constructor (props) {
@@ -101,7 +103,12 @@ class ConnectionModal extends React.Component {
         });
     }
     handleHelp () {
-        window.open(this.state.extension.helpLink, '_blank');
+        // Our own guide says how this device connects here; Scratch's help pages ask for Scratch Link.
+        if (guideFor(this.props.extensionId)) {
+            openSetupGuide(this.props.extensionId);
+        } else if (this.state.extension && this.state.extension.helpLink) {
+            window.open(this.state.extension.helpLink, '_blank');
+        }
         analytics.event({
             category: 'extensions',
             action: 'help',
@@ -138,6 +145,7 @@ class ConnectionModal extends React.Component {
         return (
             <ConnectionModalComponent
                 connectingMessage={this.state.extension && this.state.extension.connectingMessage}
+                connection={connectionKindFor(this.props.extensionId)}
                 connectionIconURL={this.state.extension && this.state.extension.connectionIconURL}
                 connectionSmallIconURL={this.state.extension && this.state.extension.connectionSmallIconURL}
                 connectionTipIconURL={this.state.extension && this.state.extension.connectionTipIconURL}

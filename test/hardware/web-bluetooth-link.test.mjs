@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {createRequire} from 'node:module';
 import {
-    WebBluetoothLinkSocket, installWebBluetoothLink, patchRequestDevice, toRequestDeviceOptions
+    WebBluetoothLinkSocket, connectionKindFor, installWebBluetoothLink, patchRequestDevice, toRequestDeviceOptions
 } from '../../src/lib/web-bluetooth-link.mjs';
 
 const require = createRequire(import.meta.url);
@@ -252,4 +252,13 @@ test('the runtime factory uses Web Bluetooth only for BLE', () => {
     } finally {
         if (hadNavigator) Object.defineProperty(globalThis, 'navigator', hadNavigator);
     }
+});
+
+test('the connection window only asks for Scratch Link when it is really needed', () => {
+    const chrome = {bluetooth: {requestDevice: () => null}};
+    assert.equal(connectionKindFor('spikeessential', chrome), 'web-bluetooth');
+    assert.equal(connectionKindFor('boost', chrome), 'web-bluetooth');
+    assert.equal(connectionKindFor('wedo2', chrome), 'web-bluetooth');
+    assert.equal(connectionKindFor('ev3', chrome), 'scratch-link');
+    assert.equal(connectionKindFor('spikeessential', {}), 'no-web-bluetooth');
 });

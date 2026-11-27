@@ -391,3 +391,12 @@ export const installWebBluetoothLink = runtime => {
     });
     return true;
 };
+
+// Extensions that use Bluetooth Classic, which browsers cannot reach.
+const SCRATCH_LINK_ONLY = ['ev3'];
+
+// What the connection window should advise when a search fails.
+export const connectionKindFor = (extensionId, nav = typeof navigator === 'undefined' ? null : navigator) => {
+    if (SCRATCH_LINK_ONLY.includes(extensionId)) return 'scratch-link';
+    return webBluetoothAvailable(nav) ? 'web-bluetooth' : 'no-web-bluetooth';
+};
