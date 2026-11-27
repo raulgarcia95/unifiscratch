@@ -314,7 +314,9 @@ const knownExtensionCardKey = extension => {
 };
 
 const localizeKnownExtensionCard = (intl, extension, field, fallback) => {
-    if (extension.disabled || (field === 'description' && !extension.extensionURL)) {
+    // A module that could not load keeps its known, translated name; only its
+    // description explains why it is not available.
+    if ((extension.disabled && field !== 'name') || (field === 'description' && !extension.extensionURL)) {
         return localize(intl, fallback);
     }
     const key = knownExtensionCardKey(extension);
