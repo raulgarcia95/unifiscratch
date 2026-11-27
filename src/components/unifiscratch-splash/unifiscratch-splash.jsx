@@ -9,6 +9,15 @@ import {
 
 import styles from './unifiscratch-splash.css';
 
+const UNIFISCRATCH_SOURCE_URL = 'https://github.com/raulgarcia95/unifiscratch';
+const UNIFISCRATCH_NOTICES_URL = `${UNIFISCRATCH_SOURCE_URL}/blob/main/THIRD_PARTY_NOTICES.md`;
+const OPEN_EVENT = 'unifiscratch:open-about';
+
+// The menu bar's About button reopens this panel, so the notices stay reachable.
+const openUnifiscratchAbout = () => {
+    window.dispatchEvent(new Event(OPEN_EVENT));
+};
+
 class UnifiscratchSplash extends React.PureComponent {
     constructor (props) {
         super(props);
@@ -16,6 +25,19 @@ class UnifiscratchSplash extends React.PureComponent {
             visible: true
         };
         this.handleClose = this.handleClose.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
+    }
+
+    componentDidMount () {
+        window.addEventListener(OPEN_EVENT, this.handleOpen);
+    }
+
+    componentWillUnmount () {
+        window.removeEventListener(OPEN_EVENT, this.handleOpen);
+    }
+
+    handleOpen () {
+        this.setState({visible: true});
     }
 
     handleClose () {
@@ -49,11 +71,42 @@ class UnifiscratchSplash extends React.PureComponent {
                     <p className={styles.disclaimer}>
                         <FormattedMessage
                             defaultMessage={
-                                'This environment has been created using freely distributed resources available ' +
-                                'on the ' +
-                                'internet. For questions, suggestions or claims, contact the creator of Unfyscratch.'
+                                'Unfyscratch is a free, non-commercial educational project based on Scratch ' +
+                                '(Scratch Foundation) and Xcratch, plus open-source extensions by other authors, ' +
+                                'used under their licences. It is not an official Scratch product and is not ' +
+                                'endorsed by the Scratch Foundation or MIT.'
                             }
                             id="unifiscratch.splash.disclaimer"
+                        />
+                    </p>
+                    <p className={styles.legal}>
+                        <FormattedMessage
+                            defaultMessage={
+                                'Scratch, LEGO, SPIKE, micro:bit, Makeblock, mBot, Codey Rocky and the other robot ' +
+                                'and board names are trademarks of their owners, who do not sponsor or endorse ' +
+                                'this site. They are mentioned only to show compatibility. The robot extensions ' +
+                                'are original code and include no manufacturer software.'
+                            }
+                            id="unifiscratch.splash.trademarks"
+                        />
+                    </p>
+                    <p className={styles.legal}>
+                        <FormattedMessage
+                            defaultMessage={
+                                'Projects stay on your computer and camera extensions analyse images in the ' +
+                                'browser. ChatGPT, generative AI and speech recognition send data to OpenAI or ' +
+                                'Google: with underage students, use them only with your school’s authorisation.'
+                            }
+                            id="unifiscratch.splash.privacy"
+                        />
+                    </p>
+                    <p className={styles.legal}>
+                        <FormattedMessage
+                            defaultMessage={
+                                'Distributed under the AGPL-3.0 licence, without any warranty. For questions, ' +
+                                'suggestions or claims, contact the creator of Unfyscratch.'
+                            }
+                            id="unifiscratch.splash.license"
                         />
                     </p>
                     <a
@@ -62,15 +115,26 @@ class UnifiscratchSplash extends React.PureComponent {
                     >
                         {`${UNIFISCRATCH_CONTACT_NAME} - ${UNIFISCRATCH_SPLASH_YEAR}`}
                     </a>
-                    <p className={styles.disclaimer}>
+                    <p className={styles.links}>
                         <a
-                            href="https://github.com/raulgarcia95/unifiscratch"
+                            href={UNIFISCRATCH_SOURCE_URL}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
                             <FormattedMessage
-                                defaultMessage="Source code and status of the extensions (AGPL-3.0)"
+                                defaultMessage="Source code (AGPL-3.0)"
                                 id="unifiscratch.splash.source"
+                            />
+                        </a>
+                        {' · '}
+                        <a
+                            href={UNIFISCRATCH_NOTICES_URL}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
+                            <FormattedMessage
+                                defaultMessage="Licences and credits"
+                                id="unifiscratch.splash.credits"
                             />
                         </a>
                     </p>
@@ -92,4 +156,5 @@ class UnifiscratchSplash extends React.PureComponent {
     }
 }
 
+export {openUnifiscratchAbout};
 export default UnifiscratchSplash;

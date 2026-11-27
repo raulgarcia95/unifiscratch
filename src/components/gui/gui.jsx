@@ -28,7 +28,7 @@ import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
-import UnifiscratchSplash from '../unifiscratch-splash/unifiscratch-splash.jsx';
+import UnifiscratchSplash, {openUnifiscratchAbout} from '../unifiscratch-splash/unifiscratch-splash.jsx';
 import SetupGuide from '../setup-guide/setup-guide.jsx';
 
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
@@ -235,7 +235,7 @@ const GUIComponent = props => {
                     logo={logo}
                     renderLogin={renderLogin}
                     showComingSoon={showComingSoon}
-                    onClickAbout={onClickAbout}
+                    onClickAbout={onClickAbout || openUnifiscratchAbout}
                     onClickAccountNav={onClickAccountNav}
                     onClickLogo={onClickLogo}
                     onCloseAccountNav={onCloseAccountNav}

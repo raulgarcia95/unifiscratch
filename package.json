@@ -2,12 +2,12 @@
   "name": "unifiscratch",
   "version": "5.1.23",
   "description": "Unified block-programming editor for curated robotics, board and AI extensions",
-  "author": "Massachusetts Institute of Technology",
+  "author": "Raúl García Antolín (based on Scratch GUI by the Scratch Foundation / MIT and Xcratch by Koji Yokokawa)",
   "license": "AGPL-3.0-only",
-  "homepage": "https://github.com/scratchfoundation/scratch-gui#readme",
+  "homepage": "https://raulgarcia95.github.io/unifiscratch/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scratchfoundation/scratch-gui.git"
+    "url": "https://github.com/raulgarcia95/unifiscratch.git"
   },
   "main": "./dist/scratch-gui.js",
   "scripts": {
