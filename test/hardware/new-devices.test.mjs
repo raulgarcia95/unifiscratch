@@ -243,11 +243,11 @@ test('Face Sensing moves the sprite only while a face is visible', () => {
     assert.equal(face.size(), 0);
 });
 
-test('only BlueBot remains as a disabled information card', () => {
+test('no robot or board remains as a disabled information card', () => {
     // The AI placeholders here are replaced by the working Stretch3 entries in stretch/index.js.
     const disabled = entries.filter(item => item.entry.disabled && item.entry.category !== 'ai')
         .map(item => item.entry.extensionId);
-    assert.deepEqual(disabled, ['blueBot']);
+    assert.deepEqual(disabled, []);
 });
 
 // ---------- Edison V3: simulated WebUSB firmware running the bridge ----------
@@ -359,7 +359,7 @@ test('every extension that needs preparation has a complete guide in three langu
         'edisonV3', 'ed1Board', 'keyestudioEsp32', 'microShield', 'wappstoBit', 'smartCutebot',
         'makeblockCodeyRocky', 'makeblockMbot2', 'xcxArduino', 'microbitMore', 'spikeessential', 'legoble',
         'poweredup', 'legoremote', 'controlplus', 'duplotrain', 'legomario', 'legoluigi', 'legopeach',
-        'ev3', 'boost', 'wedo2', 'gdxfor', 'legoSpikePrime'
+        'ev3', 'boost', 'wedo2', 'gdxfor', 'legoSpikePrime', 'blueBot'
     ];
     assert.deepEqual(guideIds().sort(), [...required].sort());
     const translated = text => assert.ok(

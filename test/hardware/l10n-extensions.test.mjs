@@ -29,7 +29,7 @@ const loadMessages = async () => {
 const modules = [
     'makeblock-codey-rocky', 'makeblock-mbot2', 'unifiscratch-extra-hardware', 'microbit-cutebot',
     'microbit-wappsto', 'microbit-microshield', 'microbit-sensor-kit', 'dash-robot', 'ed1-board',
-    'face-sensing', 'edison-v3', 'lego-spike-prime'
+    'face-sensing', 'edison-v3', 'lego-spike-prime', 'bluebot'
 ];
 
 test('every block, menu and text default of our extensions has Spanish and Catalan', async () => {

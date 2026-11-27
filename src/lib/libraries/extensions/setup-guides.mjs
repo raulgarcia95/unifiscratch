@@ -296,6 +296,30 @@ const guides = {
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
     },
+    blueBot: {
+        name: 'BlueBot',
+        openOnAdd: false,
+        status: 'unconfirmed',
+        warning: ['Not yet tested on a real Blue-Bot. TTS does not publish its Bluetooth protocol: this extension uses the one that other open projects use to control it from the browser.', 'Aún sin probar con un Blue-Bot real. TTS no publica su protocolo Bluetooth: esta extensión usa el que emplean otros proyectos abiertos para controlarlo desde el navegador.', 'Encara sense provar amb un Blue-Bot real. TTS no publica el seu protocol Bluetooth: aquesta extensió fa servir el que fan servir altres projectes oberts per controlar-lo des del navegador.'],
+        intro: ['BlueBot connects by Bluetooth directly from Chrome or Edge: there is nothing to install on the robot or on the computer.', 'BlueBot se conecta por Bluetooth directamente desde Chrome o Edge: no hay que instalar nada ni en el robot ni en el ordenador.', 'BlueBot es connecta per Bluetooth directament des de Chrome o Edge: no cal instal·lar res ni al robot ni a l’ordinador.'],
+        actions: [],
+        cardLinks: [{opensGuide: true, text: ['Bluetooth from Chrome or Edge (no installation)', 'Bluetooth desde Chrome o Edge (sin instalar nada)', 'Bluetooth des de Chrome o Edge (sense instal·lar res)']}],
+        sections: [
+            {title: ['1. Prepare it', '1. Prepararlo', '1. Preparar-lo'],
+                steps: [
+                    ['Charge the robot with its USB cable. Turn it on with the switch underneath.', 'Carga el robot con su cable USB. Enciéndelo con el interruptor de la parte de abajo.', 'Carrega el robot amb el seu cable USB. Encén-lo amb l’interruptor de la part de sota.'],
+                    ['Close the Blue-Bot app on tablets and computers nearby: the robot only accepts one Bluetooth connection at a time.', 'Cierra la app Blue-Bot en las tabletas y ordenadores cercanos: el robot solo acepta una conexión Bluetooth a la vez.', 'Tanca l’app Blue-Bot a les tauletes i ordinadors propers: el robot només accepta una connexió Bluetooth alhora.']
+                ]},
+            {title: EVERY_TIME,
+                steps: [
+                    ['Use Chrome or Edge with the computer’s Bluetooth turned on.', 'Usa Chrome o Edge con el Bluetooth del ordenador activado.', 'Fes servir Chrome o Edge amb el Bluetooth de l’ordinador activat.'],
+                    ['Press the button «connect BlueBot by Bluetooth» and choose your robot («BlueBot…») in the browser window.', 'Pulsa el botón «conectar BlueBot por Bluetooth» y elige tu robot («BlueBot…») en la ventana del navegador.', 'Prem el botó «connecta BlueBot per Bluetooth» i tria el teu robot («BlueBot…») a la finestra del navegador.'],
+                    ['Each step moves 15 cm and turns are of 45, 90 or 135 degrees. The blocks wait while the robot moves; if your robot is faster or slower, change it with «one step lasts … s».', 'Cada paso avanza 15 cm y los giros son de 45, 90 o 135 grados. Los bloques esperan mientras el robot se mueve; si tu robot va más rápido o más lento, cámbialo con «un paso dura … s».', 'Cada pas avança 15 cm i els girs són de 45, 90 o 135 graus. Els blocs esperen mentre el robot es mou; si el teu robot va més ràpid o més lent, canvia-ho amb «un pas dura … s».'],
+                    ['The red stop sign stops the blocks that remain, but the step the robot has already started finishes.', 'La señal roja de parar detiene los bloques que faltan, pero el paso que el robot ya ha empezado se termina.', 'El senyal vermell d’aturar atura els blocs que falten, però el pas que el robot ja ha començat s’acaba.']
+                ]}
+        ],
+        note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    },
     makeblockCodeyRocky: makeblockGuide('Codey Rocky',
         ['connect Codey Rocky by USB', 'conectar Codey Rocky por USB', 'connecta Codey Rocky per USB'],
         ['connect Codey Rocky by Bluetooth', 'conectar Codey Rocky por Bluetooth', 'connecta Codey Rocky per Bluetooth']),

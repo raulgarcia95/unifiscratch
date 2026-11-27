@@ -7,7 +7,8 @@ import {
 import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const modules = ['dash-robot', 'ed1-board', 'edison-v3', 'makeblock-codey-rocky', 'makeblock-mbot2',
-    'microbit-cutebot', 'microbit-microshield', 'microbit-sensor-kit', 'microbit-wappsto', 'lego-spike-prime'];
+    'microbit-cutebot', 'microbit-microshield', 'microbit-sensor-kit', 'microbit-wappsto', 'lego-spike-prime',
+    'bluebot'];
 const CONNECT_OR_HELP = /^(connect|connectUsb|connectBluetooth|showHelp)$/;
 
 test('connection and help entries are buttons, with a hidden block for old projects', async () => {

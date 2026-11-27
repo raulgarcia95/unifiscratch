@@ -334,9 +334,9 @@ const createInfoExtension = ({
     };
 };
 
-// ED1, Dash, Face Sensing, Edison V3 and micro:shield have their own modules
-// (ed1-board.mjs, dash-robot.mjs, face-sensing.mjs, edison-v3.mjs and
-// microbit-microshield.mjs).
+// ED1, Dash, Face Sensing, Edison V3, micro:shield and BlueBot have their own modules
+// (ed1-board.mjs, dash-robot.mjs, face-sensing.mjs, edison-v3.mjs,
+// microbit-microshield.mjs and bluebot.mjs).
 const entries = [
     createMicroPythonBoard({
         id: 'keyestudioEsp32',
@@ -354,24 +354,6 @@ const entries = [
         },
         description: msg('keyestudioEsp32.description', 'USB control for Keyestudio ESP32 with MicroPython firmware.'),
         helpLink: 'https://docs.keyestudio.com/projects/KS0809/en/latest/docs/ESP32/Software_Tutorial.html'
-    }),
-    createInfoExtension({
-        id: 'blueBot',
-        category: 'robots',
-        name: 'BlueBot',
-        collaborator: 'TTS / Unifiscratch',
-        icon: {title: 'BLUE', body: 'BOT', kind: 'bluebot', device: 'blueBot',
-            color1: '#0284c7', color2: '#facc15', color3: '#075985'},
-        description: msg('blueBot.description',
-            'Experimental access: BlueBot depends on a proprietary Bluetooth protocol.'),
-        helpLink: 'https://www.tts-group.co.uk/blue-bot-bluetooth-programmable-floor-robot/1015268.html',
-        message: () => tr(
-            'BlueBot uses Bluetooth, but there is no open and stable protocol to send it movements from the ' +
-                'browser. The extension stays visible as an integration point.',
-            'BlueBot usa Bluetooth, pero no hay un protocolo abierto y estable para enviarle movimientos desde ' +
-                'el navegador. La extensión queda visible como punto de integración.',
-            'BlueBot fa servir Bluetooth, però no hi ha un protocol obert i estable per enviar-li moviments des ' +
-                'del navegador. L’extensió queda visible com a punt d’integració.')
     }),
     createInfoExtension({
         id: 'tm2scratch',

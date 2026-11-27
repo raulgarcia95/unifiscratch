@@ -11,6 +11,7 @@ const importModules = [
     import('./face-sensing.mjs'),
     import('./edison-v3.mjs'),
     import('./lego-spike-prime.mjs'),
+    import('./bluebot.mjs'),
     import('../stretch/index.js')
 ];
 

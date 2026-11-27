@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import {sensorKitTexts} from './libraries/extensions/preInstall/microbit-sensor-kit-texts.mjs';
 import {spikePrimeTexts} from './libraries/extensions/preInstall/lego-spike-prime-texts.mjs';
+import {blueBotTexts} from './libraries/extensions/preInstall/bluebot-texts.mjs';
 import {legoBluetoothMessages} from './libraries/extensions/preInstall/lego-bluetooth-texts.mjs';
 const UNIFISCRATCH_SITE_URL = 'https://sites.google.com/xtec.cat/unifiscratch/p%C3%A0gina-principal';
 const UNIFISCRATCH_CONTACT_EMAIL = 'rgarci95@xtec.cat';
@@ -340,6 +341,9 @@ const newExtensionMessages = language => {
     Object.keys(spikePrimeTexts).forEach(key => {
         messages[`unifiscratch.extensions.spikePrime.${key}`] = spikePrimeTexts[key][index];
     });
+    Object.keys(blueBotTexts).forEach(key => {
+        messages[`unifiscratch.extensions.blueBot.${key}`] = blueBotTexts[key][index];
+    });
     Object.keys(setupGuideTexts).forEach(key => {
         messages[`unifiscratch.setupGuide.${key}`] = setupGuideTexts[key][index];
     });
@@ -417,7 +421,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.keyestudioEsp32.description': 'USB control for Keyestudio ESP32 with MicroPython firmware.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit on Wappsto:bit by Bluetooth or USB: send and receive Wappsto cloud data, sensors, LED display and pins.',
         'unifiscratch.extensions.edisonV3.description': 'Experimental access: Edison V3 uses EdScratch/EdPy and program download.',
-        'unifiscratch.extensions.blueBot.description': 'Experimental access: BlueBot depends on a proprietary Bluetooth protocol.',
         ...newExtensionMessages('en')
     },
     es: {
@@ -488,7 +491,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.keyestudioEsp32.description': 'Control USB para Keyestudio ESP32 con firmware MicroPython.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit en Wappsto:bit por Bluetooth o USB: envía y recibe datos de la nube Wappsto, sensores, pantalla LED y pines.',
         'unifiscratch.extensions.edisonV3.description': 'Acceso experimental: Edison V3 usa EdScratch/EdPy y descarga de programa.',
-        'unifiscratch.extensions.blueBot.description': 'Acceso experimental: BlueBot depende de un protocolo Bluetooth propietario.',
         ...newExtensionMessages('es')
     },
     ca: {
@@ -559,7 +561,6 @@ const unifiscratchMessages = {
         'unifiscratch.extensions.keyestudioEsp32.description': 'Control USB per a Keyestudio ESP32 amb firmware MicroPython.',
         'unifiscratch.extensions.wappstoBit.description': 'micro:bit a Wappsto:bit per Bluetooth o USB: envia i rep dades del núvol Wappsto, sensors, pantalla LED i pins.',
         'unifiscratch.extensions.edisonV3.description': 'Accés experimental: Edison V3 fa servir EdScratch/EdPy i descàrrega de programa.',
-        'unifiscratch.extensions.blueBot.description': 'Accés experimental: BlueBot depèn d’un protocol Bluetooth propietari.',
         ...newExtensionMessages('ca')
     }
 };

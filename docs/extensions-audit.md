@@ -30,7 +30,7 @@ Microbit More declara `EXTENSION_ID` mediante un getter sin setter. Asignar meta
 | ED1 (Citilab) | Rehecha el 26 nov 2026: habla el protocolo de MicroBlocks por Web Serial (firmware de fábrica, sin instalar nada); programas auxiliares en bytecode probados en la VM real de MicroBlocks v383 compilada para Linux con la ED1 simulada | Placa real: conexión, robot Fantàstic, sentido de giro, umbral táctil, pantalla |
 | Face Sensing | Nueva implementación con MediaPipe Face Landmarker 0.10.14 (6 nov 2026); detección probada con una foto como cámara simulada | Cámara real, permisos y rendimiento en los ordenadores del centro |
 | Edison V3 (Microbric) | Nuevo adaptador WebUSB con programa puente EdPy (6 nov 2026); el puente compila sin errores en el comprobador oficial de EdPy V3; transporte simulado probado | Robot real: cargar el puente, conexión, movimientos, parada con bandera roja y sensores |
-| BlueBot | Tarjeta informativa desactivada («Pronto») | Sin protocolo público verificable (ver más abajo) |
+| BlueBot | Implementado por Web Bluetooth (27/11/2026) | Sin probar con un robot real (ver más abajo) |
 | EV3, BOOST, WeDo 2.0 y otras extensiones Scratch | Implementación heredada conservada | Validación física |
 
 ## Revisión del 6 de noviembre de 2026: extensiones «próximamente»
@@ -75,9 +75,15 @@ Observación: los módulos originales MediaPipe Hand e Image Embed importan `@me
 - Pendiente con el robot real: comprobar que STOP_USER_PROGRAM detiene los motores a mitad de un movimiento, la velocidad real con `SPEED_5` y que los giros se miden en grados.
 - Guía de conexión (`src/components/edison-setup`): ventana con los pasos para programar el puente con EdPy V3 y conectarlo, con botones para copiar o descargar el programa y abrir EdPy. Se abre al añadir Edison V3, desde el enlace «Cómo conectar Edison» de la tarjeta y desde el bloque «cómo conectar Edison (ayuda)». La tarjeta también enlaza el archivo `.py`. Si el navegador bloquea el portapapeles, se usa el método clásico de copia; se comprobó en el editor que el texto quedaba copiado.
 
-### BlueBot sigue desactivado
+### BlueBot por Web Bluetooth
 
-Terrapin Logo lo controla por Web Bluetooth, pero no hay documentación ni implementación abierta del protocolo. Las búsquedas del 6 de noviembre de 2026 tampoco encontraron ingeniería inversa publicada. Para activarlo hay que registrar la comunicación de la app oficial con un BlueBot real. Un método posible es usar nRF Connect para listar sus servicios y el registro HCI de Bluetooth de Android mientras la app envía avances y giros.
+TTS no publica el protocolo. El 27 de noviembre de 2026 se encontraron dos proyectos públicos independientes que lo usan del mismo modo: la interfaz Blue-Bot de Vittascience (Web Bluetooth; licencia con Commons Clause) y `vilarion/bluebot-python` (Bluetooth serie, GPL-3.0). De ellos solo se toman los datos de interoperabilidad, sin copiar código:
+
+- Nombre anunciado que empieza por `BlueBot`; servicio GATT `0xFFF0`, escritura en `0xFFF2`, notificaciones en `0xFFF1`.
+- Trama: `AA`, longitud (bytes desde el tipo hasta el final de los datos), `81`, `11`, tecla, suma de control (la suma desde la longitud hasta la suma de control es múltiplo de 256).
+- Teclas: `01` GO, `02` borrar, `03` pausa, `04` adelante, `05` atrás, `06`/`07` izquierda/derecha 90°, `08`/`09` 45°, `0A`/`0B` 135°.
+
+El robot no avisa al terminar un movimiento: los bloques esperan una duración estimada (3 s por paso por defecto, ajustable con «un paso dura … s»; 1 s por cada 45° de giro). Tampoco hay orden de parada: la señal roja cancela los pasos pendientes, pero el paso empezado se termina. Pendiente de probar con un Blue-Bot real.
 
 ### Proyecto SB3 de ida y vuelta
 
