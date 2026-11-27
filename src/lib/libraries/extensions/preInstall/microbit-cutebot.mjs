@@ -24,15 +24,68 @@ const icon = {
 
 export const MAX_TIMED_SECONDS = 5;
 export const HEART = '0101011111111110111000100';
+export const TILT_THRESHOLD = 15;
+// How long a gesture keeps its hat block "true" (ms).
+const GESTURE_WINDOW = 300;
 
-// Decodes "D cm left right a b" sensor lines from the firmware.
+// Own 5x5 drawings, row by row (1 = LED on).
+export const ICONS = {
+    heart: HEART,
+    smallHeart: '0000001010011100010000000',
+    happy: '0000001010000001000101110',
+    sad: '0000001010000000111010001',
+    surprised: '0101000000001000101000100',
+    angry: '1000101010000001111110101',
+    asleep: '0000011011000000111000000',
+    yes: '0000000001000101010001000',
+    no: '1000101010001000101010001',
+    up: '0010001110101010010000100',
+    down: '0010000100101010111000100',
+    left: '0010001000111110100000100',
+    right: '0010000010111110001000100',
+    square: '1111110001100011000111111',
+    dot: '0000000000001000000000000'
+};
+
+export const GESTURES = ['shake', 'logoUp', 'logoDown', 'screenUp', 'screenDown', 'tiltLeft', 'tiltRight', 'freeFall'];
+
+const SENSOR_FIELDS = ['distance', 'left', 'right', 'a', 'b', 'logo', 'temperature', 'light', 'x', 'y', 'z', 'sound', 'heading'];
+const EMPTY_SENSORS = {distance: 0, left: 0, right: 0, a: 0, b: 0, logo: 0, temperature: 0, light: 0, x: 0, y: 0, z: 0, sound: 0, heading: -1};
+
+// Decodes "D cm left right a b [logo temp light ax ay az sound heading]".
+// Firmware CB1 sends only the first five values.
 export const parseSensors = line => {
     if (!line.startsWith('D ')) return null;
-    const [distance, left, right, a, b] = line.slice(2).trim()
+    const values = line.slice(2).trim()
         .split(/\s+/)
         .map(Number);
-    if (![distance, left, right, a, b].every(Number.isFinite)) return null;
-    return {distance, left, right, a, b};
+    if (values.length < 5 || !values.every(Number.isFinite)) return null;
+    const sensors = {};
+    SENSOR_FIELDS.slice(0, 5).forEach((key, i) => {
+        sensors[key] = values[i];
+    });
+    if (values.length >= SENSOR_FIELDS.length) {
+        SENSOR_FIELDS.forEach((key, i) => {
+            sensors[key] = values[i];
+        });
+    }
+    return sensors;
+};
+
+// Decodes "G n" gesture events (1 = shake ... 8 = free fall).
+export const parseGesture = line => {
+    const match = /^G (\d+)$/.exec(line.trim());
+    return match ? GESTURES[Number(match[1]) - 1] || null : null;
+};
+
+// Tilt angles in degrees from the accelerometer (mg). "front" is the logo
+// going down, "right" the right edge going down.
+export const tiltAngle = (sensors, direction) => {
+    const {x, y, z} = sensors;
+    const deg = rad => Math.round(rad * 180 / Math.PI);
+    const front = deg(Math.atan2(y, Math.sqrt((x * x) + (z * z))));
+    const right = deg(Math.atan2(x, Math.sqrt((y * y) + (z * z))));
+    return {front, back: -front, right, left: -right}[direction] || 0;
 };
 
 // Scratch matrix fields are 25 characters, row by row; bit 0 is top left.
@@ -52,11 +105,18 @@ const speed = value => Math.round(boundedNumber(value, -100, 100));
 class Cutebot {
     constructor (runtime) {
         this.runtime = runtime;
-        this.sensors = {distance: 0, left: 0, right: 0, a: 0, b: 0};
+        this.sensors = {...EMPTY_SENSORS};
+        this.gestureAt = {};
+        this.extraOn = {epoch: -1, flags: 0};
         this.transport = new MicrobitUartTransport(name, {
             onLine: line => {
                 const sensors = parseSensors(line);
-                if (sensors) this.sensors = sensors;
+                if (sensors) {
+                    this.sensors = {...this.sensors, ...sensors};
+                    return;
+                }
+                const gesture = parseGesture(line);
+                if (gesture) this.gestureAt[gesture] = Date.now();
             }
         });
         bindSafetyEvents(runtime, this.transport);
@@ -131,13 +191,56 @@ class Cutebot {
                     text: t('onLine', 'line sensor [SIDE] on black line?'),
                     arguments: {SIDE: {type: 'string', menu: 'sides', defaultValue: 'left'}}
                 },
+                '---',
+                {
+                    opcode: 'whenButton',
+                    blockType: 'hat',
+                    text: t('whenButton', 'when button [BUTTON] is pressed'),
+                    arguments: {BUTTON: {type: 'string', menu: 'buttons', defaultValue: 'a'}}
+                },
                 {
                     opcode: 'buttonPressed',
                     blockType: 'Boolean',
                     text: t('buttonPressed', 'button [BUTTON] pressed?'),
                     arguments: {BUTTON: {type: 'string', menu: 'buttons', defaultValue: 'a'}}
                 },
+                {opcode: 'whenLogoTouched', blockType: 'hat', text: t('whenLogoTouched', 'when logo is touched (V2)')},
+                {opcode: 'logoTouched', blockType: 'Boolean', text: t('logoTouched', 'logo touched? (V2)')},
+                {
+                    opcode: 'whenGesture',
+                    blockType: 'hat',
+                    text: t('whenGesture', 'when [GESTURE]'),
+                    arguments: {GESTURE: {type: 'string', menu: 'gestures', defaultValue: 'shake'}}
+                },
+                {
+                    opcode: 'isTilted',
+                    blockType: 'Boolean',
+                    text: t('isTilted', 'tilted [DIRECTION]?'),
+                    arguments: {DIRECTION: {type: 'string', menu: 'tiltAny', defaultValue: 'any'}}
+                },
+                {
+                    opcode: 'tiltAngle',
+                    blockType: 'reporter',
+                    text: t('tiltAngle', 'tilt angle [DIRECTION]'),
+                    arguments: {DIRECTION: {type: 'string', menu: 'tilts', defaultValue: 'front'}}
+                },
+                {
+                    opcode: 'acceleration',
+                    blockType: 'reporter',
+                    text: t('acceleration', 'acceleration [AXIS] (mg)'),
+                    arguments: {AXIS: {type: 'string', menu: 'axes', defaultValue: 'x'}}
+                },
+                {opcode: 'temperature', blockType: 'reporter', text: t('temperature', 'temperature (°C)')},
+                {opcode: 'lightLevel', blockType: 'reporter', text: t('lightLevel', 'light level')},
+                {opcode: 'compassHeading', blockType: 'reporter', text: t('compassHeading', 'compass heading (°)')},
+                {opcode: 'soundLevel', blockType: 'reporter', text: t('soundLevel', 'sound level (V2)')},
                 '---',
+                {
+                    opcode: 'showIcon',
+                    blockType: 'command',
+                    text: t('showIcon', 'display icon [ICON]'),
+                    arguments: {ICON: {type: 'string', menu: 'icons', defaultValue: 'heart'}}
+                },
                 {
                     opcode: 'showMatrix',
                     blockType: 'command',
@@ -149,6 +252,22 @@ class Cutebot {
                     blockType: 'command',
                     text: t('showText', 'display text [TEXT]'),
                     arguments: {TEXT: {type: 'string', defaultValue: 'Hola'}}
+                },
+                {
+                    opcode: 'plotLed',
+                    blockType: 'command',
+                    text: t('plotLed', 'turn LED x [X] y [Y] [STATE]'),
+                    arguments: {
+                        X: {type: 'number', defaultValue: 2},
+                        Y: {type: 'number', defaultValue: 2},
+                        STATE: {type: 'string', menu: 'onOff', defaultValue: 'on'}
+                    }
+                },
+                {
+                    opcode: 'setBrightness',
+                    blockType: 'command',
+                    text: t('setBrightness', 'set display brightness to [LEVEL] %'),
+                    arguments: {LEVEL: {type: 'number', defaultValue: 100}}
                 },
                 {opcode: 'clearDisplay', blockType: 'command', text: t('clearDisplay', 'clear display')},
                 {
@@ -178,7 +297,37 @@ class Cutebot {
                     ]
                 },
                 servos: {acceptReporters: true, items: ['1', '2']},
-                buttons: {acceptReporters: true, items: [{text: 'A', value: 'a'}, {text: 'B', value: 'b'}]}
+                buttons: {
+                    acceptReporters: true,
+                    items: [{text: 'A', value: 'a'}, {text: 'B', value: 'b'}, {text: t('anyButton', 'any'), value: 'any'}]
+                },
+                gestures: {
+                    acceptReporters: false,
+                    items: GESTURES.map(gesture => ({text: t(`gesture.${gesture}`, gesture), value: gesture}))
+                },
+                tilts: {
+                    acceptReporters: true,
+                    items: ['front', 'back', 'left', 'right'].map(dir => ({text: t(`tilt.${dir}`, dir), value: dir}))
+                },
+                tiltAny: {
+                    acceptReporters: true,
+                    items: ['any', 'front', 'back', 'left', 'right'].map(dir => ({text: t(`tilt.${dir}`, dir), value: dir}))
+                },
+                axes: {
+                    acceptReporters: true,
+                    items: [
+                        {text: 'x', value: 'x'}, {text: 'y', value: 'y'}, {text: 'z', value: 'z'},
+                        {text: t('strength', 'strength'), value: 'strength'}
+                    ]
+                },
+                icons: {
+                    acceptReporters: true,
+                    items: Object.keys(ICONS).map(key => ({text: t(`icon.${key}`, key), value: key}))
+                },
+                onOff: {
+                    acceptReporters: true,
+                    items: [{text: t('on', 'on'), value: 'on'}, {text: t('off', 'off'), value: 'off'}]
+                }
             }
         };
     }
@@ -187,12 +336,36 @@ class Cutebot {
         openSetupGuide(id);
     }
 
-    connectBluetooth () {
-        return this.transport.connectBluetooth();
+    async connectBluetooth () {
+        await this.transport.connectBluetooth();
+        this.checkFirmware();
     }
 
-    connectUsb () {
-        return this.transport.connectUsb();
+    async connectUsb () {
+        await this.transport.connectUsb();
+        this.checkFirmware();
+    }
+
+    // Firmware CB1 drives the robot but has no micro:bit sensor values.
+    checkFirmware () {
+        if (!String(this.transport.version || '').startsWith('CB2')) {
+            this.transport.lastError = 'Cutebot: firmware antiguo. Vuelve a cargar el .hex de Unifiscratch para usar ' +
+                'acelerómetro, gestos, logo, temperatura, luz, brújula y sonido.';
+        }
+    }
+
+    // micro:bit version reported by the firmware ("CB2 2" = V2).
+    isV2 () {
+        return String(this.transport.version || '').trim() === 'CB2 2';
+    }
+
+    // Compass and microphone only run once a block asks for them.
+    enableExtra (flag) {
+        if (!this.transport.isConnected()) return;
+        if (this.extraOn.epoch !== this.transport.epoch) this.extraOn = {epoch: this.transport.epoch, flags: 0};
+        if (this.extraOn.flags & flag) return;
+        this.extraOn.flags |= flag;
+        this.transport.send(`Q ${flag}`).catch(() => {});
     }
 
     disconnect () {
@@ -256,7 +429,80 @@ class Cutebot {
     }
 
     buttonPressed (args) {
-        return this.sensors[String(args.BUTTON).toLowerCase() === 'b' ? 'b' : 'a'] === 1;
+        const button = String(args.BUTTON).toLowerCase();
+        if (button === 'any') return this.sensors.a === 1 || this.sensors.b === 1;
+        return this.sensors[button === 'b' ? 'b' : 'a'] === 1;
+    }
+
+    whenButton (args) {
+        return this.buttonPressed(args);
+    }
+
+    logoTouched () {
+        return this.sensors.logo === 1;
+    }
+
+    whenLogoTouched () {
+        return this.logoTouched();
+    }
+
+    whenGesture (args) {
+        const at = this.gestureAt[args.GESTURE];
+        return typeof at === 'number' && Date.now() - at < GESTURE_WINDOW;
+    }
+
+    isTilted (args) {
+        const dir = String(args.DIRECTION);
+        if (dir === 'any') {
+            return ['front', 'back', 'left', 'right'].some(side => tiltAngle(this.sensors, side) >= TILT_THRESHOLD);
+        }
+        return tiltAngle(this.sensors, dir) >= TILT_THRESHOLD;
+    }
+
+    tiltAngle (args) {
+        return tiltAngle(this.sensors, String(args.DIRECTION));
+    }
+
+    acceleration (args) {
+        const axis = String(args.AXIS).toLowerCase();
+        if (axis === 'strength') {
+            const {x, y, z} = this.sensors;
+            return Math.round(Math.sqrt((x * x) + (y * y) + (z * z)));
+        }
+        return this.sensors[['x', 'y', 'z'].includes(axis) ? axis : 'x'];
+    }
+
+    temperature () {
+        return this.sensors.temperature;
+    }
+
+    lightLevel () {
+        return this.sensors.light;
+    }
+
+    compassHeading () {
+        this.enableExtra(1);
+        return this.sensors.heading;
+    }
+
+    soundLevel () {
+        this.enableExtra(2);
+        return this.sensors.sound;
+    }
+
+    showIcon (args) {
+        const icon = ICONS[args.ICON] || String(args.ICON);
+        return this.transport.send(`I ${matrixBits(icon)}`);
+    }
+
+    plotLed (args) {
+        const x = Math.round(boundedNumber(args.X, 0, 4));
+        const y = Math.round(boundedNumber(args.Y, 0, 4));
+        return this.transport.send(`P ${x} ${y} ${args.STATE === 'off' ? 0 : 1}`);
+    }
+
+    setBrightness (args) {
+        return this.transport.send(`R ${Math.round(boundedNumber(args.LEVEL, 0, 100) * 255 / 100)}`);
     }
 
     showMatrix (args) {
@@ -293,7 +539,7 @@ export const entry = {
     collaborator: 'ELECFREAKS / Unifiscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('smartCutebot.description', 'Cutebot with micro:bit by Bluetooth or USB: motors, lights, servos, sensors and LED display.'),
+    description: msg('smartCutebot.description', 'Cutebot with micro:bit by Bluetooth or USB: motors, lights, servos, sensors, LED display and the micro:bit buttons, accelerometer and sensors.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

@@ -5,7 +5,7 @@ import {
     MicrobitUartTransport, UART_SERVICE, UART_CHAR_A, UART_CHAR_B, MICROBIT_USB_VENDOR
 } from '../../src/lib/libraries/extensions/preInstall/microbit-uart-transport.mjs';
 import {
-    blockClass as Cutebot, entry, parseSensors, matrixBits, HEART
+    blockClass as Cutebot, entry, parseSensors, parseGesture, matrixBits, tiltAngle, HEART, ICONS, GESTURES
 } from '../../src/lib/libraries/extensions/preInstall/microbit-cutebot.mjs';
 import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
@@ -14,8 +14,9 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 // ---------- Simulated micro:bit with the Unifiscratch firmware ----------
 
 class Firmware {
-    constructor ({silent = false} = {}) {
+    constructor ({silent = false, hello = 'CB2 2'} = {}) {
         this.silent = silent;
+        this.hello = hello;
         this.lines = [];
         this.partial = '';
         this.packets = [];
@@ -29,7 +30,7 @@ class Firmware {
             const line = this.partial.slice(0, index);
             this.partial = this.partial.slice(index + 1);
             this.lines.push(line);
-            if (line === '?' && !this.silent) this.reply('CB1\n');
+            if (line === '?' && !this.silent) this.reply(`${this.hello}\n`);
         }
     }
 }
@@ -122,6 +123,15 @@ class FakePort {
 
 test('sensor lines and LED matrices are decoded', () => {
     assert.deepEqual(parseSensors('D 23 1 0 0 1'), {distance: 23, left: 1, right: 0, a: 0, b: 1});
+    assert.deepEqual(parseSensors('D 23 1 0 0 1 1 24 130 -12 500 -1020 40 271'), {
+        distance: 23, left: 1, right: 0, a: 0, b: 1, logo: 1, temperature: 24, light: 130,
+        x: -12, y: 500, z: -1020, sound: 40, heading: 271
+    });
+    assert.equal(parseGesture('G 1'), 'shake');
+    assert.equal(parseGesture('G 8'), 'freeFall');
+    assert.equal(parseGesture('G 9'), null);
+    assert.equal(GESTURES.length, 8);
+    Object.values(ICONS).forEach(icon => assert.match(icon, /^[01]{25}$/));
     assert.equal(parseSensors('CB1'), null);
     assert.equal(parseSensors('D x 1 0 0 1'), null);
     assert.equal(matrixBits('1'.padEnd(25, '0')), 1);
@@ -233,4 +243,70 @@ test('Cutebot shows a firmware guide with the .hex download', () => {
     const blocks = new Cutebot().getInfo().blocks.map(block => block.opcode);
     assert.ok(blocks.indexOf('connectBluetooth') < blocks.indexOf('connectUsb'), 'Bluetooth comes first');
     assert.ok(blocks.includes('showHelp'));
+});
+
+test('micro:bit blocks: buttons, logo, gestures, tilt, sensors and display', async () => {
+    const device = new FakeMicrobit();
+    await withBluetooth(device, async () => {
+        const robot = new Cutebot(new EventEmitter());
+        await robot.connectBluetooth();
+        assert.equal(robot.connectionError(), '');
+        assert.equal(robot.isV2(), true);
+
+        device.toHost.notify('D 30 0 0 0 1 1 22 140 0 500 -866 55 90\n');
+        assert.equal(robot.whenButton({BUTTON: 'b'}), true);
+        assert.equal(robot.buttonPressed({BUTTON: 'a'}), false);
+        assert.equal(robot.buttonPressed({BUTTON: 'any'}), true);
+        assert.equal(robot.logoTouched(), true);
+        assert.equal(robot.whenLogoTouched(), true);
+        assert.equal(robot.temperature(), 22);
+        assert.equal(robot.lightLevel(), 140);
+        assert.equal(robot.acceleration({AXIS: 'y'}), 500);
+        assert.equal(robot.acceleration({AXIS: 'strength'}), 1000);
+        assert.equal(robot.tiltAngle({DIRECTION: 'front'}), 30);
+        assert.equal(robot.tiltAngle({DIRECTION: 'back'}), -30);
+        assert.equal(robot.isTilted({DIRECTION: 'front'}), true);
+        assert.equal(robot.isTilted({DIRECTION: 'left'}), false);
+        assert.equal(robot.isTilted({DIRECTION: 'any'}), true);
+        assert.equal(robot.compassHeading(), 90);
+        assert.equal(robot.soundLevel(), 55);
+        robot.compassHeading();
+
+        assert.equal(robot.whenGesture({GESTURE: 'shake'}), false);
+        device.toHost.notify('G 1\n');
+        assert.equal(robot.whenGesture({GESTURE: 'shake'}), true);
+        assert.equal(robot.whenGesture({GESTURE: 'freeFall'}), false);
+
+        await robot.showIcon({ICON: 'yes'});
+        await robot.plotLed({X: 9, Y: 1.2, STATE: 'off'});
+        await robot.plotLed({X: 0, Y: 4, STATE: 'on'});
+        await robot.setBrightness({LEVEL: 50});
+        await tick();
+        assert.deepEqual(device.firmware.lines.slice(2), [
+            'Q 1', 'Q 2', `I ${matrixBits(ICONS.yes)}`, 'P 4 1 0', 'P 0 4 1', 'R 128'
+        ]);
+        assert.ok(device.firmware.packets.every(size => size <= 20), 'Bluetooth writes fit in 20 bytes');
+        await robot.disconnect();
+    });
+});
+
+test('tilt angles follow the micro:bit axes', () => {
+    assert.equal(tiltAngle({x: 0, y: 0, z: -1024}, 'front'), 0);
+    assert.equal(tiltAngle({x: 1024, y: 0, z: 0}, 'right'), 90);
+    assert.equal(tiltAngle({x: 1024, y: 0, z: 0}, 'left'), -90);
+});
+
+test('an old Cutebot firmware still connects but asks for the new .hex', async () => {
+    const device = new FakeMicrobit({hello: 'CB1'});
+    await withBluetooth(device, async () => {
+        const robot = new Cutebot(new EventEmitter());
+        await robot.connectBluetooth();
+        assert.equal(robot.isConnected(), true);
+        assert.equal(robot.isV2(), false);
+        assert.match(robot.connectionError(), /firmware antiguo/);
+        device.toHost.notify('D 12 1 0 1 0\n');
+        assert.equal(robot.distance(), 12);
+        assert.equal(robot.temperature(), 0);
+        await robot.disconnect();
+    });
 });

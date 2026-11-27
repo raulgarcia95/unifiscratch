@@ -1,6 +1,6 @@
 // Unifiscratch Cutebot firmware (MIT). Own implementation.
 // Line protocol, identical over Bluetooth UART and USB serial (115200):
-//   ?                 -> replies "CB1"
+//   ?                 -> replies "CB2 v" (v = micro:bit version, 1 or 2)
 //   K                 keepalive (host sends every 500 ms)
 //   M l r t           motors l,r in -100..100; t ms (0 = until next order)
 //   S                 stop motors
@@ -8,10 +8,17 @@
 //   N r g b           underglow (2 LEDs on P15)
 //   V n a             servo n (1|2) to angle a (0..180)
 //   I bits            LED matrix, 25-bit number (bit 0 = top-left)
+//   P x y v           LED x,y (0..4) on (v = 1) or off (v = 0)
+//   R n               display brightness 0..255
+//   Q f               extra sensors: f bit 1 compass, bit 2 microphone (V2)
 //   T text            scroll text
 //   C                 clear matrix
 //   B freq ms         tone
-// Sensors sent every 100 ms: "D cm left right a b"
+// Sensors sent every 100 ms:
+//   "D cm left right a b logo temp light ax ay az sound heading"
+//   (logo and sound only on V2, 0 on V1; heading -1 until "Q 1")
+// Gestures (sent by the main loop, after the D line): "G n" (1 shake, 2 logo up, 3 logo down,
+//   4 screen up, 5 screen down, 6 tilt left, 7 tilt right, 8 free fall)
 // Safety: motors stop if nothing arrives for 1.5 s or Bluetooth drops.
 
 const CUTEBOT = 0x10
@@ -20,6 +27,10 @@ let motorsOn = false
 let stopAt = 0
 let bleConnected = false
 const underglow = pins.createBuffer(6)
+const v2 = control.hardwareVersion() == "2"
+let extra = 0
+let heading = -1
+let pendingGesture = 0
 
 function i2c(a: number, b: number, c: number, d: number) {
     const buf = pins.createBuffer(4)
@@ -76,7 +87,7 @@ function handle(line: string) {
     const cmd = line.charAt(0)
     const rest = clean(line.substr(1))
     const n = rest.split(" ").map(s => parseInt(s))
-    if (cmd == "?") send("CB1")
+    if (cmd == "?") send("CB2 " + (v2 ? 2 : 1))
     else if (cmd == "K") { }
     else if (cmd == "M") {
         motors(n[0] || 0, n[1] || 0)
@@ -100,6 +111,14 @@ function handle(line: string) {
     }
     else if (cmd == "V") i2c(n[0] == 2 ? 0x06 : 0x05, Math.constrain(n[1] || 0, 0, 180), 0, 0)
     else if (cmd == "I") showBits(n[0] || 0)
+    else if (cmd == "P") {
+        const x = n[0] || 0
+        const y = n[1] || 0
+        if (n[2]) led.plot(x, y)
+        else led.unplot(x, y)
+    }
+    else if (cmd == "R") led.setBrightness(byte(n[0]))
+    else if (cmd == "Q") extra = extra | (n[0] || 0)
     else if (cmd == "T") control.inBackground(() => basic.showString(rest, 80))
     else if (cmd == "C") basic.clearScreen()
     else if (cmd == "B") {
@@ -138,6 +157,29 @@ serial.onDataReceived(serial.delimiters(Delimiters.NewLine), () => {
     handle(serial.readUntil(serial.delimiters(Delimiters.NewLine)))
 })
 
+function gesture(g: Gesture, code: number) {
+    input.onGesture(g, () => {
+        pendingGesture = code
+    })
+}
+gesture(Gesture.Shake, 1)
+gesture(Gesture.LogoUp, 2)
+gesture(Gesture.LogoDown, 3)
+gesture(Gesture.ScreenUp, 4)
+gesture(Gesture.ScreenDown, 5)
+gesture(Gesture.TiltLeft, 6)
+gesture(Gesture.TiltRight, 7)
+gesture(Gesture.FreeFall, 8)
+
+// The compass may start its calibration game: keep it off the main loop
+// so the motor safety checks go on running.
+control.inBackground(() => {
+    while (true) {
+        if (extra & 1) heading = input.compassHeading()
+        basic.pause(200)
+    }
+})
+
 pins.setPull(DigitalPin.P13, PinPullMode.PullNone)
 pins.setPull(DigitalPin.P14, PinPullMode.PullNone)
 stopMotors()
@@ -147,10 +189,16 @@ basic.forever(() => {
     const now = control.millis()
     if (stopAt > 0 && now >= stopAt) stopMotors()
     if (motorsOn && now - lastRx > 1500) stopMotors()
+    const g = pendingGesture
+    pendingGesture = 0
     if (now - lastRx < 3000) {
         send("D " + distanceCm() + " " + pins.digitalReadPin(DigitalPin.P13) + " " +
             pins.digitalReadPin(DigitalPin.P14) + " " +
-            (input.buttonIsPressed(Button.A) ? 1 : 0) + " " + (input.buttonIsPressed(Button.B) ? 1 : 0))
+            (input.buttonIsPressed(Button.A) ? 1 : 0) + " " + (input.buttonIsPressed(Button.B) ? 1 : 0) + " " +
+            (v2 && input.logoIsPressed() ? 1 : 0) + " " + input.temperature() + " " + input.lightLevel() + " " +
+            input.acceleration(Dimension.X) + " " + input.acceleration(Dimension.Y) + " " +
+            input.acceleration(Dimension.Z) + " " + (v2 && (extra & 2) ? input.soundLevel() : 0) + " " + heading)
+        if (g) send("G " + g)
     }
     basic.pause(100)
 })

@@ -28,5 +28,10 @@ el servicio en la nube de MakeCode. Así se generaron los .hex publicados
 ## Protocolo
 
 Una orden por línea (`\n`). Ver la cabecera de `main.ts`.
-Sensores cada 100 ms: `D distancia_cm linea_izq linea_der botonA botonB`.
+Sensores cada 100 ms:
+`D distancia_cm linea_izq linea_der botonA botonB logo temp luz ax ay az sonido brujula`
+(logo y sonido solo en micro:bit V2; brújula y micrófono se activan con `Q 1`
+y `Q 2` cuando un bloque los pide). Los gestos llegan como `G n`.
+La versión 2 del firmware responde `CB2 1` o `CB2 2` (V1 o V2) a `?`;
+la extensión avisa si la micro:bit tiene el firmware antiguo (`CB1`).
 Si no llega nada en 1,5 s, o se corta el Bluetooth, los motores se paran.
