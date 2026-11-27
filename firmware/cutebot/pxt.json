@@ -5,12 +5,14 @@
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "bluetooth": "*"
+        "bluetooth": "*",
+        "microphone": "*"
     },
     "files": [
         "main.ts",
         "README.md"
     ],
+    "preferredEditor": "tsprj",
     "yotta": {
         "config": {
             "microbit-dal": {
@@ -21,6 +23,5 @@
                 }
             }
         }
-    },
-    "preferredEditor": "tsprj"
+    }
 }
