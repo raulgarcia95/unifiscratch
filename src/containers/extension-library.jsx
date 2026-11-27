@@ -339,11 +339,11 @@ const cardIconOverrides = {
     facesensing: faceSensingIconURL
 };
 
-// LEGO extensions are shown together at the end of their category, with
-// SPIKE Essential and SPIKE Prime last.
+// LEGO extensions are shown together right after Codey Rocky: SPIKE
+// Essential, SPIKE Prime and LEGO BLE first, then the rest of LEGO.
 const legoCardOrder = [
-    'ev3', 'boost', 'wedo2', 'poweredup', 'legoremote', 'controlplus', 'duplotrain',
-    'legomario', 'legoluigi', 'legopeach', 'legoble', 'spikeessential', 'legospikeprime'
+    'spikeessential', 'legospikeprime', 'legoble', 'poweredup', 'controlplus', 'duplotrain',
+    'legomario', 'legoluigi', 'legopeach', 'legoremote', 'boost', 'wedo2', 'ev3'
 ];
 
 const legoRank = extension => {
@@ -353,10 +353,16 @@ const legoRank = extension => {
     return rank;
 };
 
-const orderLegoLast = items => {
+const isCodeyRocky = extension =>
+    String(extension.extensionId || '').toLowerCase() === 'makeblockcodeyrocky';
+
+const orderLego = items => {
     const lego = items.filter(item => legoRank(item) !== -1)
         .sort((a, b) => legoRank(a) - legoRank(b));
-    return items.filter(item => legoRank(item) === -1).concat(lego);
+    const rest = items.filter(item => legoRank(item) === -1);
+    const codey = rest.findIndex(isCodeyRocky);
+    if (codey === -1) return rest.concat(lego);
+    return rest.slice(0, codey + 1).concat(lego, rest.slice(codey + 1));
 };
 
 const localizeKnownExtensionCard = (intl, extension, field, fallback) => {
@@ -491,7 +497,7 @@ class ExtensionLibrary extends React.PureComponent {
         
     }
     render () {
-        const extensionLibraryThumbnailData = orderLegoLast(extensionLibraryContent).map(extension => ({
+        const extensionLibraryThumbnailData = orderLego(extensionLibraryContent).map(extension => ({
             rawURL: extension.iconURL || extensionIcon,
             ...extension,
             ...(cardIconOverrides[knownExtensionCardKey(extension)] ? {
