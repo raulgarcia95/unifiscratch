@@ -473,7 +473,7 @@ export const entry = {
     collaborator: 'Make&Learn / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('microShield.description', 'micro:shield with micro:bit by Bluetooth or USB: DC motors, steppers, servos, pins, sonar and LED strip.'),
+    description: msg('microShield.description', 'micro:shield with micro:bit by Bluetooth or USB.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

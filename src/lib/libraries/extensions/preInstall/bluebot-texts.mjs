@@ -2,7 +2,7 @@
 // Block texts of the BlueBot (TTS) extension: [English, Spanish, Catalan].
 // Keys become unifiscratch.extensions.blueBot.<key>.
 export const blueBotTexts = {
-    description: ['TTS Blue-Bot floor robot by Bluetooth: steps forward and back, turns of 45, 90 and 135 degrees, and the GO, clear and pause keys.', 'Robot de suelo Blue-Bot de TTS por Bluetooth: pasos adelante y atrás, giros de 45, 90 y 135 grados y las teclas GO, borrar y pausa.', 'Robot de terra Blue-Bot de TTS per Bluetooth: passos endavant i enrere, girs de 45, 90 i 135 graus i les tecles GO, esborrar i pausa.'],
+    description: ['TTS Blue-Bot floor robot by Bluetooth.', 'Robot de suelo Blue-Bot de TTS por Bluetooth.', 'Robot de terra Blue-Bot de TTS per Bluetooth.'],
     showHelp: ['how to connect BlueBot (help)', 'cómo conectar BlueBot (ayuda)', 'com connectar BlueBot (ajuda)'],
     connectBluetooth: ['connect BlueBot by Bluetooth', 'conectar BlueBot por Bluetooth', 'connecta BlueBot per Bluetooth'],
     disconnect: ['disconnect BlueBot', 'desconectar BlueBot', 'desconnecta BlueBot'],

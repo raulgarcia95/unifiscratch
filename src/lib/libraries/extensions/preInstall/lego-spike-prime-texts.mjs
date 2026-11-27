@@ -2,7 +2,7 @@
 // Block texts of the LEGO SPIKE Prime (Pybricks) extension: [English, Spanish, Catalan].
 // Keys become unifiscratch.extensions.spikePrime.<key>.
 export const spikePrimeTexts = {
-    description: ['LEGO SPIKE Prime hub with the Pybricks firmware, by Bluetooth: motors, color, distance and force sensors, light matrix, buttons and gyro.', 'Hub LEGO SPIKE Prime con el firmware Pybricks, por Bluetooth: motores, sensores de color, distancia y fuerza, matriz de luces, botones y giroscopio.', 'Hub LEGO SPIKE Prime amb el firmware Pybricks, per Bluetooth: motors, sensors de color, distància i força, matriu de llums, botons i giroscopi.'],
+    description: ['LEGO SPIKE Prime hub with the Pybricks firmware, by Bluetooth.', 'Hub LEGO SPIKE Prime con el firmware Pybricks, por Bluetooth.', 'Hub LEGO SPIKE Prime amb el firmware Pybricks, per Bluetooth.'],
     showHelp: ['how to connect SPIKE Prime (help)', 'cómo conectar SPIKE Prime (ayuda)', 'com connectar SPIKE Prime (ajuda)'],
     connectBluetooth: ['connect SPIKE Prime by Bluetooth', 'conectar SPIKE Prime por Bluetooth', 'connecta SPIKE Prime per Bluetooth'],
     disconnect: ['disconnect SPIKE Prime', 'desconectar SPIKE Prime', 'desconnecta SPIKE Prime'],

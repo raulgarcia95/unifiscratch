@@ -535,7 +535,7 @@ const entry = {
     collaborator: 'Wonder Workshop / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('dashRobot.description', 'Bluetooth control of Dash: timed moves, turns, head, lights, sounds and sensors.'),
+    description: msg('dashRobot.description', 'Control of Dash by Bluetooth.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

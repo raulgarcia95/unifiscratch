@@ -206,7 +206,7 @@ const knownExtensionCards = {
             name: 'Microbit More',
             description: 'Use more micro:bit sensors, buttons and Bluetooth features.'
         },
-        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Control LEGO SPIKE Essential hubs and creations.'},
+        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Control LEGO SPIKE Essential hubs and elements.'},
         legoble: {name: 'LEGO BLE Device', description: 'Connect LEGO Bluetooth hubs and devices.'},
         poweredup: {name: 'LEGO Powered UP', description: 'Control LEGO Powered UP motors and sensors.'},
         legoremote: {name: 'LEGO Powered UP Remote', description: 'Use the LEGO remote control in projects.'},
@@ -240,7 +240,7 @@ const knownExtensionCards = {
             name: 'Microbit More',
             description: 'Usa más sensores, botones y funciones Bluetooth de micro:bit.'
         },
-        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Controla hubs y creaciones LEGO SPIKE Essential.'},
+        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Controla hubs y elementos de LEGO SPIKE Essential.'},
         legoble: {name: 'LEGO BLE Device', description: 'Conecta hubs y dispositivos LEGO por Bluetooth.'},
         poweredup: {name: 'LEGO Powered UP', description: 'Controla motores y sensores LEGO Powered UP.'},
         legoremote: {name: 'LEGO Powered UP Remote', description: 'Usa el mando LEGO en tus proyectos.'},
@@ -277,7 +277,7 @@ const knownExtensionCards = {
             name: 'Microbit More',
             description: 'Fes servir més sensors, botons i funcions Bluetooth de micro:bit.'
         },
-        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Controla hubs i creacions LEGO SPIKE Essential.'},
+        spikeessential: {name: 'LEGO SPIKE Essential', description: 'Controla hubs i elements de LEGO SPIKE Essential.'},
         legoble: {name: 'LEGO BLE Device', description: 'Connecta hubs i dispositius LEGO per Bluetooth.'},
         poweredup: {name: 'LEGO Powered UP', description: 'Controla motors i sensors LEGO Powered UP.'},
         legoremote: {name: 'LEGO Powered UP Remote', description: 'Fes servir el comandament LEGO als projectes.'},
