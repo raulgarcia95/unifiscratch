@@ -110,6 +110,26 @@ const esp32Actions = [
 ];
 
 // ---------- Makeblock: live-mode protocol (USB or Bluetooth) ----------
+const PRIVACY_LINK = ['Data and privacy', 'Datos y privacidad', 'Dades i privadesa'];
+const MINORS_NOTE = ['With underage students, use it only with your school’s authorisation, and do not type personal data.', 'Con alumnado menor de edad, úsala solo con autorización del centro y no escribas datos personales.', 'Amb alumnat menor d’edat, fes-la servir només amb autorització del centre i no hi escriguis dades personals.'];
+const OPENAI_KEYS_URL = 'https://platform.openai.com/api-keys';
+const GEMINI_KEYS_URL = 'https://aistudio.google.com/apikey';
+const onlineAiGuide = (name, service, keysUrl, keyStep, localService = [service, service]) => ({
+    name,
+    linkText: PRIVACY_LINK,
+    warning: [`The texts, images and sounds you give these blocks are sent to ${service}, which processes them under its own terms.`, `Los textos, imágenes y sonidos que des a estos bloques se envían a ${localService[0]}, que los trata según sus propias condiciones.`, `Els textos, imatges i sons que donis a aquests blocs s’envien a ${localService[1]}, que els tracta segons les seves pròpies condicions.`],
+    intro: ['It needs an API key in the name of the teacher or the school.', 'Necesita una clave de API a nombre del docente o del centro.', 'Necessita una clau d’API a nom del docent o del centre.'],
+    actions: [{type: 'link', href: keysUrl, label: ['Get an API key', 'Conseguir una clave de API', 'Aconseguir una clau d’API']}],
+    sections: [
+        {title: ['Before using it', 'Antes de usarla', 'Abans de fer-la servir'],
+            steps: [
+                keyStep,
+                ['Do not save the key in projects that you share: anyone with the project could use it.', 'No guardes la clave en proyectos que compartas: cualquiera que tenga el proyecto podría usarla.', 'No desis la clau en projectes que comparteixis: qualsevol que tingui el projecte la podria fer servir.']
+            ]}
+    ],
+    note: MINORS_NOTE
+});
+
 const makeblockGuide = (name, usb, bluetooth) => ({
     name,
     warning: [`This extension uses the Makeblock live mode by USB or Bluetooth, the same one mBlock uses. Close mBlock and mLink first so the robot is free.`, `Esta extensión usa el modo en vivo de Makeblock por USB o Bluetooth, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el robot quede libre.`, `Aquesta extensió fa servir el mode en directe de Makeblock per USB o Bluetooth, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el robot quedi lliure.`],
@@ -329,6 +349,22 @@ const guides = {
                 ]}
         ],
         note: ['The ultrasonic sensor block needs PingFirmata instead of StandardFirmata.', 'El bloque del sensor de ultrasonidos necesita PingFirmata en lugar de StandardFirmata.', 'El bloc del sensor d’ultrasons necessita PingFirmata en lloc de StandardFirmata.']
+    },
+    // Privacy notices: these extensions send what the program gives them to an
+    // external service, so the notice opens when the extension is added.
+    chatgpt2scratch: onlineAiGuide('ChatGPT2Scratch', 'OpenAI', OPENAI_KEYS_URL,
+        ['Get an OpenAI API key (it is paid per use) and type it with the «Set API key» block.', 'Consigue una clave de API de OpenAI (se paga según el uso) y escríbela con el bloque «configurar clave de API».', 'Aconsegueix una clau d’API d’OpenAI (es paga segons l’ús) i escriu-la amb el bloc «configura la clau d’API».']),
+    gai: onlineAiGuide('IA generativa', 'Google (Gemini), OpenAI or Anthropic', GEMINI_KEYS_URL,
+        ['Get an API key from the AI service you will use (for example Gemini, in Google AI Studio) and type it with the «set API key to» block.', 'Consigue una clave de API del servicio de IA que vayas a usar (por ejemplo Gemini, en Google AI Studio) y escríbela con el bloque «fijar clave de API a».', 'Aconsegueix una clau d’API del servei d’IA que facis servir (per exemple Gemini, a Google AI Studio) i escriu-la amb el bloc «fixa la clau d’API a».'],
+        ['Google (Gemini), OpenAI o Anthropic', 'Google (Gemini), OpenAI o Anthropic']),
+    speech2scratch: {
+        name: 'Speech2Scratch',
+        linkText: PRIVACY_LINK,
+        warning: ['Speech recognition uses the browser’s service: in Chrome and Edge the audio is sent to Google or Microsoft servers to be transcribed.', 'El reconocimiento de voz usa el servicio del navegador: en Chrome y Edge el audio se envía a servidores de Google o Microsoft para transcribirlo.', 'El reconeixement de veu fa servir el servei del navegador: a Chrome i Edge l’àudio s’envia a servidors de Google o Microsoft per transcriure’l.'],
+        intro: ['Use Chrome or Edge and allow the microphone when the browser asks.', 'Usa Chrome o Edge y permite el micrófono cuando el navegador lo pida.', 'Fes servir Chrome o Edge i permet el micròfon quan el navegador ho demani.'],
+        actions: [],
+        sections: [],
+        note: MINORS_NOTE
     },
     microbitMore: {
         name: 'Microbit More',

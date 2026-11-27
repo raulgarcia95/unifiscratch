@@ -361,7 +361,9 @@ test('every extension that needs preparation has a complete guide in three langu
         'poweredup', 'legoremote', 'controlplus', 'duplotrain', 'legomario', 'legoluigi', 'legopeach',
         'ev3', 'boost', 'wedo2', 'gdxfor', 'legoSpikePrime', 'blueBot'
     ];
-    assert.deepEqual(guideIds().sort(), [...required].sort());
+    // Extensions that send data outside the browser show a privacy notice instead.
+    const privacy = ['chatgpt2scratch', 'gai', 'speech2scratch'];
+    assert.deepEqual(guideIds().sort(), [...required, ...privacy].sort());
     const translated = text => assert.ok(
         Array.isArray(text) && text.length === 3 && text.every(item => typeof item === 'string' && item.length > 0),
         JSON.stringify(text)
@@ -386,6 +388,16 @@ test('every extension that needs preparation has a complete guide in three langu
             // The card repeats exactly the links of the guide, with the same labels.
             assert.deepEqual(links.slice(1), guideLinksFor(id, locale, 'https://example.org/help'));
         });
+    });
+    privacy.forEach(id => {
+        const guide = guideFor(id);
+        translated(guide.warning);
+        translated(guide.intro);
+        translated(guide.note);
+        translated(guide.linkText);
+        assert.ok(guideOpensOnAdd(id), id);
+        guide.sections.forEach(section => section.steps.forEach(translated));
+        assert.equal(cardLinksFor(id, 'es')[0].text, 'Datos y privacidad');
     });
     // Robots that work without preparation get no extra card links, and inherited keys are not guides.
     assert.deepEqual(cardLinksFor('dashRobot', 'es'), []);
