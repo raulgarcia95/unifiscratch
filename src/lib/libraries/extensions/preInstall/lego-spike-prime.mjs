@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 // LEGO SPIKE Prime hub with the Pybricks firmware, by Web Bluetooth.
-// The hub is flashed once with Pybricks (install.pybricks.com, reversible);
+// The hub is flashed once with Pybricks (code.pybricks.com, Tools > Install Pybricks Firmware; reversible);
 // the blocks then type short MicroPython lines into the hub's REPL through
 // our own implementation of the Pybricks BLE profile (pybricks-transport.mjs).
 import formatMessage from 'format-message';

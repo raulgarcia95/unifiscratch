@@ -264,7 +264,7 @@ test('SPIKE Prime has a Pybricks guide and connection buttons', () => {
     assert.equal(entry.extensionId, 'legoSpikePrime');
     const guide = guideFor('legoSpikePrime');
     assert.ok(guide.warning);
-    assert.equal(guide.actions[0].href, 'https://install.pybricks.com/');
+    assert.equal(guide.actions[0].href, 'https://code.pybricks.com/');
     const blocks = new SpikePrime(new EventEmitter()).getInfo().blocks;
     assert.ok(blocks.some(block => block.func === 'unifiscratchAction:connectBluetooth'));
     assert.ok(blocks.some(block => block.func === 'unifiscratchAction:showHelp'));
