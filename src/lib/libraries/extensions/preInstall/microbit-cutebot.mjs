@@ -545,7 +545,7 @@ export const entry = {
     collaborator: 'ELECFREAKS / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('smartCutebot.description', 'Cutebot with micro:bit by Bluetooth or USB: motors, lights, servos, sensors, LED display and the micro:bit buttons, accelerometer and sensors.'),
+    description: msg('smartCutebot.description', 'Cutebot with micro:bit by Bluetooth or USB.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

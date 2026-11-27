@@ -397,7 +397,7 @@ const entry = {
     collaborator: 'Citilab / Unifyscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('ed1Board.description', 'USB control for the Citilab ED1 with its MicroBlocks firmware: Fantàstic robot motors, buzzer, screen, touch buttons and sensors.'),
+    description: msg('ed1Board.description', 'USB control for the Citilab ED1 with its MicroBlocks firmware.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,
