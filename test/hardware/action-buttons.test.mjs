@@ -4,6 +4,7 @@ import {EventEmitter} from 'node:events';
 import {
     ACTION_BUTTON_CLASS, actionButtonKey, actionButtonsOf, markActionButtons
 } from '../../src/lib/libraries/extensions/preInstall/action-buttons.mjs';
+import {guideFor} from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const modules = ['dash-robot', 'ed1-board', 'edison-v3', 'makeblock-codey-rocky', 'makeblock-mbot2',
     'microbit-cutebot', 'microbit-microshield', 'microbit-sensor-kit', 'microbit-wappsto'];
@@ -16,6 +17,9 @@ test('connection and help entries are buttons, with a hidden block for old proje
         const blocks = info.blocks.filter(block => typeof block === 'object');
         const buttons = actionButtonsOf({id: info.id, blocks: blocks.map(block => ({info: block}))});
         assert.ok(buttons.length > 0, `${name} has no connection button`);
+        if (guideFor(info.id)) {
+            assert.ok(buttons.some(({opcode}) => opcode === 'showHelp'), `${name} has a guide but no help button`);
+        }
         buttons.forEach(({opcode}) => {
             assert.equal(typeof blockClass.prototype[opcode], 'function', `${name}.${opcode}`);
             const hidden = blocks.find(block => block.opcode === opcode);

@@ -1,4 +1,5 @@
-// Makeblock "live mode" transport for CyberPi (mBot2) and Codey Rocky over Web Serial.
+// Makeblock "live mode" transport for CyberPi (mBot2) and Codey Rocky over Web Serial
+// (USB cable) or Web Bluetooth (the robot's own BLE radio).
 //
 // These robots do not expose a MicroPython raw REPL. Their factory firmware
 // speaks a framed binary protocol instead:
@@ -125,6 +126,125 @@ export const pyArgs = (...values) => values.map(value => {
     return JSON.stringify(String(value));
 }).join(', ');
 
+// ---------- Bluetooth: the same F3 frames over the robot's BLE serial service ----------
+// Makeblock boards expose a serial-like GATT service (0xFFE1): one characteristic
+// to write and one that notifies. The characteristics are picked by their
+// properties, so a board that numbers them differently still works.
+// Not yet tested on a real mBot2 or Codey Rocky.
+export const BLE_SERVICES = [0xFFE1, 0xFFE0];
+export const BLE_NAME_PREFIXES = ['Makeblock', 'CyberPi', 'Codey', 'mBot'];
+const BLE_CHUNK = 20;
+
+const pickCharacteristics = async service => {
+    const all = await service.getCharacteristics();
+    const tx = all.find(c => c.properties && (c.properties.writeWithoutResponse || c.properties.write));
+    const rx = all.find(c => c.properties && (c.properties.notify || c.properties.indicate));
+    if (!tx || !rx) throw new Error('El robot no ofrece el servicio Bluetooth de Makeblock.');
+    return {tx, rx};
+};
+
+// Wraps a Bluetooth device in the same shape as a Web Serial port
+// (open, readable, writable, close), so the transport does not change.
+export class BluetoothSerialPort {
+    constructor (device) {
+        this.device = device;
+        this.readable = null;
+        this.writable = null;
+    }
+
+    async open () {
+        const device = this.device;
+        if (!device.gatt) throw new Error('Este dispositivo Bluetooth no admite conexión.');
+        const server = await device.gatt.connect();
+        let service = null;
+        for (const uuid of BLE_SERVICES) {
+            try {
+                service = await server.getPrimaryService(uuid);
+                break;
+            } catch (error) {
+                // try the next one
+            }
+        }
+        if (!service) {
+            device.gatt.disconnect();
+            throw new Error('El robot no ofrece el servicio Bluetooth de Makeblock.');
+        }
+        const {tx, rx} = await pickCharacteristics(service);
+        this.tx = tx;
+        this.rx = rx;
+        let output = null;
+        const finish = () => {
+            if (!output) return;
+            try {
+                output.close();
+            } catch (error) {
+                // already closed
+            }
+            output = null;
+        };
+        this.onValue = event => {
+            const view = event.target.value;
+            if (output) output.enqueue(new Uint8Array(view.buffer, view.byteOffset, view.byteLength).slice());
+        };
+        this.onGone = finish;
+        this.readable = new ReadableStream({
+            start: controller => {
+                output = controller;
+            },
+            cancel: finish
+        });
+        rx.addEventListener('characteristicvaluechanged', this.onValue);
+        device.addEventListener('gattserverdisconnected', this.onGone);
+        await rx.startNotifications();
+        const write = tx.properties.writeWithoutResponse && tx.writeValueWithoutResponse ?
+            chunk => tx.writeValueWithoutResponse(chunk) :
+            chunk => (tx.writeValueWithResponse ? tx.writeValueWithResponse(chunk) : tx.writeValue(chunk));
+        this.writable = new WritableStream({
+            write: async data => {
+                const bytes = Uint8Array.from(data);
+                for (let start = 0; start < bytes.length; start += BLE_CHUNK) {
+                    await write(bytes.slice(start, start + BLE_CHUNK));
+                }
+            }
+        });
+    }
+
+    async close () {
+        const device = this.device;
+        if (this.rx) {
+            this.rx.removeEventListener('characteristicvaluechanged', this.onValue);
+            await this.rx.stopNotifications().catch(() => {});
+        }
+        if (this.onGone) {
+            device.removeEventListener('gattserverdisconnected', this.onGone);
+            this.onGone();
+        }
+        if (device.gatt && device.gatt.connected) device.gatt.disconnect();
+        this.readable = null;
+        this.writable = null;
+    }
+}
+
+const requestPort = async kind => {
+    if (kind === 'bluetooth') {
+        if (typeof navigator === 'undefined' || !navigator.bluetooth) {
+            throw new Error('Web Bluetooth no está disponible. Usa Chrome o Edge en HTTPS y activa el Bluetooth.');
+        }
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [
+                ...BLE_SERVICES.map(service => ({services: [service]})),
+                ...BLE_NAME_PREFIXES.map(namePrefix => ({namePrefix}))
+            ],
+            optionalServices: BLE_SERVICES
+        });
+        return new BluetoothSerialPort(device);
+    }
+    if (typeof navigator === 'undefined' || !navigator.serial) {
+        throw new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
+    }
+    return navigator.serial.requestPort();
+};
+
 export class MakeblockF3Transport {
     constructor (label, {
         probe = '',
@@ -163,20 +283,22 @@ export class MakeblockF3Transport {
         return this.idx;
     }
 
-    async connect () {
+    // kind: 'usb' (Web Serial, default) or 'bluetooth' (Web Bluetooth).
+    async connect (kind = 'usb') {
         if (this.isConnected()) return;
         if (this.connecting || this.closing) throw new Error('Conexión ocupada.');
-        if (typeof navigator === 'undefined' || !navigator.serial) {
-            throw new Error('Web Serial no está disponible. Usa Chrome o Edge en HTTPS o localhost.');
-        }
         this.connecting = true;
         const epoch = this.epoch;
+        const bluetooth = kind === 'bluetooth';
+        this.kind = bluetooth ? 'bluetooth' : 'usb';
         try {
-            const selected = await navigator.serial.requestPort();
+            const selected = await requestPort(this.kind);
             if (epoch !== this.epoch) throw cancelled();
-            await selected.open({baudRate: this.baudRate});
             this.port = selected;
-            if (!selected.readable || !selected.writable) throw new Error('Puerto USB no disponible.');
+            await selected.open({baudRate: this.baudRate});
+            if (!selected.readable || !selected.writable) {
+                throw new Error(bluetooth ? 'Conexión Bluetooth no disponible.' : 'Puerto USB no disponible.');
+            }
             this.parser = new FrameParser();
             this.reader = selected.readable.getReader();
             this.readTask = this.readLoop(this.reader);
@@ -187,10 +309,14 @@ export class MakeblockF3Transport {
             this.ready = true;
             this.lastError = '';
         } catch (error) {
-            const reason = error.message === 'El robot no respondió a tiempo.' ?
-                'El robot no responde. Comprueba que está encendido, que el cable USB transmite datos ' +
-                'y que mBlock u otra pestaña no está usando el puerto.' :
-                error.message;
+            let reason = error.message;
+            if (reason === 'El robot no respondió a tiempo.') {
+                reason = bluetooth ?
+                    'El robot no responde por Bluetooth. Comprueba que está encendido y cerca, y que mBlock ' +
+                    'no está conectado a él.' :
+                    'El robot no responde. Comprueba que está encendido, que el cable USB transmite datos ' +
+                    'y que mBlock u otra pestaña no está usando el puerto.';
+            }
             this.lastError = `${this.label}: ${reason}`;
             await this.closePort();
             throw new Error(this.lastError);
@@ -222,7 +348,11 @@ export class MakeblockF3Transport {
                 if (done) break;
                 for (const payload of this.parser.push(value)) this.handlePayload(payload);
             }
-            if (!this.closing) throw new Error('El dispositivo USB se ha desconectado.');
+            if (!this.closing) {
+                throw new Error(this.kind === 'bluetooth' ?
+                    'El robot se ha desconectado del Bluetooth.' :
+                    'El dispositivo USB se ha desconectado.');
+            }
         } catch (error) {
             if (!this.closing) {
                 this.lastError = error.message;
@@ -252,7 +382,7 @@ export class MakeblockF3Transport {
                     new Promise((resolve, reject) => {
                         timer = setTimeout(() => {
                             writer.abort().catch(() => {});
-                            reject(new Error('La escritura USB no respondió a tiempo.'));
+                            reject(new Error('El envío al robot no respondió a tiempo.'));
                         }, Math.max(this.timeout, 1000));
                     })
                 ]);

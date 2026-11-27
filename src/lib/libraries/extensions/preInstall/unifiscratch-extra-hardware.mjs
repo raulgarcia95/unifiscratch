@@ -2,6 +2,7 @@
 import {MicroPythonTransport, bindSafetyEvents, boundedMotion, boundedNumber} from './micropython-transport.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {openSetupGuide} from '../setup-guides.mjs';
 
 const clamp = boundedNumber;
 const msg = (id, defaultText) => ({
@@ -162,6 +163,7 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
                 color2: icon.color2,
                 color3: icon.color3,
                 blocks: [
+                    ...actionButton('showHelp', msg('showHelp', 'how to connect (help)')),
                     ...actionButton('connect', msg('connectUsb', 'connect by USB')),
                     {opcode: 'disconnect', blockType: 'command', text: msg('disconnect', 'disconnect')},
                     {opcode: 'isConnected', blockType: 'Boolean', text: msg('connected', 'connected?')},
@@ -202,6 +204,10 @@ const createMicroPythonBoard = ({id, name, collaborator, icon, description, help
                     }
                 }
             };
+        }
+
+        showHelp () {
+            openSetupGuide(id);
         }
 
         connect () {

@@ -89,11 +89,11 @@ const esp32Actions = [
 ];
 
 // ---------- Makeblock: live-mode protocol, not yet tested on real robots ----------
-const makeblockGuide = (name, en, es, ca) => ({
+const makeblockGuide = (name, usb, bluetooth) => ({
     name,
     status: 'unconfirmed',
-    warning: [`Not yet tested on a real ${name}. This extension uses the Makeblock live mode over USB, the same one mBlock uses. Close mBlock and mLink first so the USB port is free.`, `Aún sin probar con un ${name} real. Esta extensión usa el modo en vivo de Makeblock por USB, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el puerto USB quede libre.`, `Encara sense provar amb un ${name} real. Aquesta extensió fa servir el mode en directe de Makeblock per USB, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el port USB quedi lliure.`],
-    intro: [`${name} needs up-to-date firmware from Makeblock.`, `${name} necesita el firmware de Makeblock actualizado.`, `${name} necessita el firmware de Makeblock actualitzat.`],
+    warning: [`Not yet tested on a real ${name}. This extension uses the Makeblock live mode by USB or Bluetooth, the same one mBlock uses. Close mBlock and mLink first so the robot is free.`, `Aún sin probar con un ${name} real. Esta extensión usa el modo en vivo de Makeblock por USB o Bluetooth, el mismo que usa mBlock. Cierra antes mBlock y mLink para que el robot quede libre.`, `Encara sense provar amb un ${name} real. Aquesta extensió fa servir el mode en directe de Makeblock per USB o Bluetooth, el mateix que fa servir mBlock. Tanca abans mBlock i mLink perquè el robot quedi lliure.`],
+    intro: [`${name} needs up-to-date firmware from Makeblock. It connects by USB cable or by Bluetooth.`, `${name} necesita el firmware de Makeblock actualizado. Se conecta por cable USB o por Bluetooth.`, `${name} necessita el firmware de Makeblock actualitzat. Es connecta per cable USB o per Bluetooth.`],
     actions: [{type: 'link', href: MBLOCK_URL, label: ['Open mBlock', 'Abrir mBlock', 'Obrir mBlock']}],
     cardLinks: [{href: MBLOCK_URL, text: ['mBlock (firmware update)', 'mBlock (actualizar firmware)', 'mBlock (actualitzar el firmware)']}],
     sections: [
@@ -102,9 +102,15 @@ const makeblockGuide = (name, en, es, ca) => ({
                 [`Connect the robot by USB and update its firmware with [mBlock](${MBLOCK_URL}).`, `Conecta el robot por USB y actualiza su firmware con [mBlock](${MBLOCK_URL}).`, `Connecta el robot per USB i actualitza’n el firmware amb [mBlock](${MBLOCK_URL}).`],
                 CLOSE_TAB
             ]},
-        {title: EVERY_TIME, steps: [CHROME_USB, connectBlock(en, es, ca)]}
+        {title: EVERY_TIME,
+            steps: [
+                ['By USB: connect the cable, switch the robot on and use Chrome or Edge.', 'Por USB: conecta el cable, enciende el robot y usa Chrome o Edge.', 'Per USB: connecta el cable, encén el robot i fes servir Chrome o Edge.'],
+                connectBlock(...usb),
+                ['By Bluetooth: switch the robot on, keep it close and turn on the computer’s Bluetooth. Use Chrome or Edge.', 'Por Bluetooth: enciende el robot, tenlo cerca y activa el Bluetooth del ordenador. Usa Chrome o Edge.', 'Per Bluetooth: encén el robot, tingues-lo a prop i activa el Bluetooth de l’ordinador. Fes servir Chrome o Edge.'],
+                connectBlock(...bluetooth)
+            ]}
     ],
-    note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
+    note: [`The computer needs its own Bluetooth (the Makeblock USB Bluetooth dongle is not used). ${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `El ordenador necesita Bluetooth propio (no se usa la llave Bluetooth USB de Makeblock). ${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `L’ordinador necessita Bluetooth propi (no es fa servir la clau Bluetooth USB de Makeblock). ${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
 });
 
 const guides = {
@@ -242,8 +248,12 @@ const guides = {
         ],
         note: [`${NOT_TESTED[0]} ${LAST_ERROR[0]}`, `${NOT_TESTED[1]} ${LAST_ERROR[1]}`, `${NOT_TESTED[2]} ${LAST_ERROR[2]}`]
     },
-    makeblockCodeyRocky: makeblockGuide('Codey Rocky', 'connect Codey Rocky by USB', 'conectar Codey Rocky por USB', 'connecta Codey Rocky per USB'),
-    makeblockMbot2: makeblockGuide('mBot2', 'connect mBot2 by USB', 'conectar mBot2 por USB', 'connecta mBot2 per USB'),
+    makeblockCodeyRocky: makeblockGuide('Codey Rocky',
+        ['connect Codey Rocky by USB', 'conectar Codey Rocky por USB', 'connecta Codey Rocky per USB'],
+        ['connect Codey Rocky by Bluetooth', 'conectar Codey Rocky por Bluetooth', 'connecta Codey Rocky per Bluetooth']),
+    makeblockMbot2: makeblockGuide('mBot2',
+        ['connect mBot2 by USB', 'conectar mBot2 por USB', 'connecta mBot2 per USB'],
+        ['connect mBot2 by Bluetooth', 'conectar mBot2 por Bluetooth', 'connecta mBot2 per Bluetooth']),
     xcxArduino: {
         name: 'Arduino UNO',
         intro: ['The Arduino needs the StandardFirmata program, which comes with the Arduino IDE. You only load it once.', 'El Arduino necesita el programa StandardFirmata, que viene con el Arduino IDE. Solo hay que cargarlo una vez.', 'L’Arduino necessita el programa StandardFirmata, que ve amb l’Arduino IDE. Només cal carregar-lo una vegada.'],

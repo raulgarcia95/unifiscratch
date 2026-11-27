@@ -8,6 +8,7 @@ import {
 } from './makeblock-serial.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {openSetupGuide} from '../setup-guides.mjs';
 
 const EXTENSION_ID = 'makeblockCodeyRocky';
 const iconURL = deviceIconURL('codeyRocky');
@@ -41,6 +42,8 @@ const blockClass = class MakeblockCodeyRocky {
             color2: '#0b86a4',
             color3: '#086177',
             blocks: [
+                ...actionButton('showHelp', msg('codey.showHelp', 'how to connect Codey Rocky (help)')),
+                ...actionButton('connectBluetooth', msg('codey.connectBluetooth', 'connect Codey Rocky by Bluetooth')),
                 ...actionButton('connect', msg('codey.connect', 'connect Codey Rocky by USB')),
                 {
                     opcode: 'disconnect',
@@ -159,8 +162,16 @@ const blockClass = class MakeblockCodeyRocky {
         };
     }
 
+    showHelp () {
+        openSetupGuide(EXTENSION_ID);
+    }
+
+    connectBluetooth () {
+        return this.transport.connect('bluetooth');
+    }
+
     connect () {
-        return this.transport.connect();
+        return this.transport.connect('usb');
     }
 
     disconnect () {
@@ -259,7 +270,7 @@ const entry = {
     collaborator: 'Makeblock / Unifiscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('codey.description', 'USB control of Codey Rocky in live mode.'),
+    description: msg('codey.description', 'USB or Bluetooth control of Codey Rocky in live mode.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,

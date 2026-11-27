@@ -20,6 +20,7 @@ import {bindSafetyEvents, boundedNumber} from './micropython-transport.mjs';
 import {msg} from './unifiscratch-extra-hardware.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {openSetupGuide} from '../setup-guides.mjs';
 
 const MAX_SECONDS = 5;
 const MAX_STEPS = 2400;
@@ -180,6 +181,7 @@ const blockClass = class Ed1Board {
             color2: icon.color2,
             color3: icon.color3,
             blocks: [
+                ...actionButton('showHelp', t('showHelp', 'how to connect ED1 (help)')),
                 ...actionButton('connect', t('connect', 'connect ED1 by USB')),
                 {opcode: 'disconnect', blockType: 'command', text: t('disconnect', 'disconnect ED1')},
                 {opcode: 'isConnected', blockType: 'Boolean', text: t('connected', 'ED1 connected?')},
@@ -276,6 +278,10 @@ const blockClass = class Ed1Board {
                 axes: {acceptReporters: true, items: ['x', 'y', 'z']}
             }
         };
+    }
+
+    showHelp () {
+        openSetupGuide(id);
     }
 
     connect () {

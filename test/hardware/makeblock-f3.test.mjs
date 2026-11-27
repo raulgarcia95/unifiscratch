@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+    BLE_SERVICES,
     FrameParser,
     MakeblockF3Transport,
     decodeScriptReply,
@@ -168,5 +169,99 @@ test('Codey Rocky blocks keep their saved arguments and send codey/rocky calls',
         'codey.speaker.play_note(72, 0.25)',
         'codey.light_sensor.get_value()'
     ]);
+    await extension.disconnect();
+});
+
+// A fake robot seen through Web Bluetooth: same F3 frames, 20-byte writes, notifications back.
+class FakeBleRobot extends FakeRobot {
+    constructor (options) {
+        super(options);
+        this.chunks = [];
+        this.connected = false;
+        this.listeners = {};
+        const robot = this;
+        const notify = {
+            properties: {notify: true},
+            listeners: [],
+            addEventListener: (type, fn) => notify.listeners.push(fn),
+            removeEventListener: (type, fn) => { notify.listeners = notify.listeners.filter(f => f !== fn); },
+            startNotifications: async () => {},
+            stopNotifications: async () => {}
+        };
+        const write = {
+            properties: {writeWithoutResponse: true},
+            writeValueWithoutResponse: async chunk => {
+                robot.chunks.push(chunk.length);
+                await robot.writer.write(chunk);
+            }
+        };
+        this.notify = notify;
+        this.device = {
+            addEventListener: (type, fn) => { robot.listeners[type] = fn; },
+            removeEventListener: type => { delete robot.listeners[type]; },
+            gatt: {
+                get connected () { return robot.connected; },
+                connect: async () => {
+                    robot.connected = true;
+                    await robot.open();
+                    robot.writer = robot.writable.getWriter();
+                    const reader = robot.readable.getReader();
+                    (async () => {
+                        for (;;) {
+                            const {value, done} = await reader.read();
+                            if (done) return;
+                            const view = new DataView(value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength));
+                            notify.listeners.forEach(fn => fn({target: {value: view}}));
+                        }
+                    })();
+                    return {getPrimaryService: async uuid => {
+                        if (uuid !== BLE_SERVICES[0]) throw new Error('no service');
+                        return {getCharacteristics: async () => [notify, write]};
+                    }};
+                },
+                disconnect: () => {
+                    robot.connected = false;
+                    robot.closes++;
+                }
+            }
+        };
+    }
+}
+
+test('Bluetooth connection sends the same frames in 20-byte chunks and closes the link', async () => {
+    const robot = new FakeBleRobot({answer: () => '5'});
+    let request;
+    Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {
+        bluetooth: {requestDevice: async options => {
+            request = options;
+            return robot.device;
+        }}
+    }});
+    const transport = new MakeblockF3Transport('mBot2', {probe: 'ping()', stop: 'halt()', probeInterval: 50});
+    await transport.connect('bluetooth');
+    assert.equal(transport.isConnected(), true);
+    assert.ok(request.optionalServices.includes(0xFFE1));
+    assert.deepEqual(robot.modes, [1]);
+    assert.equal(await transport.run(`show(${JSON.stringify('x'.repeat(40))})`), 5);
+    assert.ok(robot.chunks.length > 2 && robot.chunks.every(size => size <= 20));
+    await transport.disconnect();
+    assert.equal(transport.isConnected(), false);
+    assert.equal(robot.connected, false);
+});
+
+test('mBot2 and Codey Rocky offer help, Bluetooth and USB buttons', async () => {
+    for (const Robot of [Mbot, Codey]) {
+        const info = new Robot().getInfo();
+        const buttons = info.blocks.filter(block => block.blockType === 'button').map(block => block.func);
+        assert.deepEqual(buttons, ['showHelp', 'connectBluetooth', 'connect'].map(name => `unifiscratchAction:${name}`));
+    }
+    const robot = new FakeBleRobot();
+    Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {
+        bluetooth: {requestDevice: async () => robot.device}
+    }});
+    const extension = new Codey();
+    extension.transport.probeInterval = 50;
+    await extension.connectBluetooth();
+    assert.equal(extension.isConnected(), true);
     await extension.disconnect();
 });

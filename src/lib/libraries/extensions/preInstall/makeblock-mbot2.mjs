@@ -8,6 +8,7 @@ import {
 } from './makeblock-serial.mjs';
 import {deviceIconURL} from './device-icons.mjs';
 import {actionButton} from './action-buttons.mjs';
+import {openSetupGuide} from '../setup-guides.mjs';
 
 const EXTENSION_ID = 'makeblockMbot2';
 const iconURL = deviceIconURL('mbot2');
@@ -44,6 +45,8 @@ const blockClass = class MakeblockMbot2 {
             color2: '#484eb8',
             color3: '#343881',
             blocks: [
+                ...actionButton('showHelp', msg('mbot2.showHelp', 'how to connect mBot2 (help)')),
+                ...actionButton('connectBluetooth', msg('mbot2.connectBluetooth', 'connect mBot2 by Bluetooth')),
                 ...actionButton('connect', msg('mbot2.connect', 'connect mBot2 by USB')),
                 {
                     opcode: 'disconnect',
@@ -185,8 +188,16 @@ const blockClass = class MakeblockMbot2 {
         };
     }
 
+    showHelp () {
+        openSetupGuide(EXTENSION_ID);
+    }
+
+    connectBluetooth () {
+        return this.transport.connect('bluetooth');
+    }
+
     connect () {
-        return this.transport.connect();
+        return this.transport.connect('usb');
     }
 
     disconnect () {
@@ -295,7 +306,7 @@ const entry = {
     collaborator: 'Makeblock / Unifiscratch',
     iconURL,
     insetIconURL: iconURL,
-    description: msg('mbot2.description', 'USB control of CyberPi in live mode.'),
+    description: msg('mbot2.description', 'USB or Bluetooth control of CyberPi in live mode.'),
     tags: ['device', 'hardware'],
     featured: true,
     disabled: false,
