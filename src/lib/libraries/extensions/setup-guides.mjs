@@ -74,6 +74,30 @@ const scratchLinkGuide = (name, turnOn) => ({
     ],
     note: ['Scratch Link does not exist for every system: on Chromebooks and Linux these robots cannot connect.', 'Scratch Link no existe para todos los sistemas: en Chromebook y Linux estos robots no pueden conectarse.', 'Scratch Link no existeix per a tots els sistemes: a Chromebook i Linux aquests robots no es poden connectar.']
 });
+// ---------- Web Bluetooth: LEGO BLE hubs, WeDo 2.0, Force and Acceleration ----------
+// Chrome and Edge connect to these directly. Scratch Link is only a fallback
+// (used when it is running, needed in browsers without Web Bluetooth), so the
+// guide does not open by itself when the extension is added.
+const webBluetoothGuide = (name, turnOn) => ({
+    name,
+    openOnAdd: false,
+    intro: [`${name} connects by Bluetooth directly from Chrome or Edge: there is nothing to install.`, `${name} se conecta por Bluetooth directamente desde Chrome o Edge: no hay que instalar nada.`, `${name} es connecta per Bluetooth directament des de Chrome o Edge: no cal instal·lar res.`],
+    actions: [],
+    cardLinks: [{opensGuide: true, text: ['Bluetooth from Chrome or Edge (no installation)', 'Bluetooth desde Chrome o Edge (sin instalar nada)', 'Bluetooth des de Chrome o Edge (sense instal·lar res)']}],
+    sections: [
+        {title: ['1. Prepare it', '1. Prepararlo', '1. Preparar-lo'],
+            steps: [
+                ['Use Chrome or Edge and turn on the computer’s Bluetooth.', 'Usa Chrome o Edge y activa el Bluetooth del ordenador.', 'Fes servir Chrome o Edge i activa el Bluetooth de l’ordinador.']
+            ]},
+        {title: EVERY_TIME,
+            steps: [
+                turnOn,
+                ['Press the orange warning button next to the extension’s name in the block palette.', 'Pulsa el botón naranja de aviso junto al nombre de la extensión en la paleta de bloques.', 'Prem el botó taronja d’avís al costat del nom de l’extensió a la paleta de blocs.'],
+                ['Choose the device in the browser window and press «Pair». Then press «Connect» in Unfyscratch.', 'Elige el dispositivo en la ventana del navegador y pulsa «Emparejar». Después pulsa «Conectar» en Unfyscratch.', 'Tria el dispositiu a la finestra del navegador i prem «Emparellar». Després prem «Connecta» a Unfyscratch.']
+            ]}
+    ],
+    note: [`If Scratch Link is open on the computer, it is used instead and works as before. It is only needed in browsers without Web Bluetooth, such as Firefox or Safari: [Scratch Link](${SCRATCH_LINK_URL}).`, `Si Scratch Link está abierto en el ordenador, se usa en su lugar y funciona como antes. Solo hace falta en navegadores sin Web Bluetooth, como Firefox o Safari: [Scratch Link](${SCRATCH_LINK_URL}).`, `Si Scratch Link és obert a l’ordinador, es fa servir en lloc seu i funciona com abans. Només cal en navegadors sense Web Bluetooth, com Firefox o Safari: [Scratch Link](${SCRATCH_LINK_URL}).`]
+});
 const PRESS_HUB = ['Switch on the hub and press its button so that its light blinks.', 'Enciende el hub y pulsa su botón para que la luz parpadee.', 'Encén el hub i prem el botó perquè la llum parpellegi.'];
 const SWITCH_ON = ['Switch on the device and keep it close to the computer.', 'Enciende el dispositivo y mantenlo cerca del ordenador.', 'Encén el dispositiu i mantén-lo a prop de l’ordinador.'];
 
@@ -316,30 +340,39 @@ const guides = {
                 ]}
         ]
     },
-    spikeessential: scratchLinkGuide('LEGO SPIKE Essential', PRESS_HUB),
-    legoble: scratchLinkGuide('LEGO BLE Device', PRESS_HUB),
-    poweredup: scratchLinkGuide('LEGO Powered UP', PRESS_HUB),
-    legoremote: scratchLinkGuide('LEGO Powered UP Remote', ['Press the green button on the remote so that its light blinks.', 'Pulsa el botón verde del mando para que la luz parpadee.', 'Prem el botó verd del comandament perquè la llum parpellegi.']),
-    controlplus: scratchLinkGuide('LEGO Technic CONTROL+', PRESS_HUB),
-    duplotrain: scratchLinkGuide('LEGO DUPLO Train', ['Push the train forward so that it switches on and its light blinks.', 'Empuja el tren hacia delante para que se encienda y su luz parpadee.', 'Empeny el tren endavant perquè s’encengui i la seva llum parpellegi.']),
-    legomario: scratchLinkGuide('LEGO Mario', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
-    legoluigi: scratchLinkGuide('LEGO Luigi', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
-    legopeach: scratchLinkGuide('LEGO Peach', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
+    spikeessential: webBluetoothGuide('LEGO SPIKE Essential', PRESS_HUB),
+    legoble: webBluetoothGuide('LEGO BLE Device', PRESS_HUB),
+    poweredup: webBluetoothGuide('LEGO Powered UP', PRESS_HUB),
+    legoremote: webBluetoothGuide('LEGO Powered UP Remote', ['Press the green button on the remote so that its light blinks.', 'Pulsa el botón verde del mando para que la luz parpadee.', 'Prem el botó verd del comandament perquè la llum parpellegi.']),
+    controlplus: webBluetoothGuide('LEGO Technic CONTROL+', PRESS_HUB),
+    duplotrain: webBluetoothGuide('LEGO DUPLO Train', ['Push the train forward so that it switches on and its light blinks.', 'Empuja el tren hacia delante para que se encienda y su luz parpadee.', 'Empeny el tren endavant perquè s’encengui i la seva llum parpellegi.']),
+    legomario: webBluetoothGuide('LEGO Mario', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
+    legoluigi: webBluetoothGuide('LEGO Luigi', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
+    legopeach: webBluetoothGuide('LEGO Peach', ['Switch on the figure and press its Bluetooth button.', 'Enciende la figura y pulsa su botón de Bluetooth.', 'Encén la figura i prem el botó de Bluetooth.']),
     ev3: scratchLinkGuide('LEGO EV3', ['Switch on the EV3 and pair it with the computer in the system’s Bluetooth settings.', 'Enciende el EV3 y emparéjalo con el ordenador en los ajustes de Bluetooth del sistema.', 'Encén l’EV3 i aparella’l amb l’ordinador a la configuració de Bluetooth del sistema.']),
-    boost: scratchLinkGuide('LEGO BOOST', PRESS_HUB),
-    wedo2: scratchLinkGuide('LEGO WeDo 2.0', PRESS_HUB),
-    gdxfor: scratchLinkGuide('Go Direct Force & Acceleration', SWITCH_ON)
+    boost: webBluetoothGuide('LEGO BOOST', PRESS_HUB),
+    wedo2: webBluetoothGuide('LEGO WeDo 2.0', PRESS_HUB),
+    gdxfor: webBluetoothGuide('Go Direct Force & Acceleration', SWITCH_ON)
 };
 
 export const guideFor = id => (Object.prototype.hasOwnProperty.call(guides, id) ? guides[id] : null);
 export const guideIds = () => Object.keys(guides);
+// Guides open by themselves when the extension is added, unless nothing needs preparing.
+export const guideOpensOnAdd = id => {
+    const guide = guideFor(id);
+    return !!guide && guide.openOnAdd !== false;
+};
 
 // Links for the library card: what the extension needs, plus the guide itself.
 export const cardLinksFor = (id, locale) => {
     const guide = guideFor(id);
     if (!guide) return [];
     return [
-        ...guide.cardLinks.map(link => ({...link, text: pickText(link.text, locale)})),
+        ...guide.cardLinks.map(({opensGuide, ...link}) => ({
+            ...link,
+            ...(opensGuide ? {guideId: id} : {}),
+            text: pickText(link.text, locale)
+        })),
         {guideId: id, text: pickText(guideLink, locale)}
     ];
 };

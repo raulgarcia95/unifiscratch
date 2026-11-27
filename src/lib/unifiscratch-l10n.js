@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import {sensorKitTexts} from './libraries/extensions/preInstall/microbit-sensor-kit-texts.mjs';
 import {spikePrimeTexts} from './libraries/extensions/preInstall/lego-spike-prime-texts.mjs';
+import {legoBluetoothMessages} from './libraries/extensions/preInstall/lego-bluetooth-texts.mjs';
 const UNIFISCRATCH_SITE_URL = 'https://sites.google.com/xtec.cat/unifiscratch/p%C3%A0gina-principal';
 const UNIFISCRATCH_CONTACT_EMAIL = 'rgarci95@xtec.cat';
 const UNIFISCRATCH_CONTACT_NAME = 'RAUL GARCIA ANTOLIN';
@@ -276,6 +277,8 @@ const newExtensionMessages = language => {
     Object.keys(setupGuideTexts).forEach(key => {
         messages[`unifiscratch.setupGuide.${key}`] = setupGuideTexts[key][index];
     });
+    // The bricklife LEGO originals use their own ids, not unifiscratch.*.
+    Object.assign(messages, legoBluetoothMessages(language));
     return messages;
 };
 

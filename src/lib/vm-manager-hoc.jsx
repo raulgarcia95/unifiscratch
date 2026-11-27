@@ -16,6 +16,7 @@ import {
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 import initializeExtensions from './libraries/extensions/initialize';
+import {installWebBluetoothLink} from './web-bluetooth-link.mjs';
 
 /*
  * Higher Order Component to manage events emitted by the VM
@@ -36,6 +37,8 @@ const vmManagerHOC = function (WrappedComponent) {
                 this.props.vm.attachAudioEngine(this.audioEngine);
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
+                // LEGO hubs by Bluetooth from the browser, without needing Scratch Link.
+                installWebBluetoothLink(this.props.vm.runtime);
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
                 // To load extension which is used in a project file.
                 this.props.vm.extensionManager.extensionLibraryContent = extensionLibraryContent;

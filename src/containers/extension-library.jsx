@@ -9,7 +9,7 @@ import log from '../lib/log.js';
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 import initializeExtensions from '../lib/libraries/extensions/initialize';
 import {localize} from '../lib/unifiscratch-l10n';
-import {cardLinksFor, openSetupGuide} from '../lib/libraries/extensions/setup-guides.mjs';
+import {cardLinksFor, guideOpensOnAdd, openSetupGuide} from '../lib/libraries/extensions/setup-guides.mjs';
 
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
@@ -386,7 +386,7 @@ class ExtensionLibrary extends React.PureComponent {
                 }
                 this.props.onCategorySelected(id);
                 // Extensions that need preparation show their guide when added.
-                openSetupGuide(id);
+                if (guideOpensOnAdd(id)) openSetupGuide(id);
             } catch (error) {
                 log.error(error);
                 await alert({message: error.message});

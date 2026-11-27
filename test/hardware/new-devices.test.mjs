@@ -12,7 +12,7 @@ import {
     blockClass as Edison, encodeOrder, ORDER
 } from '../../src/lib/libraries/extensions/preInstall/edison-v3.mjs';
 import {
-    SETUP_GUIDE_EVENT, cardLinksFor, guideFor, guideIds, pickText
+    SETUP_GUIDE_EVENT, cardLinksFor, guideFor, guideIds, guideOpensOnAdd, pickText
 } from '../../src/lib/libraries/extensions/setup-guides.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -389,6 +389,20 @@ test('every extension that needs preparation has a complete guide in three langu
     assert.equal(guideFor('constructor'), null);
     assert.equal(pickText(['a', 'b', 'c'], 'ca-ES'), 'c');
     assert.equal(pickText(['a', 'b', 'c'], 'fr'), 'a');
+    // LEGO BLE hubs, WeDo, BOOST and Force and Acceleration use the browser's Bluetooth:
+    // no Scratch Link requirement and no guide popping up when added. EV3 (Bluetooth
+    // Classic) still needs Scratch Link.
+    ['spikeessential', 'legoble', 'poweredup', 'legoremote', 'controlplus', 'duplotrain',
+        'legomario', 'legoluigi', 'legopeach', 'boost', 'wedo2', 'gdxfor'].forEach(id => {
+        assert.equal(guideOpensOnAdd(id), false, id);
+        assert.doesNotMatch(pickText(guideFor(id).intro, 'es'), /Scratch Link/, id);
+        const [info] = cardLinksFor(id, 'es');
+        assert.equal(info.guideId, id);
+        assert.match(info.text, /Chrome o Edge/);
+    });
+    assert.equal(guideOpensOnAdd('ev3'), true);
+    assert.match(cardLinksFor('ev3', 'es')[0].text, /Scratch Link \(necesario\)/);
+    assert.equal(guideOpensOnAdd('edisonV3'), true);
     // Makeblock robots stay unconfirmed until tested on real hardware.
     assert.equal(guideFor('makeblockMbot2').status, 'unconfirmed');
     assert.equal(guideFor('makeblockCodeyRocky').status, 'unconfirmed');

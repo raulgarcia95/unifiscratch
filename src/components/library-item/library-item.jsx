@@ -108,7 +108,7 @@ class LibraryItemComponent extends React.PureComponent {
                         </div>
                     ) : null}
                     {(this.props.extraLinks || []).map(link => (
-                        <div key={link.href || link.guideId}>
+                        <div key={link.href || `${link.guideId}:${link.text}`}>
                             <span className={styles.featuredExtensionHelp}>
                                 <a
                                     download={link.download}
