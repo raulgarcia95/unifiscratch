@@ -29,7 +29,9 @@ const CUTEBOT_HEX_FILE = 'unifyscratch-cutebot.hex';
 const CUTEBOT_HEX_PATH = `static/extensions/cutebot/${CUTEBOT_HEX_FILE}`;
 const WAPPSTO_HEX_FILE = 'unifyscratch-wappsto-bit.hex';
 const WAPPSTO_HEX_PATH = `static/extensions/wappsto-bit/${WAPPSTO_HEX_FILE}`;
-const WAPPSTO_SETUP_URL = 'https://bit.wappsto.com/setup';
+// Official Wappsto:bit getting-started video, linked from the README of
+// wappsto/pxt-wappsto. The old https://bit.wappsto.com/setup page no longer works.
+const WAPPSTO_SETUP_URL = 'https://www.youtube.com/watch?v=GCt_CLVkZNs';
 const MICROSHIELD_HEX_FILE = 'unifyscratch-microshield.hex';
 const MICROSHIELD_HEX_PATH = `static/extensions/microshield/${MICROSHIELD_HEX_FILE}`;
 const ESP32_FIRMWARE_URL = 'https://micropython.org/download/ESP32_GENERIC/';
@@ -241,12 +243,12 @@ const guides = {
         intro: ['With this program Unifyscratch controls the micro:bit by Bluetooth or USB, and the micro:bit sends and receives Wappsto cloud data through the Wappsto:bit board.', 'Con este programa Unifyscratch controla la micro:bit por Bluetooth o USB, y la micro:bit envía y recibe datos de la nube Wappsto a través de la placa Wappsto:bit.', 'Amb aquest programa Unifyscratch controla la micro:bit per Bluetooth o USB, i la micro:bit envia i rep dades del núvol Wappsto a través de la placa Wappsto:bit.'],
         actions: [
             {type: 'download', path: WAPPSTO_HEX_PATH, file: WAPPSTO_HEX_FILE, label: ['Download micro:bit program (.hex)', 'Descargar programa para micro:bit (.hex)', 'Descarregar el programa per a micro:bit (.hex)']},
-            {type: 'link', href: WAPPSTO_SETUP_URL, label: ['Wappsto:bit setup', 'Configurar la Wappsto:bit', 'Configurar la Wappsto:bit']}
+            {type: 'link', href: WAPPSTO_SETUP_URL, label: ['Wappsto:bit setup video', 'Vídeo: configurar la Wappsto:bit', 'Vídeo: configurar la Wappsto:bit']}
         ],
         sections: [
             {title: FIRST_TIME,
                 steps: [
-                    [`Create a Wappsto account in the Wappsto app or at [wappsto.com](https://wappsto.com), add the Wappsto:bit with the (+) button and follow the app to set up its WiFi ([guide](${WAPPSTO_SETUP_URL})).`, `Crea una cuenta de Wappsto en la app Wappsto o en [wappsto.com](https://wappsto.com), añade la Wappsto:bit con el botón (+) y sigue la app para configurar su WiFi ([guía](${WAPPSTO_SETUP_URL})).`, `Crea un compte de Wappsto a l’app Wappsto o a [wappsto.com](https://wappsto.com), afegeix la Wappsto:bit amb el botó (+) i segueix l’app per configurar-ne la WiFi ([guia](${WAPPSTO_SETUP_URL})).`],
+                    [`Create a Wappsto account in the Wappsto app or at [wappsto.com](https://wappsto.com), add the Wappsto:bit with the (+) button and follow the app to set up its WiFi ([video](${WAPPSTO_SETUP_URL})).`, `Crea una cuenta de Wappsto en la app Wappsto o en [wappsto.com](https://wappsto.com), añade la Wappsto:bit con el botón (+) y sigue la app para configurar su WiFi ([vídeo](${WAPPSTO_SETUP_URL})).`, `Crea un compte de Wappsto a l’app Wappsto o a [wappsto.com](https://wappsto.com), afegeix la Wappsto:bit amb el botó (+) i segueix l’app per configurar-ne la WiFi ([vídeo](${WAPPSTO_SETUP_URL})).`],
                     ['Press «Download micro:bit program (.hex)», connect the micro:bit by USB and copy the file to the MICROBIT drive. The display shows a «W» when it is ready.', 'Pulsa «Descargar programa para micro:bit (.hex)», conecta la micro:bit por USB y copia el archivo en la unidad MICROBIT. La pantalla muestra una «W» cuando está lista.', 'Prem «Descarregar el programa per a micro:bit (.hex)», connecta la micro:bit per USB i copia el fitxer a la unitat MICROBIT. La pantalla mostra una «W» quan està a punt.']
                 ]},
             {title: EVERY_TIME,
