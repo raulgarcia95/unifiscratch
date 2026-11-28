@@ -1,4 +1,4 @@
 Unifyscratch source code: https://github.com/raulgarcia95/unifyscratch
-Built from commit: 4a617dacae4368d6cd059929e7a68e2d4d169080
+Built from commit: 2fd71043c259cc96cf5d78878e37b8b6af9706ef
 License: AGPL-3.0, without any warranty. Third-party licences and credits: THIRD_PARTY_NOTICES.md
 Unifyscratch is not an official Scratch product and is not endorsed by the Scratch Foundation or MIT.
